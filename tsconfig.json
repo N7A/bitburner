@@ -1,0 +1,10 @@
+{
+  "include": ["NetscriptDefinitions.d.ts", "./**/*"],
+  "compilerOptions": {
+    "baseUrl": "./",
+    "paths": {
+      "/*": ["*"],
+      "@ns": ["NetscriptDefinitions.d.ts"]
+    }
+  }
+}
