@@ -16,14 +16,17 @@ export async function main(ns: NS, targetHost: string) {
     var nuked: boolean = false
     let resultMessage: string;
 
-    ns.atExit(() => {
+    ns.atExit(async() => {
         if (nuked) {
             ns.tprint('SUCCESS', ' ', `${input.hostnameTarget} [nuked]`, resultMessage ? ` : ${resultMessage}` : '');
         } else {
             ns.print('WARN', ' ', `${input.hostnameTarget} nuke ${Log.color('KO', Log.Color.RED)}`, resultMessage ? ` : ${resultMessage}` : '');
         }
         let executionResult: ExecutionResult = {id: input.hostnameTarget, result: nuked}
-        ns.writePort(UNLOCK_HANDLER_PORT, executionResult);
+        ns.writePort(UNLOCK_HANDLER_PORT, executionResult)
+        /*while(!ns.tryWritePort(UNLOCK_HANDLER_PORT, executionResult)) {
+            await ns.asleep(500);
+        }*/
     });
 
 

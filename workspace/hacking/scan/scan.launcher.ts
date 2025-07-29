@@ -3,6 +3,7 @@ import {TargetHost} from 'workspace/hacking/model/TargetHost'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository.ts'
+import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
 
 /**
  * Scan les cibles données par le unlock.
@@ -20,11 +21,14 @@ export async function main(ns: NS) {
 
         ns.tprint('SUCCESS', ' ', `${target} [scanned]`);
 
-        const newTargets = neighbors.filter(x => !targets.unlockTargets.includes(x))
-            .filter(x => !OwnedServersRepository.getAll(ns).includes(x));
+        const newTargets = neighbors
+            .filter(x => !targets.unlockTargets.includes(x))
+            .filter(x => !targets.hackTargets.includes(x))
+            .filter(x => !targets.hackableTagrets.includes(x))
+            .filter(x => !(OwnedServersRepository.getAll(ns) as OwnedServer[]).map(x => x.hostname).includes(x));
 
         if (newTargets.length > 0) {
-            await handleNewTargets(ns, newTargets, target)
+            await handleNewTargets(ns, newTargets, target);
         }
 
     }

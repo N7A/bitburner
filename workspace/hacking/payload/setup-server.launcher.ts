@@ -12,8 +12,8 @@ export async function main(ns: NS) {
     const ownedServers = OwnedServersRepository.getAll(ns);
     // load host data
     var serversHackable: string[] = ServersRepository.getAll(ns).filter(x => {
-        return targets.scanTargets.includes(x)
-            || targets.unlockTargets.includes(x)
+        return !(targets.scanTargets.includes(x)
+            || targets.unlockTargets.includes(x))
     }).filter(x => !ownedServers.includes(x));
 
     let scripts = [
@@ -25,6 +25,7 @@ export async function main(ns: NS) {
 
     const nbPayload: number = 4;
     let payloadExec: number[] = []
+    ns.print('Hackable : ', serversHackable)
     for (const server of serversHackable) {
         // kill payload scripts
         for (const script of scripts) {

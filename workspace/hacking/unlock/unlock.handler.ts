@@ -9,7 +9,7 @@ export const PORT = 1;
 export async function main(ns: NS) {
     // TODO : count waited result to stop loop when no more need ?
     while(true) {
-        if (ns.readPort(PORT) === 'NULL PORT DATA') {
+        if (ns.peek(PORT) === 'NULL PORT DATA') {
             await ns.nextPortWrite(PORT);
         }
 
@@ -48,6 +48,9 @@ function saveUnlocked(ns: NS, targetUnlocked: string) {
 
     // add to hack targets
     TargetsRepository.addHack(ns, targetUnlocked);
+    
+    // add to hackable targets
+    TargetsRepository.addHackable(ns, targetUnlocked);
     
     // add to scan targets
     TargetsRepository.addScan(ns, targetUnlocked);

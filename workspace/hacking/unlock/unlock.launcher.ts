@@ -17,6 +17,7 @@ export async function main(ns: NS) {
     let targetsHostname: string[] = TargetsRepositoryGet(ns).unlockTargets;
 
     let unlockLaunched: string[] = [];
+    
     //#region accès root
     for (const targetHostname of targetsHostname) {
         ns.print('START [Unlock] ', targetHostname);
@@ -30,7 +31,7 @@ export async function main(ns: NS) {
 
         unlockLaunched.push(targetHostname);
     }
-    
+
     if(unlockLaunched.length > 0) {
         if (!ns.isRunning(UNLOCK_HANDLER_SCRIPT, 'home')) {
             ns.exec(UNLOCK_HANDLER_SCRIPT, 'home');

@@ -22,7 +22,24 @@ export function addScan(ns: NS, hostname: string) {
     let targets: Targets = get(ns);
 
     // add to owned servers
-    targets.scanTargets.push(hostname);
+    targets.scanTargets = Array.from(new Set([...targets.scanTargets, hostname]));
+    
+    // save data
+    resetWith(ns, targets);
+}
+
+/**
+ * Enregistre en base un nouveau serveur à scanner.
+ * 
+ * @param ns Bitburner API
+ * @param hostname serveur à ajouter
+ */
+export function addHackable(ns: NS, hostname: string) {
+    // get last version
+    let targets: Targets = get(ns);
+
+    // add to owned servers
+    targets.hackableTagrets = Array.from(new Set([...targets.hackableTagrets, hostname]));
     
     // save data
     resetWith(ns, targets);
@@ -49,14 +66,14 @@ export function removeScan(ns: NS, hostname: string) {
  * Enregistre en base un nouveau serveur à débloquer.
  * 
  * @param ns Bitburner API
- * @param hostname serveur à ajouter
+ * @param hostnames serveur à ajouter
  */
-export function addUnlock(ns: NS, hostname: string[]) {
+export function addUnlock(ns: NS, hostnames: string[]) {
     // get last version
     let targets: Targets = get(ns);
 
     // add to owned servers
-    targets.unlockTargets.push(...hostname);
+    targets.unlockTargets = Array.from(new Set([...targets.unlockTargets, ...hostnames]));
     
     // save data
     resetWith(ns, targets);
@@ -90,7 +107,7 @@ export function addHack(ns: NS, hostname: string) {
     let targets: Targets = get(ns);
 
     // add to owned servers
-    targets.hackTargets.push(hostname);
+    targets.hackTargets = Array.from(new Set([...targets.hackTargets, hostname]));
     
     // save data
     resetWith(ns, targets);
@@ -122,7 +139,8 @@ export function reset(ns: NS) {
     const targets: Targets = {
         scanTargets: ['home', ...OwnedServersRepository.getAll(ns).map(server => server.hostname)],
         unlockTargets: [],
-        hackTargets: []
+        hackTargets: [],
+        hackableTagrets: []
     }
 
     // save data
@@ -138,21 +156,16 @@ export function resetHack(ns: NS) {
     // get last version
     let targets: Targets = get(ns);
     
-    targets.hackTargets.push(
-        ...getAllHostname(ns)
+    targets.hackTargets = 
+        Array.from(new Set([...targets.hackTargets,
+        ...targets.hackableTagrets
             .filter(server => !targets.unlockTargets.includes(server) && !targets.hackTargets.includes(server))
-    );
+        ]));
     
     ns.tprint('New hack targets :', targets.hackTargets);
 
     // save data
     resetWith(ns, targets);
-}
-
-function getAllHostname(ns: NS) {
-    return ns.ls('home', Referentiel.SERVERS_REPOSITORY)
-        .filter(x => x.startsWith(Referentiel.SERVERS_REPOSITORY))
-        .map(x => x.substring(x.lastIndexOf('/')+1, x.lastIndexOf('.json')));
 }
 
 /**

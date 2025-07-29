@@ -12,6 +12,10 @@ export function getAll(ns: NS) {
     return JSON.parse(ns.read(REPOSITORY)) as OwnedServer[];
 }
 
+export function get(ns: NS, hostname: string) {
+    return getAll(ns).find(x => x.hostname === hostname);
+}
+
 /**
  * Enregistre en base un nouveau serveur.
  * 
@@ -39,14 +43,14 @@ export function save(ns: NS, server: OwnedServer) {
     // get last version
     let ownedServers: OwnedServer[] = getAll(ns);
 
-    // remove all version
-    ownedServers = ownedServers.filter(server => server.hostname !== server.hostname);
+    // remove old version
+    ownedServers = ownedServers.filter(x => x.hostname !== server.hostname);
+
+    // add to owned servers
+    ownedServers.push(server);
 
     // save data
     resetWith(ns, ownedServers);
-    
-    // add to owned servers
-    add(ns, server);
 }
 
 /**
