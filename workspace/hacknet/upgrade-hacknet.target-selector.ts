@@ -2,6 +2,9 @@ import { HacknetUpgrade } from 'workspace/hacknet/model/HacknetUpgrade'
 import { UpgradeExecution } from 'workspace/hacknet/model/UpgradeExecution'
 import { UpgradeType } from 'workspace/hacknet/model/UpgradeType'
 
+/**
+ * @remarks Import RAM : 4,25GB
+ */
 export function getBestProfits(ns: NS, maxMoneyToSpend?: number): UpgradeExecution | undefined {
     // load profits disponibles
     let profits: UpgradeExecution[] = getProfits(ns, maxMoneyToSpend)
@@ -9,13 +12,15 @@ export function getBestProfits(ns: NS, maxMoneyToSpend?: number): UpgradeExecuti
     .filter(upgradeRatio => maxMoneyToSpend === undefined || upgradeRatio.cost <= maxMoneyToSpend);
 
     // find the most profitability upgrade
-    const mostProfitUpgrade = Math.max(...profits.map(x => x.ratio));
-    return profits.find(ratio => ratio.ratio === mostProfitUpgrade);
+    return profits.sort((a, b) => a.ratio - b.ratio).pop();
 }
 
 function getProfits(ns: NS, maxMoneyToSpend?: number): UpgradeExecution[] {
-    // ns.hacknet.maxNumNodes()
-    let profits: UpgradeExecution[] = [getProfitBuy(ns, 1)];
+    let profits: UpgradeExecution[] = [];
+    
+    if (ns.hacknet.numNodes() < ns.hacknet.maxNumNodes()) {
+        profits.push(getProfitBuy(ns, 1));
+    }
     
     for (var i = 0; i < ns.hacknet.numNodes(); i++) {
         const profit = getProfitUpgradeNode(ns, i, maxMoneyToSpend);
