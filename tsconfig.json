@@ -1,6 +1,7 @@
 {
   "include": ["NetscriptDefinitions.d.ts", "./**/*"],
   "compilerOptions": {
+    "lib": ["es2016"],
     "baseUrl": "./",
     "paths": {
       "/*": ["*"],

@@ -2,7 +2,7 @@ import {Targets} from 'workspace/hacking/model/Targets'
 import {TargetHost} from 'workspace/hacking/model/TargetHost'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository.ts'
+import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
 
 /**

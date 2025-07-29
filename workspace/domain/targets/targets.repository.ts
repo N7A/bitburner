@@ -159,7 +159,7 @@ export function resetHack(ns: NS) {
     targets.hackTargets = 
         Array.from(new Set([...targets.hackTargets,
         ...targets.hackableTagrets
-            .filter(server => !targets.unlockTargets.includes(server) && !targets.hackTargets.includes(server))
+            .filter(server => !targets.unlockTargets.includes(server))
         ]));
     
     ns.tprint('New hack targets :', targets.hackTargets);
