@@ -1,11 +1,10 @@
 import {Contract} from 'workspace/coding-contract/model/Contract';
 import {Interval} from 'workspace/coding-contract/model/Interval';
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import {main as getContracts} from 'workspace/coding-contract/contract.selector.ts';
 import * as Log from 'workspace/logging-framework/main';
 
 export async function main(ns: NS) {
-    const servers = ServersRepository.getAll(ns);
-    const contracts = getCurrentContracts(ns, servers)
+    const contracts = (await getContracts(ns))
         .filter(x => ns.codingcontract.getContract(x.filepath, x.hostname).type === ns.enums.CodingContractName.MergeOverlappingIntervals);
 
     contracts.forEach(contract => {
@@ -64,15 +63,6 @@ function getInput(ns: NS, contract: Contract): InputArg {
     return result;
 }
 //#endregion Input arguments
-
-
-function getCurrentContracts(ns: NS, hostnames: string[]): Contract[] {
-    return hostnames.flatMap(
-        hostname => ns.ls(hostname)
-        .filter(x => x.endsWith('.cct'))
-        .map(x => {return {hostname: hostname, filepath: x} as Contract})
-    );
-}
 
 function integrate(intervals: Interval[], newInterval: Interval) {
     for (const interval of intervals) {

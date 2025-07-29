@@ -1,10 +1,9 @@
 import {Contract} from 'workspace/coding-contract/model/Contract';
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import {main as getContracts} from 'workspace/coding-contract/contract.selector.ts';
 import * as Log from 'workspace/logging-framework/main';
 
 export async function main(ns: NS) {
-    const servers = ServersRepository.getAll(ns);
-    const contracts = getCurrentContracts(ns, servers)
+    const contracts = (await getContracts(ns))
         .filter(x => [
             ns.enums.CodingContractName.ArrayJumpingGame,
             ns.enums.CodingContractName.ArrayJumpingGameII
@@ -37,14 +36,15 @@ export async function main(ns: NS) {
     };
 }
 
-function getCurrentContracts(ns: NS, hostnames: string[]): Contract[] {
-    return hostnames.flatMap(
-        hostname => ns.ls(hostname)
-        .filter(x => x.endsWith('.cct'))
-        .map(x => {return {hostname: hostname, filepath: x} as Contract})
-    );
-}
-
+/**
+ * Description : You are given the following array of integers: 0,3,0,6,2,4,9,8
+ * 
+ * Each element in the array represents your MAXIMUM jump length at that position. This means that if you are at position i and your maximum jump length is n, you can jump to any position from i to i+n. 
+ * 
+ * Assuming you are initially positioned at the start of the array, determine whether you are able to reach the last index.
+ * 
+ * Your answer should be submitted as 1 or 0, representing true and false respectively.
+ */
 function getSolution(ns: NS, contract: Contract): number {
     let solution: number = getSolutionII(ns , contract);
         

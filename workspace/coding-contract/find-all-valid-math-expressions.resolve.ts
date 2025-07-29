@@ -1,12 +1,9 @@
 import {Contract} from 'workspace/coding-contract/model/Contract';
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import {main as getContracts} from 'workspace/coding-contract/contract.selector.ts';
 import * as Log from 'workspace/logging-framework/main';
 
 export async function main(ns: NS) {
-    const servers = ServersRepository.getAll(ns);
-    ns.print(Log.INFO('Serveurs connus', servers));
-
-    const contracts = getCurrentContracts(ns, servers)
+    const contracts = (await getContracts(ns))
         .filter(x => [
             ns.enums.CodingContractName.FindAllValidMathExpressions
         ].includes(ns.codingcontract.getContract(x.filepath, x.hostname).type));

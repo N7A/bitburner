@@ -1,8 +1,40 @@
 import {Contract} from 'workspace/coding-contract/model/Contract';
 import {Transaction} from 'workspace/coding-contract/model/Transaction';
+import * as Log from 'workspace/logging-framework/main';
+import {main as getContracts} from 'workspace/coding-contract/contract.selector.ts';
 
 export async function main(ns: NS) {
+    const contracts = (await getContracts(ns))
+        .filter(x => [
+            ns.enums.CodingContractName.AlgorithmicStockTraderI,
+            ns.enums.CodingContractName.AlgorithmicStockTraderIII
+        ].includes(ns.codingcontract.getContract(x.filepath, x.hostname).type));
 
+    for(const contract of contracts) {
+        ns.print(Log.INFO('Contrat', `${contract.hostname} > ${contract.filepath}`));
+        let solution: number;
+
+        const codingContract: CodingContractObject = ns.codingcontract.getContract(contract.filepath, contract.hostname)
+
+        if (codingContract.type === ns.enums.CodingContractName.AlgorithmicStockTraderI) {
+            solution = getSolutionI(ns, contract);
+        } else if (codingContract.type === ns.enums.CodingContractName.AlgorithmicStockTraderIII) {
+            solution = getSolutionIII(ns , contract);
+        } else {
+            ns.print('ERROR', ' ', `Type (${codingContract}) non pris en charge`)
+            continue;
+        }
+
+        ns.print(Log.INFO('Solution', solution));
+        let reward = ns.codingcontract.attempt(solution, contract.filepath, contract.hostname);
+        if (reward) {
+            ns.tprint('SUCCESS', ' ', `Contract ${contract.hostname} > ${contract.filepath} [solved]`);
+            ns.tprint('INFO', ' ', Log.INFO('Reward', reward));
+        } else {
+            ns.tprint('ERROR', ' ', `Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
+            ns.tprint(Log.INFO('Essais restant', ns.codingcontract.getNumTriesRemaining(contract.filepath, contract.hostname)));
+        }
+    };
 }
 
 /**
@@ -22,7 +54,7 @@ function getSolutionI(ns: NS, contract: Contract): number {
     if (!transaction1) {
         return 0;
     }
-    bestProfit = getProfit(transaction1);
+    bestProfit = getProfit(data, transaction1);
     if (bestProfit > 0) {
         ns.print("Transaction 1 :", transaction1);
     }
@@ -50,20 +82,20 @@ function getSolutionIII(ns: NS, contract: Contract): number {
     for (let i=minimalTransactionSize; i < data.length - (minimalTransactionSize-1); i++) {
         let transactions: Transaction[] = [];
         const transaction1 = getBestTransaction(data.slice(0, i));
-        if (transaction1 && getProfit(transaction1) > 0) {
+        if (transaction1 && getProfit(data, transaction1) > 0) {
             transactions.push(transaction1);
         }
 
         const nextTransactionStartDay = transaction1 ? transaction1?.sellDay+1 : i;
         const transaction2 = getBestTransaction(data.slice(nextTransactionStartDay));
-        if (transaction2 && getProfit(transaction2) > 0) {
+        if (transaction2 && getProfit(data.slice(nextTransactionStartDay), transaction2) > 0) {
             // conversion du jour depuis le slice vers le stockPrices actuel
             transaction2.buyDay += nextTransactionStartDay
             transaction2.sellDay += nextTransactionStartDay
             transactions.push(transaction2);
         }
 
-        let profit = transactions.map(x => getProfit(x)).reduce((x,y) => x + y);
+        let profit = transactions.map(x => getProfit(data, x)).reduce((x,y) => x + y);
         if (profit > bestProfit) {
             ns.print("Transaction 1 :", transaction1);
             ns.print("Transaction 2 :", transaction2);
@@ -82,8 +114,6 @@ function getBestTransaction(stockPrices: number[]): Transaction|undefined {
         return bestTransaction;
     }
 
-    const getProfit = (transaction: Transaction) => transaction.sellDay - transaction.buyDay;
-    
     const minPriceDay = stockPrices.findIndex(x => x == Math.min(...stockPrices));
     const maxPriceDay = stockPrices.findIndex(x => x == Math.max(...stockPrices));
 
@@ -91,20 +121,24 @@ function getBestTransaction(stockPrices: number[]): Transaction|undefined {
         const transaction1: Transaction|undefined = getBestTransaction(stockPrices.slice(0, maxPriceDay+1));
 
         const transaction2: Transaction|undefined = getBestTransaction(stockPrices.slice(maxPriceDay+1, minPriceDay));
-        // conversion du jour depuis le slice vers le stockPrices actuel
-        transaction2!.buyDay += maxPriceDay+1;
-        transaction2!.sellDay += maxPriceDay+1;
+        if (transaction2) {
+            // conversion du jour depuis le slice vers le stockPrices actuel
+            transaction2.buyDay += maxPriceDay+1;
+            transaction2.sellDay += maxPriceDay+1;
+        }
 
         const transaction3: Transaction|undefined = getBestTransaction(stockPrices.slice(minPriceDay));
-        // conversion du jour depuis le slice vers le stockPrices actuel
-        transaction3!.buyDay += minPriceDay;
-        transaction3!.sellDay += minPriceDay;
+        if (transaction3) {
+            // conversion du jour depuis le slice vers le stockPrices actuel
+            transaction3.buyDay += minPriceDay;
+            transaction3.sellDay += minPriceDay;
+        }
 
         const possibleTransactions: Transaction[] = [transaction1, transaction2, transaction3]
             .filter(x => x !== undefined)
             .map(x => x as Transaction);
             
-        return possibleTransactions.find(x => getProfit(x) === Math.max(...possibleTransactions.map(x => getProfit(x))));
+        return possibleTransactions.find(x => getProfit(stockPrices, x) === Math.max(...possibleTransactions.map(x => getProfit(stockPrices, x))));
     }
 
     return {
@@ -113,8 +147,8 @@ function getBestTransaction(stockPrices: number[]): Transaction|undefined {
         }
 }
 
-function getProfit(transaction: Transaction) {
-    return transaction.sellDay - transaction.buyDay;
+function getProfit(stockPrices: number[], transaction: Transaction) {
+    return stockPrices[transaction.sellDay] - stockPrices[transaction.buyDay];
 }
 
 //#region Input arguments
