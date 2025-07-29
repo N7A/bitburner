@@ -38,6 +38,6 @@ export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
         OwnedServersRepository.add(ns, newServer);
 
         // copie du toolkit
-        copyToolkit(ns, nextHostname);
+        await copyToolkit(ns, nextHostname);
     }
 }

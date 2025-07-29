@@ -31,7 +31,7 @@ export async function main(ns: NS) {
         // get best purchase with max amount disponible
         const selectedUpgrade = await selectUpgrade(ns, MoneyPiggyBank.getDisponibleMoney(getMoney()));
         // do purchase
-        executeUpgrade(ns, selectedUpgrade);
+        await executeUpgrade(ns, selectedUpgrade);
         
         if (input.runHasLoop) {
             // sleep to prevent crash because of infinite loop
