@@ -1,0 +1,15 @@
+{
+    "name": "millenium-fitness",
+    "parent": "summit-uni",
+    "depth": 6,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 3,
+        "requiredHackingSkill": 498
+    },
+    "hackData": {
+        "minDifficulty": 16,
+        "moneyMax": 6250000000,
+        "maxRam": 128,
+        "cpuCores": 6
+    }
+}

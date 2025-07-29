@@ -1,0 +1,15 @@
+{
+    "name": "snap-fitness",
+    "parent": "millenium-fitness",
+    "depth": 7,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 4,
+        "requiredHackingSkill": 785
+    },
+    "hackData": {
+        "minDifficulty": 17,
+        "moneyMax": 11250000000,
+        "maxRam": 0,
+        "cpuCores": 6
+    }
+}

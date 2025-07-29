@@ -1,0 +1,15 @@
+{
+    "name": "galactic-cyber",
+    "parent": "millenium-fitness",
+    "depth": 7,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 862
+    },
+    "hackData": {
+        "minDifficulty": 19,
+        "moneyMax": 19202876750,
+        "maxRam": 0,
+        "cpuCores": 4
+    }
+}

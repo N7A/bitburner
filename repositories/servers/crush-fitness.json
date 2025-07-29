@@ -1,0 +1,15 @@
+{
+    "name": "crush-fitness",
+    "parent": "neo-net",
+    "depth": 4,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 2,
+        "requiredHackingSkill": 244
+    },
+    "hackData": {
+        "minDifficulty": 15,
+        "moneyMax": 1367577200,
+        "maxRam": 0,
+        "cpuCores": 3
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name": "rho-construction",
+    "parent": "catalyst",
+    "depth": 6,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 3,
+        "requiredHackingSkill": 505
+    },
+    "hackData": {
+        "minDifficulty": 18,
+        "moneyMax": 14203118400,
+        "maxRam": 32,
+        "cpuCores": 3
+    }
+}

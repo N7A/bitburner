@@ -1,0 +1,15 @@
+{
+    "name": "icarus",
+    "parent": "omnia",
+    "depth": 9,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 878
+    },
+    "hackData": {
+        "minDifficulty": 31,
+        "moneyMax": 23455547200,
+        "maxRam": 0,
+        "cpuCores": 7
+    }
+}

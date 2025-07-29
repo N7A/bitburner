@@ -1,0 +1,15 @@
+{
+    "name": "f1rst",
+    "parent": "home",
+    "depth": 1,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 1
+    },
+    "hackData": {
+        "minDifficulty": 1,
+        "moneyMax": 0,
+        "maxRam": 131072,
+        "cpuCores": 1
+    }
+}

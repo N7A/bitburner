@@ -1,0 +1,15 @@
+{
+    "name": "defcomm",
+    "parent": "deltaone",
+    "depth": 9,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 906
+    },
+    "hackData": {
+        "minDifficulty": 31,
+        "moneyMax": 23007331350,
+        "maxRam": 0,
+        "cpuCores": 9
+    }
+}

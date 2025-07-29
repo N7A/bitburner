@@ -1,0 +1,15 @@
+{
+    "name": "taiyang-digital",
+    "parent": "defcomm",
+    "depth": 10,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 851
+    },
+    "hackData": {
+        "minDifficulty": 25,
+        "moneyMax": 22072716500,
+        "maxRam": 0,
+        "cpuCores": 6
+    }
+}

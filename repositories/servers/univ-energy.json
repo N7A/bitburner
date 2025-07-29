@@ -1,0 +1,15 @@
+{
+    "name": "univ-energy",
+    "parent": "deltaone",
+    "depth": 9,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 4,
+        "requiredHackingSkill": 805
+    },
+    "hackData": {
+        "minDifficulty": 29,
+        "moneyMax": 29933594950,
+        "maxRam": 64,
+        "cpuCores": 5
+    }
+}

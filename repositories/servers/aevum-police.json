@@ -1,0 +1,15 @@
+{
+    "name": "aevum-police",
+    "parent": "catalyst",
+    "depth": 6,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 4,
+        "requiredHackingSkill": 435
+    },
+    "hackData": {
+        "minDifficulty": 24,
+        "moneyMax": 8813040075,
+        "maxRam": 16,
+        "cpuCores": 5
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name": "stormtech",
+    "parent": "run4theh111z",
+    "depth": 12,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 973
+    },
+    "hackData": {
+        "minDifficulty": 28,
+        "moneyMax": 29167601125,
+        "maxRam": 0,
+        "cpuCores": 10
+    }
+}

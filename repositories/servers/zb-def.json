@@ -1,0 +1,15 @@
+{
+    "name": "zb-def",
+    "parent": "icarus",
+    "depth": 10,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 4,
+        "requiredHackingSkill": 823
+    },
+    "hackData": {
+        "minDifficulty": 20,
+        "moneyMax": 23955018150,
+        "maxRam": 0,
+        "cpuCores": 10
+    }
+}

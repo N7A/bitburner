@@ -1,0 +1,25 @@
+1. save game
+2. rm workspace
+3. sync from VS code (https://github.com/bitburner-official/typescript-template/blob/main/DockerGuide.md)
+4. mv *.js to *.ts
+5. adapt alias
+
+---
+
+# VS Code
+
+## Pros
+
+Arborescence
+Rename
+
+## Cons
+
+sync VS Code génère des fichier *.js
+
+# Game
+
+## Pros
+
+Ram visualisation
+NS integration

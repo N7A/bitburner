@@ -1,0 +1,15 @@
+# TODO
+
+- Commentaires
+- Reorg
+- more log
+- RAM minimum dans application.properties (pour les run a la main et les alias)
+- gestion serveurs acheté
+- ajout repository serveur acheté pour ne pas essayer de hack
+- see https://github.com/alainbryden/bitburner-scripts
+- next objectif
+- permettre call by cmd & by run (cf payload.launcher)
+
+# Réflexions
+
+comment savoir les host déjà hack -> rootacces ?

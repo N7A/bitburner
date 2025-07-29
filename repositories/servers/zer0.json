@@ -1,0 +1,15 @@
+{
+    "name": "zer0",
+    "parent": "joesguns",
+    "depth": 2,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 1,
+        "requiredHackingSkill": 75
+    },
+    "hackData": {
+        "minDifficulty": 8,
+        "moneyMax": 187500000,
+        "maxRam": 32,
+        "cpuCores": 1
+    }
+}

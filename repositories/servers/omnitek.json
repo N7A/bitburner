@@ -1,0 +1,15 @@
+{
+    "name": "omnitek",
+    "parent": "helios",
+    "depth": 13,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 945
+    },
+    "hackData": {
+        "minDifficulty": 30,
+        "moneyMax": 346806704675,
+        "maxRam": 512,
+        "cpuCores": 11
+    }
+}

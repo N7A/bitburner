@@ -1,0 +1,15 @@
+{
+    "name": "CSEC",
+    "parent": "iron-gym",
+    "depth": 2,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 1,
+        "requiredHackingSkill": 53
+    },
+    "hackData": {
+        "minDifficulty": 1,
+        "moneyMax": 0,
+        "maxRam": 8,
+        "cpuCores": 2
+    }
+}

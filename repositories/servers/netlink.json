@@ -1,0 +1,15 @@
+{
+    "name": "netlink",
+    "parent": "neo-net",
+    "depth": 4,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 3,
+        "requiredHackingSkill": 389
+    },
+    "hackData": {
+        "minDifficulty": 26,
+        "moneyMax": 6875000000,
+        "maxRam": 64,
+        "cpuCores": 2
+    }
+}

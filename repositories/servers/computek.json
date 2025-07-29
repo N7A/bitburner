@@ -1,0 +1,15 @@
+{
+    "name": "computek",
+    "parent": "neo-net",
+    "depth": 4,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 3,
+        "requiredHackingSkill": 396
+    },
+    "hackData": {
+        "minDifficulty": 19,
+        "moneyMax": 6133782475,
+        "maxRam": 0,
+        "cpuCores": 3
+    }
+}

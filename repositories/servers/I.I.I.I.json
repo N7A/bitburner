@@ -1,0 +1,15 @@
+{
+    "name": "I.I.I.I",
+    "parent": "the-hub",
+    "depth": 5,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 3,
+        "requiredHackingSkill": 347
+    },
+    "hackData": {
+        "minDifficulty": 1,
+        "moneyMax": 0,
+        "maxRam": 128,
+        "cpuCores": 4
+    }
+}

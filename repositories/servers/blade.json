@@ -1,0 +1,15 @@
+{
+    "name": "blade",
+    "parent": "kuai-gong",
+    "depth": 14,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 1071
+    },
+    "hackData": {
+        "minDifficulty": 29,
+        "moneyMax": 798494442075,
+        "maxRam": 512,
+        "cpuCores": 11
+    }
+}

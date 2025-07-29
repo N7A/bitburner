@@ -1,0 +1,15 @@
+{
+    "name": "fulcrumassets",
+    "parent": "b-and-a",
+    "depth": 15,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 1175
+    },
+    "hackData": {
+        "minDifficulty": 33,
+        "moneyMax": 25000000,
+        "maxRam": 0,
+        "cpuCores": 9
+    }
+}

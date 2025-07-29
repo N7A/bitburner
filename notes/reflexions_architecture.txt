@@ -1,0 +1,53 @@
+Launcher
+    auto-host
+    => looper (min ram) <- host
+        auto-targets
+        => worker <- target
+                  <- host
+
+---
+
+- import * get all RAM even not needed + all RAM from import import, etc...
+
+# Import
+
+## PROS
+
+meilleur gestion
+
+## CONS
+
++RAM all import
++1 run; +1.3 exec
+
+## Conclusion
+
+besoin de - de RAM mais actif le temps du script
+
+# Run
+
+## PROS
+
+use RAM when needed
+
+## CONS
+
++ 1.6 RAM par défaut
+
+## Conclusion
+
++ de RAM (1.6) mais temporaire
+
+---
+
+en parallèle pour reduire le temps d'execution (loop + worker)
+en séquence pour reduire la RAM ? (sequencer)
+
+---
+
+IMPORT : somme(scripts.RAM) - (scripts.lenght * 1.6)
+RUN : max(scripts.RAM) /!\ + somme(scripts called en parallele)
+=> best choice = min(IMPORT, RUN)
+see spawn
+
+=> 1 fonction == 1 worker (avec min import)

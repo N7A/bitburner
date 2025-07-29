@@ -1,0 +1,15 @@
+{
+    "name": "johnson-ortho",
+    "parent": "silver-helix",
+    "depth": 4,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 2,
+        "requiredHackingSkill": 282
+    },
+    "hackData": {
+        "minDifficulty": 21,
+        "moneyMax": 1999523525,
+        "maxRam": 0,
+        "cpuCores": 2
+    }
+}

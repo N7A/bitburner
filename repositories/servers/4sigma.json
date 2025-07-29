@@ -1,0 +1,15 @@
+{
+    "name": "4sigma",
+    "parent": "stormtech",
+    "depth": 13,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 967
+    },
+    "hackData": {
+        "minDifficulty": 19,
+        "moneyMax": 529234482850,
+        "maxRam": 0,
+        "cpuCores": 11
+    }
+}

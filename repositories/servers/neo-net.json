@@ -1,0 +1,15 @@
+{
+    "name": "neo-net",
+    "parent": "zer0",
+    "depth": 3,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 1,
+        "requiredHackingSkill": 50
+    },
+    "hackData": {
+        "minDifficulty": 8,
+        "moneyMax": 125000000,
+        "maxRam": 32,
+        "cpuCores": 3
+    }
+}

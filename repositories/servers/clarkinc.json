@@ -1,0 +1,15 @@
+{
+    "name": "clarkinc",
+    "parent": "kuai-gong",
+    "depth": 14,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 1088
+    },
+    "hackData": {
+        "minDifficulty": 17,
+        "moneyMax": 533282513275,
+        "maxRam": 0,
+        "cpuCores": 13
+    }
+}

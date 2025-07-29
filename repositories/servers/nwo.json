@@ -1,0 +1,15 @@
+{
+    "name": "nwo",
+    "parent": "4sigma",
+    "depth": 14,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 1067
+    },
+    "hackData": {
+        "minDifficulty": 33,
+        "moneyMax": 856682009150,
+        "maxRam": 0,
+        "cpuCores": 10
+    }
+}

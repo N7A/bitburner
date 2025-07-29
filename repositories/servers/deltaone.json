@@ -1,0 +1,15 @@
+{
+    "name": "deltaone",
+    "parent": "galactic-cyber",
+    "depth": 8,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 864
+    },
+    "hackData": {
+        "minDifficulty": 27,
+        "moneyMax": 40671261725,
+        "maxRam": 0,
+        "cpuCores": 4
+    }
+}

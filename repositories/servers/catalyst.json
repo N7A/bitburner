@@ -1,0 +1,15 @@
+{
+    "name": "catalyst",
+    "parent": "crush-fitness",
+    "depth": 5,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 3,
+        "requiredHackingSkill": 435
+    },
+    "hackData": {
+        "minDifficulty": 23,
+        "moneyMax": 10453641250,
+        "maxRam": 128,
+        "cpuCores": 5
+    }
+}

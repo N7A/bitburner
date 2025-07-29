@@ -1,0 +1,15 @@
+{
+    "name": "alpha-ent",
+    "parent": "rothman-uni",
+    "depth": 6,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 4,
+        "requiredHackingSkill": 581
+    },
+    "hackData": {
+        "minDifficulty": 19,
+        "moneyMax": 17249075175,
+        "maxRam": 128,
+        "cpuCores": 6
+    }
+}

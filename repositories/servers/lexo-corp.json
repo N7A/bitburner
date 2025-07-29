@@ -1,0 +1,15 @@
+{
+    "name": "lexo-corp",
+    "parent": "rothman-uni",
+    "depth": 6,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 4,
+        "requiredHackingSkill": 705
+    },
+    "hackData": {
+        "minDifficulty": 24,
+        "moneyMax": 19245510625,
+        "maxRam": 64,
+        "cpuCores": 3
+    }
+}

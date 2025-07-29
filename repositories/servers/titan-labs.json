@@ -1,0 +1,15 @@
+{
+    "name": "titan-labs",
+    "parent": "nova-med",
+    "depth": 11,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 843
+    },
+    "hackData": {
+        "minDifficulty": 24,
+        "moneyMax": 19510653775,
+        "maxRam": 64,
+        "cpuCores": 6
+    }
+}

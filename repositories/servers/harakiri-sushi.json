@@ -1,0 +1,15 @@
+{
+    "name": "harakiri-sushi",
+    "parent": "home",
+    "depth": 1,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 0,
+        "requiredHackingSkill": 40
+    },
+    "hackData": {
+        "minDifficulty": 5,
+        "moneyMax": 100000000,
+        "maxRam": 16,
+        "cpuCores": 1
+    }
+}

@@ -1,0 +1,15 @@
+broker de message
+
+communication inter-script (looper to looper)
+communication inter-serveur
+/!\ temporaire (pas de persistance)
+
+ip port : 1-20
+50 messages / port
+FIFO
+
+message write -> repo.broker.looper -> save on db
+message read -> repo.broker.looper -> get on db OU scp db on home
+
+
+- read / write, only on self host -> bdd througt host compliqué => sync (workspace + repositories) looper

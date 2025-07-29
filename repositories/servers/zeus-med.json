@@ -1,0 +1,15 @@
+{
+    "name": "zeus-med",
+    "parent": "omnia",
+    "depth": 9,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 5,
+        "requiredHackingSkill": 833
+    },
+    "hackData": {
+        "minDifficulty": 29,
+        "moneyMax": 37038775850,
+        "maxRam": 0,
+        "cpuCores": 7
+    }
+}

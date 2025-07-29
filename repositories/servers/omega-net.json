@@ -1,0 +1,15 @@
+{
+    "name": "omega-net",
+    "parent": "nectar-net",
+    "depth": 3,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 2,
+        "requiredHackingSkill": 217
+    },
+    "hackData": {
+        "minDifficulty": 11,
+        "moneyMax": 1531483625,
+        "maxRam": 32,
+        "cpuCores": 3
+    }
+}

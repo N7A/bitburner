@@ -1,0 +1,15 @@
+{
+    "name": "syscore",
+    "parent": "avmnite-02h",
+    "depth": 5,
+    "unlockRequirements": {
+        "numOpenPortsRequired": 4,
+        "requiredHackingSkill": 631
+    },
+    "hackData": {
+        "minDifficulty": 25,
+        "moneyMax": 10450808500,
+        "maxRam": 0,
+        "cpuCores": 4
+    }
+}
