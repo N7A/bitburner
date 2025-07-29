@@ -21,27 +21,30 @@ export async function main(ns: NS) {
 }
 
 function nukeAchievable(ns: NS, hostToHack: string): boolean {
-  return ns.getServerNumPortsRequired(hostToHack) == 0
-    && ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(hostToHack)
+    return ns.getServerNumPortsRequired(hostToHack) == 0
+        && ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(hostToHack)
 }
 
 function printData(ns: NS, data: Server) {
-  var dataMessages: string[] = []
-  dataMessages.push('root access : ' + data.hasAdminRights)
-  if (!data.hasAdminRights) {
-    dataMessages.push('nuke achievable : ' + nukeAchievable(ns, data.hostname))
-  }
-  dataMessages.push('Money : ' + Log.money(ns, data.moneyAvailable as number) + ' / ' + ns.formatNumber(data.moneyMax as number) 
-    + ' (~' + Log.money(ns, (data.moneyMax as number) - (data.moneyAvailable as number)) + ')');
-  dataMessages.push('Security level : ' + ns.formatNumber(data.hackDifficulty as number) + ' >>> ' + ns.formatNumber(data.minDifficulty as number) 
-    + ' (~' + ns.formatNumber((data.hackDifficulty as number) - (data.minDifficulty as number)) + ')');
+    var dataMessages: string[] = []
+    dataMessages.push('root access : ' + data.hasAdminRights)
+    if (!data.hasAdminRights) {
+        dataMessages.push('nuke achievable : ' + nukeAchievable(ns, data.hostname))
+    }
+    dataMessages.push('Backdoor installé : ' + data.backdoorInstalled);
+    dataMessages.push('Organisation : ' + data.organizationName);
 
-    for(const message of dataMessages) {
-      ns.tprint(message);
+    dataMessages.push('Money : ' + Log.money(ns, data.moneyAvailable as number) + ' / ' + ns.formatNumber(data.moneyMax as number)
+        + ' (~' + Log.money(ns, (data.moneyMax as number) - (data.moneyAvailable as number)) + ')');
+    dataMessages.push('Security level : ' + ns.formatNumber(data.hackDifficulty as number) + ' >>> ' + ns.formatNumber(data.minDifficulty as number)
+        + ' (~' + ns.formatNumber((data.hackDifficulty as number) - (data.minDifficulty as number)) + ')');
+    
+    for (const message of dataMessages) {
+        ns.tprint(message);
     }
     ns.tprint('Path : ', ServersRepository.getHostPath(ns, data.hostname));
 
-  ns.tprint(data.hostname)
+    ns.tprint(data.hostname)
 }
 
 //#region Input parameters
@@ -60,7 +63,7 @@ function getInput(ns: NS): InputArg {
         ns.tprint('ERROR', ' ', 'Merci de renseigner un hostname');
         ns.exit();
     }
-    
+
     return {
         hostnameTarget: (ns.args[0] as string)
     };
