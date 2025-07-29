@@ -85,5 +85,5 @@ function hasEnoughRam(ns: NS, targetHost: string, ramNeeded: number) {
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return ns.getServerMaxRam(targetHost) - (Properties.ramReserve.get(targetHost) ?? 0) - ns.getServerUsedRam(targetHost);
+    return Math.max(ns.getServerMaxRam(targetHost) - ns.getServerUsedRam(targetHost) - (Properties.ramReserve.get(targetHost) ?? 0), 0);
 }
