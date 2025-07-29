@@ -1,24 +1,18 @@
 import * as Referentiel from 'workspace/referentiel'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
-import * as ExecutionsRepository from 'workspace/domain/executions.repository'
-import * as Log from 'workspace/logging-framework/main'
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
+import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
 import {PORT} from 'workspace/hacking/unlock/unlock.handler';
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
-    if (ns.hasTorRouter()) {
-        MoneyPiggyBank.setReserveMoney(200 * 1000);
-    }
+    (OwnedServersRepository.getAll(ns) as OwnedServer[]).forEach(x => ns.killall(x.hostname))
 
     ns.clearPort(PORT);
     // reset des bases de données
-    OwnedServersRepository.reset(ns);
     TargetsRepository.reset(ns);
-    ExecutionsRepository.reset(ns);
 
     // lancement du hacking automatisé
     ns.run(Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts', 1);
@@ -27,13 +21,4 @@ export async function main(ns: NS) {
 
     // lancement de l'achat de node automatisé
     ns.run(Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts', 1, true);
-
-    // TODO : affichage de la TODO list + informations diverses
-    ns.tprint(Log.getStartLog());
-    ns.tprint(Log.color('TODO', Log.Color.MAGENTA));
-    ns.tprint(Log.color('==========', Log.Color.GREEN));
-    ns.tprint('Go get a job');
-    ns.tprint('Run alias');
-    ns.tprint('Go to City > [alpha ent.]; Purchase TOR router; cmd : buy -l')
-    ns.tprint(Log.getEndLog());
 }
