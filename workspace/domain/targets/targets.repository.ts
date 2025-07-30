@@ -137,7 +137,7 @@ export function removeHack(ns: NS, hostname: string) {
  */
 export function reset(ns: NS) {
     const targets: Targets = {
-        scanTargets: ['home', ...OwnedServersRepository.getAll(ns).map(server => server.hostname)],
+        scanTargets: [...OwnedServersRepository.getAll(ns).map(server => server.hostname)],
         unlockTargets: [],
         hackTargets: [],
         hackableTagrets: []
