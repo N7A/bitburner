@@ -21,11 +21,17 @@ export function addScan(ns: NS, hostname: string) {
     // get last version
     let targets: Targets = get(ns);
 
+    if (targets.scanTargets.includes(hostname)) {
+        return;
+    }
+    
     // add to owned servers
     targets.scanTargets = Array.from(new Set([...targets.scanTargets, hostname]));
     
     // save data
     resetWith(ns, targets);
+
+    ns.tprint('INFO', ' ', 'New target to scan : ' + hostname);
 }
 
 /**
@@ -38,11 +44,17 @@ export function addHackable(ns: NS, hostname: string) {
     // get last version
     let targets: Targets = get(ns);
 
+    if (targets.hackableTagrets.includes(hostname)) {
+        return;
+    }
+    
     // add to owned servers
     targets.hackableTagrets = Array.from(new Set([...targets.hackableTagrets, hostname]));
     
     // save data
     resetWith(ns, targets);
+
+    ns.tprint('INFO', ' ', 'New target hackable : ' + hostname);
 }
 
 /**
@@ -55,11 +67,18 @@ export function removeScan(ns: NS, hostname: string) {
     // get last version
     let targets: Targets = get(ns);
 
+    const indexToRemove = targets.scanTargets.indexOf(hostname);
+    if (indexToRemove === -1) {
+        return;
+    }
+    
     // remove from scan targets
-    targets.scanTargets = targets.scanTargets.filter(x => x !== hostname);
+    targets.scanTargets.splice(indexToRemove, 1);
     
     // save data
     resetWith(ns, targets);
+
+    ns.tprint('INFO', ' ', 'Remove target to scan : ' + hostname);
 }
 
 /**
@@ -72,11 +91,17 @@ export function addUnlock(ns: NS, hostnames: string[]) {
     // get last version
     let targets: Targets = get(ns);
 
+    if (hostnames.every(hostname => targets.unlockTargets.includes(hostname))) {
+        return;
+    }
+    
     // add to owned servers
     targets.unlockTargets = Array.from(new Set([...targets.unlockTargets, ...hostnames]));
     
     // save data
     resetWith(ns, targets);
+
+    ns.tprint('INFO', ' ', 'New target to unlock : ' + hostnames);
 }
 
 /**
@@ -89,11 +114,18 @@ export function removeUnlock(ns: NS, hostname: string) {
     // get last version
     let targets: Targets = get(ns);
 
-    // remove from scan targets
-    targets.unlockTargets = targets.unlockTargets.filter(x => x !== hostname);
+    const indexToRemove = targets.unlockTargets.indexOf(hostname);
+    if (indexToRemove === -1) {
+        return;
+    }
+    
+    // remove from targets
+    targets.unlockTargets.splice(indexToRemove, 1);
     
     // save data
     resetWith(ns, targets);
+
+    ns.tprint('INFO', ' ', 'Remove target to unlock : ' + hostname);
 }
 
 /**
@@ -106,11 +138,17 @@ export function addHack(ns: NS, hostname: string) {
     // get last version
     let targets: Targets = get(ns);
 
+    if (targets.hackTargets.includes(hostname)) {
+        return;
+    }
+    
     // add to owned servers
     targets.hackTargets = Array.from(new Set([...targets.hackTargets, hostname]));
     
     // save data
     resetWith(ns, targets);
+
+    ns.tprint('INFO', ' ', 'New target to hack : ' + hostname);
 }
 
 /**
@@ -123,11 +161,18 @@ export function removeHack(ns: NS, hostname: string) {
     // get last version
     let targets: Targets = get(ns);
 
+    const indexToRemove = targets.hackTargets.indexOf(hostname);
+    if (indexToRemove === -1) {
+        return;
+    }
+    
     // remove from scan targets
-    targets.hackTargets = targets.hackTargets.filter(x => x !== hostname);
+    targets.hackTargets.splice(indexToRemove, 1);
     
     // save data
     resetWith(ns, targets);
+
+    ns.tprint('INFO', ' ', 'Remove target to hack : ' + hostname);
 }
 
 /**
@@ -158,7 +203,7 @@ export function resetHack(ns: NS) {
     
     targets.hackTargets = 
         Array.from(new Set([...targets.hackTargets,
-        ...targets.hackableTagrets
+            ...targets.hackableTagrets
             .filter(server => !targets.unlockTargets.includes(server))
         ]));
     
