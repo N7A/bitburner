@@ -147,6 +147,15 @@ export function source(hostname: string): string {
  * 
  * Ram cost : 0
  */
+export function script(value: string): string {
+    return color(value, Color.YELLOW);
+}
+
+/**
+ * @param value cible
+ * 
+ * Ram cost : 0
+ */
 export function action(value: string): string {
     return color(value, Color.WHITE);
 }
