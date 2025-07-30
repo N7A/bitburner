@@ -10,9 +10,10 @@ export async function main(ns: NS) {
     var runOnce: boolean = ns.args.length >= 1 ? ns.args[0] as boolean : false;
     //#endregion input parameters
 
+    let nextTarget;
     do {
         ns.print(Log.getStartLog());
-        let nextTarget = getNextTarget(ns);
+        nextTarget = getNextTarget(ns);
         if (nextTarget !== undefined) {
             let currentHackLvl = ns.getHackingLevel();
             let currentAvailablePortProgram = getAvailablePortProgram(ns);
@@ -21,38 +22,50 @@ export async function main(ns: NS) {
             ns.print(Log.INFO('Next target ports needed', getNextTarget(ns)?.unlockRequirements.numOpenPortsRequired));
             ns.print(Log.INFO('Next target lvl needed', getNextTarget(ns)?.unlockRequirements.requiredHackingSkill));
             
-            // check next target unlockable
-            if (
-                currentHackLvl >= (nextTarget.unlockRequirements.requiredHackingSkill  as number)
-                && currentAvailablePortProgram.length >=(nextTarget.unlockRequirements.numOpenPortsRequired as number)
+            // wait until next target unlockable
+            while (
+                currentHackLvl < (nextTarget.unlockRequirements.requiredHackingSkill  as number)
+                || currentAvailablePortProgram.length < (nextTarget.unlockRequirements.numOpenPortsRequired as number)
             ) {
-                // ouverture accès root
-                const pidUnlock = ns.run(Referentiel.HACKING_DIRECTORY + '/unlock/unlock.launcher.ts');
-                
-                // attendre l'ouverture de l'accès root
-                while (pidUnlock != 0 && ns.isRunning(pidUnlock)) {
-                    await ns.asleep(500);
-                }
-
-                // load targets
-                let targets: Targets = TargetsRepository.get(ns);
-
-                // recherche des cibles
-                if (targets.scanTargets.length > 0) {
-                    ns.run(Referentiel.HACKING_DIRECTORY + '/scan/scan.launcher.ts');
-                }
-                
-                // Spreading + Payload
-                if (targets.hackTargets.length > 0) {
-                    ns.run(Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts');
-                }
+                await ns.asleep(500);
+                nextTarget = getNextTarget(ns);
+            }
+        
+            // ouverture accès root
+            const pidUnlock = ns.run(Referentiel.HACKING_DIRECTORY + '/unlock/unlock.launcher.ts');
+            
+            // attendre l'ouverture de l'accès root
+            while (pidUnlock != 0 && ns.isRunning(pidUnlock)) {
+                await ns.asleep(500);
             }
         }
+
+        // TODO : need scan target up to date here
+
+        // load targets
+        let targets: Targets = TargetsRepository.get(ns);
+
+        // Spreading + Payload
+        if (targets.hackTargets.length > 0) {
+            ns.run(Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts');
+        }
+
+        // recherche des cibles
+        if (targets.scanTargets.length > 0) {
+            const pidScan = ns.run(Referentiel.HACKING_DIRECTORY + '/scan/scan.launcher.ts');
+            
+            // attendre la découverte de nouvelle cibles à unlock
+            while (pidScan != 0 && ns.isRunning(pidScan)) {
+                await ns.asleep(500);
+            }
+        }
+        
+        // TODO : need unlock target up to date here
         ns.print(Log.getEndLog());
 
         // TODO : check repository maj instead || next target time
         if (true && !runOnce) {
             await ns.asleep(500);
         }
-    } while(true && !runOnce)
+    } while(true && !runOnce && nextTarget !== undefined)
 }

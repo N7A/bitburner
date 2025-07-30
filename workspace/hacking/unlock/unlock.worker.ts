@@ -4,6 +4,7 @@ import { TargetHost, UnlockRequirements } from 'workspace/hacking/model/TargetHo
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import {ExecutionResult} from 'workspace/hacking/model/ExecutionResult'
 import {PORT} from 'workspace/hacking/unlock/unlock.handler';
+import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 
 //#region Constants
 const UNLOCK_HANDLER_PORT = PORT;
@@ -19,14 +20,14 @@ export async function main(ns: NS, targetHost: string) {
     ns.atExit(async() => {
         if (nuked) {
             ns.tprint('SUCCESS', ' ', `${input.hostnameTarget} [nuked]`, resultMessage ? ` : ${resultMessage}` : '');
+            saveUnlocked(ns, input.hostnameTarget)
         } else {
             ns.print('WARN', ' ', `${input.hostnameTarget} nuke ${Log.color('KO', Log.Color.RED)}`, resultMessage ? ` : ${resultMessage}` : '');
         }
         let executionResult: ExecutionResult = {id: input.hostnameTarget, result: nuked}
-        ns.writePort(UNLOCK_HANDLER_PORT, executionResult)
-        /*while(!ns.tryWritePort(UNLOCK_HANDLER_PORT, executionResult)) {
+        while(!ns.tryWritePort(UNLOCK_HANDLER_PORT, executionResult)) {
             await ns.asleep(500);
-        }*/
+        }
     });
 
 
@@ -90,4 +91,22 @@ function getInput(ns: NS, hostnameTarget: string): InputArg {
 function missedHackingLevels(ns: NS, requiredHackingLevel: number): number {
     const hackingLevel: number = ns.getHackingLevel();
     return Math.max(requiredHackingLevel - hackingLevel, 0)
+}
+
+
+/**
+ * Enregistre en base le fait qu'on ai débloqué la cible ainsi que les nouvelles cibles accessibles.
+ */
+function saveUnlocked(ns: NS, targetUnlocked: string) {
+    // remove from unlock targets
+    TargetsRepository.removeUnlock(ns, targetUnlocked);
+
+    // add to hack targets
+    TargetsRepository.addHack(ns, targetUnlocked);
+    
+    // add to hackable targets
+    TargetsRepository.addHackable(ns, targetUnlocked);
+    
+    // add to scan targets
+    TargetsRepository.addScan(ns, targetUnlocked);
 }
