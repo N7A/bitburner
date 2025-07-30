@@ -10,9 +10,12 @@ import {PORT} from 'workspace/hacking/unlock/unlock.handler';
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
-    if (ns.hasTorRouter()) {
+    MoneyPiggyBank.setReserveMoney(0);
+    
+    // TODO : objectif dépend de la vitesse de gain
+    /*if (!ns.hasTorRouter()) {
         MoneyPiggyBank.setReserveMoney(200 * 1000);
-    }
+    }*/
 
     ns.clearPort(PORT);
     // reset des bases de données
