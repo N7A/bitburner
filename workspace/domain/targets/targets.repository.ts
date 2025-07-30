@@ -44,12 +44,12 @@ export function addHackable(ns: NS, hostname: string) {
     // get last version
     let targets: Targets = get(ns);
 
-    if (targets.hackableTagrets.includes(hostname)) {
+    if (targets.hackableTargets.includes(hostname)) {
         return;
     }
     
     // add to owned servers
-    targets.hackableTagrets = Array.from(new Set([...targets.hackableTagrets, hostname]));
+    targets.hackableTargets = Array.from(new Set([...targets.hackableTargets, hostname]));
     
     // save data
     resetWith(ns, targets);
@@ -185,7 +185,7 @@ export function reset(ns: NS) {
         scanTargets: [...OwnedServersRepository.getAll(ns).map(server => server.hostname)],
         unlockTargets: [],
         hackTargets: [],
-        hackableTagrets: []
+        hackableTargets: []
     }
 
     // save data
@@ -203,7 +203,7 @@ export function resetHack(ns: NS) {
     
     targets.hackTargets = 
         Array.from(new Set([...targets.hackTargets,
-            ...targets.hackableTagrets
+            ...targets.hackableTargets
             .filter(server => !targets.unlockTargets.includes(server))
         ]));
     

@@ -2,5 +2,5 @@ export type Targets = {
     scanTargets: string[];
     unlockTargets: string[];
     hackTargets: string[];
-    hackableTagrets: string[];
+    hackableTargets: string[];
 }
