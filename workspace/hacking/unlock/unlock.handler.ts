@@ -33,23 +33,4 @@ async function handleUnlock(ns: NS, targetUnlocked: string) {
     // copie du toolkit
     await copyToolkit(ns, targetUnlocked);
     //#endregion Spreading
-
-    //saveUnlocked(ns, targetUnlocked);
-}
-
-/**
- * Enregistre en base le fait qu'on ai débloqué la cible ainsi que les nouvelles cibles accessibles.
- */
-function saveUnlocked(ns: NS, targetUnlocked: string) {
-    // remove from unlock targets
-    TargetsRepository.removeUnlock(ns, targetUnlocked);
-
-    // add to hack targets
-    TargetsRepository.addHack(ns, targetUnlocked);
-    
-    // add to hackable targets
-    TargetsRepository.addHackable(ns, targetUnlocked);
-    
-    // add to scan targets
-    TargetsRepository.addScan(ns, targetUnlocked);
 }
