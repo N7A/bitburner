@@ -23,7 +23,7 @@ export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
         }
     } else if (upgrade.upgradeType === UpgradeType.SERVER) {
         ns.print('Achat de serveur');
-        const hostnames = ['f1rst', 'se2ond', 'th3rd'];
+        const hostnames = ['f1rst', 'se2ond', 'th3rd', 'fourt4'];
         let ownedServers: OwnedServer[] = OwnedServersRepository.getAll(ns)
             .filter(x => x.hostname !== 'home');
         const nextHostname: string = hostnames
