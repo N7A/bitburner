@@ -10,22 +10,23 @@ export async function main(ns: NS) {
     var runOnce: boolean = ns.args.length >= 1 ? ns.args[0] as boolean : false;
     //#endregion input parameters
 
+    ns.disableLog('asleep');
+    ns.disableLog('getHackingLevel');
+    
     let nextTarget;
     do {
         ns.print(Log.getStartLog());
         nextTarget = getNextTarget(ns);
         if (nextTarget !== undefined) {
-            let currentHackLvl = ns.getHackingLevel();
-            let currentAvailablePortProgram = getAvailablePortProgram(ns);
-
             ns.print(Log.INFO('Next target', getNextTarget(ns)?.name));
             ns.print(Log.INFO('Next target ports needed', getNextTarget(ns)?.unlockRequirements.numOpenPortsRequired));
             ns.print(Log.INFO('Next target lvl needed', getNextTarget(ns)?.unlockRequirements.requiredHackingSkill));
             
+            ns.print('Wait unlock possible...');
             // wait until next target unlockable
             while (
-                currentHackLvl < (nextTarget.unlockRequirements.requiredHackingSkill  as number)
-                || currentAvailablePortProgram.length < (nextTarget.unlockRequirements.numOpenPortsRequired as number)
+                ns.getHackingLevel() < (nextTarget.unlockRequirements.requiredHackingSkill  as number)
+                || getAvailablePortProgram(ns).length < (nextTarget.unlockRequirements.numOpenPortsRequired as number)
             ) {
                 await ns.asleep(500);
                 nextTarget = getNextTarget(ns);
@@ -34,6 +35,7 @@ export async function main(ns: NS) {
             // ouverture accès root
             const pidUnlock = ns.run(Referentiel.HACKING_DIRECTORY + '/unlock/unlock.launcher.ts');
             
+            ns.print('Wait unlock end...');
             // attendre l'ouverture de l'accès root
             while (pidUnlock != 0 && ns.isRunning(pidUnlock)) {
                 await ns.asleep(500);
@@ -54,6 +56,7 @@ export async function main(ns: NS) {
         if (targets.scanTargets.length > 0) {
             const pidScan = ns.run(Referentiel.HACKING_DIRECTORY + '/scan/scan.launcher.ts');
             
+            ns.print('Wait scan end...');
             // attendre la découverte de nouvelle cibles à unlock
             while (pidScan != 0 && ns.isRunning(pidScan)) {
                 await ns.asleep(500);
