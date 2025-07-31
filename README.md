@@ -17,8 +17,8 @@ Ce dépôt contient les scripts que j'utilise pour jouer dans Bitburner.
 
 # ⚙️ Stack technique
 
-![](https://img.shields.io/badge/Bitburner-v2.8.1-blue)
+[![Badge Bitburner v2.8.1](https://img.shields.io/badge/Bitburner-v2.8.1-blue)](https://store.steampowered.com/news/app/1812820?updates=true&emclan=103582791471085708&emgid=529842974219043322)
 
-![](https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+[![Badge TypeScript](https://img.shields.io/badge/-TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-![](https://img.shields.io/badge/-JSON-000000?style=for-the-badge&logo=json&logoColor=white)
+[![Badge JSON](https://img.shields.io/badge/-JSON-000000?style=for-the-badge&logo=json&logoColor=white)](https://www.json.org/json-fr.html)
