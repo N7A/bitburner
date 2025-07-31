@@ -1,5 +1,5 @@
-import {TargetHost, HackData} from 'workspace/hacking/model/TargetHost'
-import {get as ServersRepositoryGet } from 'workspace/domain/servers/servers.repository';
+//import {TargetHost, HackData} from 'workspace/hacking/model/TargetHost'
+//import {get as ServersRepositoryGet } from 'workspace/domain/servers/servers.repository';
 
 export async function main(ns: NS) {
     ns.disableLog('getHostname')

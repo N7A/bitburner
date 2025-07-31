@@ -4,7 +4,7 @@ import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
-import * as Log from 'workspace/frameworks/logging'
+import * as Log from 'workspace/frameworks/logging';
 
 /**
  * Scan les cibles données par le unlock.

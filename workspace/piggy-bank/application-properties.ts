@@ -7,7 +7,7 @@ export class Money {
     /** pourcentage d'argent à ne pas utiliser */
     private static rateToKeep: number = 30/100;
     /** montant à ne pas utiliser */
-    private static toReserve: number = 7 * 1000 * 1000 * 1000;
+    private static toReserve: number = 0 * 1000;
 
     static getDisponibleMoney(currentMoney: number): number {
         return currentMoney - Money.getReserveMoney(currentMoney);

@@ -1,4 +1,4 @@
-import * as Log from 'workspace/frameworks/logging'
+import * as Log from 'workspace/frameworks/logging';
 
 /**
  * Alerte quand le joueur atteint un certain monant.

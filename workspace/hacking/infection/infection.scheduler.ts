@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
 import {Targets} from 'workspace/hacking/model/Targets'
 import {getAvailablePortProgram, getNextTarget} from 'workspace/hacking/unlock/utils'
-import * as Log from 'workspace/frameworks/logging'
+import * as Log from 'workspace/frameworks/logging';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import { waitEndExecution } from 'workspace/frameworks/execution'
 import { TargetHost } from 'workspace/hacking/model/TargetHost'

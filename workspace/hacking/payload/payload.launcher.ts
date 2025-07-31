@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
 import {Targets} from 'workspace/hacking/model/Targets'
 import {TargetHost, HackData} from 'workspace/hacking/model/TargetHost'
-import * as Log from 'workspace/frameworks/logging'
+import * as Log from 'workspace/frameworks/logging';
 import * as ServersRepository from 'workspace/domain/servers/servers.repository';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import { getAvailableServer } from 'workspace/load-balancer/main'

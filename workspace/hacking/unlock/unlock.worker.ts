@@ -1,5 +1,5 @@
 import { main as openPorts } from 'workspace/hacking/unlock/open-ports.worker'
-import * as Log from 'workspace/frameworks/logging'
+import * as Log from 'workspace/frameworks/logging';
 import { TargetHost, UnlockRequirements } from 'workspace/hacking/model/TargetHost'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import {ExecutionResult} from 'workspace/hacking/model/ExecutionResult'
