@@ -1,4 +1,6 @@
-![Logo Bitburner](https://cdn2.steamgriddb.com/icon/f72b5935d3c9a1dbc4dc2cb5bd078cd8/32/256x256.png)
+<p align="center">
+  <img alt="Logo Bitburner" src="https://cdn2.steamgriddb.com/icon/f72b5935d3c9a1dbc4dc2cb5bd078cd8/32/256x256.png" />
+</p>
 
 Bitburner est un jeu incrémentiel basé sur la programmation. Écrivez des scripts en JavaScript pour automatiser le gameplay, acquérir des compétences, jouer des mini-jeux, résoudre des énigmes, et plus encore dans ce RPG cyberpunk incrémentiel.
 
@@ -8,7 +10,8 @@ Le jeu peut être joué sur https://danielyxie.github.io/bitburner ou installé 
 
 Ce dépôt contient les scripts que j'utilise pour jouer dans Bitburner.
 
-⚠️ Peut contenir des spoilers
+> [!WARNING]
+> Peut contenir des spoilers
 
 ---
 
