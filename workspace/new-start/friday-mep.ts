@@ -2,7 +2,6 @@ import * as Referentiel from 'workspace/referentiel'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
-import {PORT} from 'workspace/hacking/unlock/unlock.handler';
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
@@ -10,7 +9,6 @@ import {PORT} from 'workspace/hacking/unlock/unlock.handler';
 export async function main(ns: NS) {
     (OwnedServersRepository.getAll(ns) as OwnedServer[]).forEach(x => ns.killall(x.hostname))
 
-    ns.clearPort(PORT);
     // reset des bases de données
     TargetsRepository.reset(ns);
 
