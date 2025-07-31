@@ -2,13 +2,8 @@ import { main as openPorts } from 'workspace/hacking/unlock/open-ports.worker'
 import * as Log from 'workspace/frameworks/logging';
 import { TargetHost, UnlockRequirements } from 'workspace/hacking/model/TargetHost'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
-import {ExecutionResult} from 'workspace/hacking/model/ExecutionResult'
-import {PORT} from 'workspace/hacking/unlock/unlock.handler';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
-
-//#region Constants
-const UNLOCK_HANDLER_PORT = PORT;
-//#endregion Constants
+import { main as copyToolkit } from 'workspace/hacking/spreading/copy-toolkit.launcher'
 
 export async function main(ns: NS, targetHost: string) {
     // load input arguments
@@ -21,12 +16,9 @@ export async function main(ns: NS, targetHost: string) {
         if (nuked) {
             ns.tprint('SUCCESS', ' ', `${input.hostnameTarget} [nuked]`, resultMessage ? ` : ${resultMessage}` : '');
             saveUnlocked(ns, input.hostnameTarget)
+            await handleUnlock(ns, input.hostnameTarget);
         } else {
             ns.print('WARN', ' ', `${input.hostnameTarget} nuke ${Log.color('KO', Log.Color.RED)}`, resultMessage ? ` : ${resultMessage}` : '');
-        }
-        let executionResult: ExecutionResult = {id: input.hostnameTarget, result: nuked}
-        while(!ns.tryWritePort(UNLOCK_HANDLER_PORT, executionResult)) {
-            await ns.asleep(500);
         }
     });
 
@@ -106,4 +98,14 @@ function saveUnlocked(ns: NS, targetUnlocked: string) {
     
     // add to hackable targets
     TargetsRepository.addHackable(ns, targetUnlocked);
+}
+
+async function handleUnlock(ns: NS, targetUnlocked: string) {
+    ns.tprint('SUCCESS', ' ', `${targetUnlocked} [unlocked]`);
+    
+    //#region Spreading
+    ns.print('Spreading ', targetUnlocked);
+    // copie du toolkit
+    await copyToolkit(ns, targetUnlocked);
+    //#endregion Spreading
 }
