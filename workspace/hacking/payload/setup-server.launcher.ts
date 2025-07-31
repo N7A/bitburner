@@ -2,7 +2,7 @@ import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import {Targets} from 'workspace/hacking/model/Targets'
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 import * as Referentiel from 'workspace/referentiel'
 
 export async function main(ns: NS) {
@@ -14,7 +14,7 @@ export async function main(ns: NS) {
     var serversHackable: string[] = ServersRepository.getAll(ns).filter(x => {
         return !(targets.scanTargets.includes(x)
             || targets.unlockTargets.includes(x))
-    }).filter(x => !ownedServers.includes(x));
+    }).filter(x => !ownedServers.map(y => y.hostname).includes(x));
 
     let scripts = [
         Referentiel.HACKING_DIRECTORY + '/payload/grow.looper.ts',

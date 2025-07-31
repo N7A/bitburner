@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 import {get as TargetsRepositoryGet} from 'workspace/domain/targets/targets.repository'
 import {TargetHost} from 'workspace/hacking/model/TargetHost'
 import { getUnlockTarget } from 'workspace/hacking/unlock/unlock.selector'

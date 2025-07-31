@@ -1,4 +1,4 @@
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

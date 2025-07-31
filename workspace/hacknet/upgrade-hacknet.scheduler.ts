@@ -1,6 +1,6 @@
 import { executeUpgrade } from 'workspace/hacknet/upgrade-hacknet.worker'
 import { getBestProfits } from 'workspace/hacknet/upgrade-hacknet.target-selector'
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 import * as Properties from 'workspace/hacknet/application-properties'
 import { UpgradeExecution } from 'workspace/hacknet/model/UpgradeExecution'
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'

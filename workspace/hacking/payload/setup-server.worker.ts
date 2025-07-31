@@ -4,7 +4,7 @@ import{getAvailableServer} from 'workspace/load-balancer/main'
 import {ExecutionParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import * as ServersRepository from 'workspace/domain/servers/servers.repository';
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 
 /**
  * Augmente au maximum l'argent disponible sur un serveur,

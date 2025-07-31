@@ -2,7 +2,7 @@ import * as Referentiel from 'workspace/referentiel'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import * as ExecutionsRepository from 'workspace/domain/executions.repository'
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
 import {PORT} from 'workspace/hacking/unlock/unlock.handler';
 

@@ -1,6 +1,6 @@
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Properties from 'workspace/load-balancer/application-properties'
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import * as Referentiel from 'workspace/referentiel'
 

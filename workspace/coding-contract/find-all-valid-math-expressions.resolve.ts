@@ -1,6 +1,6 @@
 import {Contract} from 'workspace/coding-contract/model/Contract';
-import {main as getContracts} from 'workspace/coding-contract/contract.selector.ts';
-import * as Log from 'workspace/logging-framework/main';
+import {main as getContracts} from 'workspace/coding-contract/contract.selector';
+import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {
     const contracts = (await getContracts(ns))

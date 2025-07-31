@@ -1,5 +1,5 @@
 import * as ServersRepository from 'workspace/domain/servers/servers.repository';
-import * as Log from 'workspace/logging-framework/main';
+import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {
     const servers = ServersRepository.getAll(ns);

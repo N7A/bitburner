@@ -4,7 +4,7 @@ import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 
 /**
  * Scan les cibles données par le unlock.
@@ -89,7 +89,7 @@ function getNeighbors(ns: NS, target: string): string[] {
  * 
  * @returns true si de nouvelles cibles on été traité; false sinon
  */
-function handleNewTargets(ns: NS, newTargets: string[], parent: string) {
+function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean {
     // aucune nouvelle cible à traiter
     if (newTargets.length <= 0) {
         return false;

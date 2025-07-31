@@ -1,6 +1,5 @@
 import {Contract} from 'workspace/coding-contract/model/Contract';
 import {getAll as ServersRepositoryGetAll} from 'workspace/domain/servers/servers.repository';
-import * as Log from 'workspace/logging-framework/main';
 
 export async function main(ns: NS): Promise<Contract[]> {
     const knownServers = ServersRepositoryGetAll(ns);

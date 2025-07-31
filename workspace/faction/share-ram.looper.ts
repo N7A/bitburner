@@ -1,4 +1,4 @@
-import * as Log from 'workspace/logging-framework/main'
+import * as Log from 'workspace/frameworks/logging'
 import * as ExecutionsRepository from 'workspace/domain/executions.repository'
 
 /**
