@@ -1,6 +1,6 @@
 import { executeUpgrade } from 'workspace/hacknet/upgrade-hacknet.worker'
 import { getBestProfits } from 'workspace/hacknet/upgrade-hacknet.target-selector'
-import * as Log from 'workspace/frameworks/logging'
+import * as Log from 'workspace/frameworks/logging';
 import * as Properties from 'workspace/hacknet/application-properties'
 import { UpgradeExecution } from 'workspace/hacknet/model/UpgradeExecution'
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
@@ -27,16 +27,16 @@ export async function main(ns: NS) {
 	const getMoney = () => ns.getPlayer().money;
     //#endregion
     
+    // select next upgrade
+    let nextUpgrade: UpgradeExecution | undefined = getBestProfits(ns);
     do {
-        // select next upgrade
-        let nextUpgrade: UpgradeExecution | undefined = getBestProfits(ns);
         if (!nextUpgrade) {
             continue;
         }
 
         // wait purchase to be possible
         while(MoneyPiggyBank.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
-            refreshDashBoard(ns, getMoney(), interval);
+            refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
             // sleep to prevent crash because of infinite loop
             await ns.sleep(500);
         }
@@ -46,9 +46,11 @@ export async function main(ns: NS) {
         // do purchase
         executeUpgrade(ns, selectedUpgrade);
         
-        refreshDashBoard(ns, getMoney(), interval);
-        
         if (input.runHasLoop) {
+            nextUpgrade = getBestProfits(ns);
+            
+            refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
+        
             // sleep to prevent crash because of infinite loop
             await ns.sleep(interval);
         }
@@ -84,7 +86,7 @@ function setupDashboard(ns: NS) {
     ns.print('Waiting to purchase next upgrade...');
 }
 
-function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null) {
+function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null, nextUpgrade?: UpgradeExecution | undefined) {
     ns.clearLog();
     let nodes = Array(ns.hacknet.numNodes()).fill(0);
     
@@ -104,6 +106,11 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null)
     if (interval !== null) {
         ns.print('\n');
         ns.print('Next refresh on ', Log.date(ns,new Date(new Date().getTime() + interval * 1000)));
+    }
+    if (nextUpgrade) {
+        ns.print(Log.INFO('Next upgrade type', nextUpgrade.upgradeType));
+        ns.print(Log.INFO('Next upgrade ratio', ns.formatNumber(nextUpgrade.ratio)));
+        ns.print(Log.INFO('Next upgrade cost', Log.money(ns, nextUpgrade.cost)));
     }
     ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
     ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(currentMoney))}`));
