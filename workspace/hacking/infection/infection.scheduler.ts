@@ -21,7 +21,8 @@ export async function main(ns: NS) {
         do {
             // maj next target
             const newNextTarget = getNextTarget(ns)
-            if (newNextTarget !== undefined && newNextTarget != nextTarget) {
+            // maj affichage si target a changé
+            if (newNextTarget !== undefined && newNextTarget.name != nextTarget?.name) {
                 ns.print(Log.INFO('Next target', newNextTarget.name));
                 ns.print(Log.INFO('Next target ports needed', newNextTarget.unlockRequirements.numOpenPortsRequired));
                 ns.print(Log.INFO('Next target lvl needed', newNextTarget.unlockRequirements.requiredHackingSkill));
@@ -47,8 +48,6 @@ export async function main(ns: NS) {
             }
         }
 
-        // TODO : need scan target up to date here
-
         // load targets
         const targets: Targets = TargetsRepository.get(ns);
 
@@ -57,25 +56,13 @@ export async function main(ns: NS) {
             ns.run(Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts');
         }
 
-        // recherche des cibles
-        if (targets.scanTargets.length > 0) {
-            const pidScan = ns.run(Referentiel.HACKING_DIRECTORY + '/scan/scan.launcher.ts');
-            
-            ns.print('Wait scan end...');
-            // attendre la découverte de nouvelle cibles à unlock
-            while (pidScan != 0 && ns.isRunning(pidScan)) {
-                await ns.asleep(500);
-            }
-        }
-        
-        // TODO : need unlock target up to date here
         ns.print(Log.getEndLog());
 
         // TODO : check repository maj instead || next target time
-        if (true && input.runHasLoop) {
+        if (needLoop(ns, input, nextTarget)) {
             await ns.asleep(500);
         }
-    } while(true && input.runHasLoop && nextTarget !== undefined)
+    } while(needLoop(ns, input, nextTarget))
     ns.ui.closeTail();
 }
 
@@ -105,3 +92,14 @@ function getInput(ns: NS): InputArg {
 	};
 }
 //#endregion Input arguments
+
+function needLoop(ns: NS, input: InputArg, nextTarget: TargetHost | undefined): boolean {
+    // scprit lancé en mode loop
+    return input.runHasLoop 
+    && (
+        // il reste des cibles
+        nextTarget !== undefined 
+        // scan en cours
+        || ns.isRunning(Referentiel.HACKING_DIRECTORY + '/scan/scan.scheduler.ts')
+    )
+}

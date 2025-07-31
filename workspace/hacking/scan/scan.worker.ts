@@ -34,11 +34,11 @@ export async function main(ns: NS, scanTargets: string[]) {
             .filter(x => !targets.hackableTargets.includes(x))
             .filter(x => !(OwnedServersRepository.getAll(ns) as OwnedServer[]).map(x => x.hostname).includes(x));
 
-        if (newTargets.length > 0) {
-            await handleNewTargets(ns, newTargets, target);
-        }
+        handleNewTargets(ns, newTargets, target);
+        
         ns.print(Log.getEndLog());
     }
+
 }
 
 function setupDashboard(ns: NS) {
@@ -83,8 +83,18 @@ function getNeighbors(ns: NS, target: string): string[] {
 
 /**
  * Enregistre en base les nouvelles cibles découvertes.
+ * 
+ * @returns true si de nouvelles cibles on été traité; false sinon
  */
-async function handleNewTargets(ns: NS, newTargets: string[], parent: string) {
+function handleNewTargets(ns: NS, newTargets: string[], parent: string) {
+    // aucune nouvelle cible à traiter
+    if (newTargets.length <= 0) {
+        return false;
+    }
+
+    // add to scan targets
+    TargetsRepository.addScan(ns, newTargets);
+    // add to unlock targets
     TargetsRepository.addUnlock(ns, newTargets);
     
     ns.tprint('INFO', ' ', `New targets (${newTargets.length}) to unlock from ${parent} : `, newTargets);
@@ -106,5 +116,7 @@ async function handleNewTargets(ns: NS, newTargets: string[], parent: string) {
             ns.run('workspace/domain/servers/save-server.worker.ts', undefined, newTarget, parent)
         }
     }
+
+    return true;
 }
 

@@ -106,7 +106,4 @@ function saveUnlocked(ns: NS, targetUnlocked: string) {
     
     // add to hackable targets
     TargetsRepository.addHackable(ns, targetUnlocked);
-    
-    // add to scan targets
-    TargetsRepository.addScan(ns, targetUnlocked);
 }

@@ -17,21 +17,21 @@ export function get(ns: NS) {
  * @param ns Bitburner API
  * @param hostname serveur à ajouter
  */
-export function addScan(ns: NS, hostname: string) {
+export function addScan(ns: NS, hostnames: string[]) {
     // get last version
     let targets: Targets = get(ns);
 
-    if (targets.scanTargets.includes(hostname)) {
+    if (hostnames.every(hostname => targets.scanTargets.includes(hostname))) {
         return;
     }
     
     // add to owned servers
-    targets.scanTargets = Array.from(new Set([...targets.scanTargets, hostname]));
+    targets.scanTargets = Array.from(new Set([...targets.scanTargets, ...hostnames]));
     
     // save data
     resetWith(ns, targets);
 
-    ns.tprint('INFO', ' ', 'New target to scan : ' + hostname);
+    ns.tprint('INFO', ' ', 'New targets to scan : ' + hostnames);
 }
 
 /**
@@ -101,7 +101,7 @@ export function addUnlock(ns: NS, hostnames: string[]) {
     // save data
     resetWith(ns, targets);
 
-    ns.tprint('INFO', ' ', 'New target to unlock : ' + hostnames);
+    ns.tprint('INFO', ' ', 'New targets to unlock : ' + hostnames);
 }
 
 /**

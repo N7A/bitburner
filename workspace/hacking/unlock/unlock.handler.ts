@@ -1,5 +1,4 @@
 import {ExecutionResult} from 'workspace/hacking/model/ExecutionResult'
-import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import { main as copyToolkit } from 'workspace/hacking/spreading/copy-toolkit.launcher'
 
 //#region Constants
