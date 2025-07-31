@@ -1,11 +1,14 @@
 import * as Referentiel from 'workspace/referentiel'
 import {TargetHost} from 'workspace/hacking/model/TargetHost'
 import {Targets} from 'workspace/hacking/model/Targets'
-import * as Log from 'workspace/frameworks/logging'
+import * as Log from 'workspace/frameworks/logging';
 import {getNextTarget} from 'workspace/hacking/unlock/utils'
 import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
 
 export async function main(ns: NS) {
+    ns.ui.setTailTitle('Unlock targets');
+    ns.ui.openTail();
+
     // load target files
     let targets: TargetHost[] = Array.from((JSON.parse(ns.read(Referentiel.TARGETS_REPOSITORY_FILE)) as Targets).unlockTargets)
         // load host data
@@ -14,19 +17,19 @@ export async function main(ns: NS) {
         .reverse();
 
     // TODO : formater en tableau
-	ns.tprint(Log.getStartLog());
+	ns.print(Log.getStartLog());
     for (const data of targets) {
-        ns.tprint(Log.color(data.name, Log.Color.CYAN));
-        ns.tprint('    ', Log.INFO('Required open port', getRemaning(ns, data)));
-        ns.tprint('    ', Log.color('Required hacking skill : ', Log.Color.MAGENTA), data.unlockRequirements.requiredHackingSkill);
-        ns.tprint(Log.color('----------', Log.Color.WHITE))
+        ns.print(Log.color(data.name, Log.Color.CYAN));
+        ns.print('    ', Log.INFO('Required open port', getRemaning(ns, data)));
+        ns.print('    ', Log.color('Required hacking skill : ', Log.Color.MAGENTA), data.unlockRequirements.requiredHackingSkill);
+        ns.print(Log.color('----------', Log.Color.WHITE))
     }
-    ns.tprint(Log.color('Nombre de cible : ', Log.Color.MAGENTA), targets.length);
-    ns.tprint(Log.color('Nombre de port opener : ', Log.Color.MAGENTA), getPortPrograms(ns)
+    ns.print(Log.color('Nombre de cible : ', Log.Color.MAGENTA), targets.length);
+    ns.print(Log.color('Nombre de port opener : ', Log.Color.MAGENTA), getPortPrograms(ns)
         .filter(x => ns.fileExists(x.filename)).length);
-    ns.tprint(Log.color('Hacking skill : ', Log.Color.MAGENTA), ns.getPlayer().skills.hacking);
-    ns.tprint(Log.INFO('Next target', getNextTarget(ns)?.name));
-	ns.tprint(Log.getEndLog());
+    ns.print(Log.color('Hacking skill : ', Log.Color.MAGENTA), ns.getPlayer().skills.hacking);
+    ns.print(Log.INFO('Next target', getNextTarget(ns)?.name));
+	ns.print(Log.getEndLog());
 }
 
 function getRemaning(ns: NS, data: TargetHost) {
