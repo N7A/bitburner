@@ -1,4 +1,4 @@
-import { getScanTarget } from '/workspace/hacking/scan/scan.target-selector'
+import { getScanTarget } from 'workspace/hacking/scan/scan.target-selector'
 import { main as doScan } from 'workspace/hacking/scan/scan.worker'
 import * as Log from 'workspace/logging-framework/main'
 

@@ -13,7 +13,7 @@ export async function main(ns: NS, scanTargets: string[]) {
     // load input arguments
     const input: InputArg = getInput(ns, scanTargets);
 
-    setupDashboard(ns);
+    //setupDashboard(ns);
     
     for (const target of input.hostnamesTarget) {
         ns.print(Log.getStartLog());
@@ -60,8 +60,11 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS, hostnamesTarget: string[]): InputArg {
+    if (!hostnamesTarget && ns.args[0]) {
+        hostnamesTarget = [ns.args[0] as string]
+    }
     let result: InputArg = {
-        hostnamesTarget: (ns.args[0] ?? hostnamesTarget ?? [ns.getHostname()]) as string[]
+        hostnamesTarget: (hostnamesTarget ?? [ns.getHostname()]) as string[]
     };
 
     return result;
