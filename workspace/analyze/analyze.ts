@@ -42,7 +42,8 @@ function printData(ns: NS, data: Server) {
     for (const message of dataMessages) {
         ns.tprint(message);
     }
-    ns.tprint('Path : ', ServersRepository.getHostPath(ns, data.hostname));
+    ns.tprint('Path : ', ServersRepository.getHostPathLibelle(ns, data.hostname));
+    ns.tprint('Deep connect command : ', ServersRepository.getConnectCommand(ns, data.hostname));
 
     ns.tprint(data.hostname)
 }

@@ -81,15 +81,27 @@ function resetWith(ns: NS, hostname: string, data: TargetHost) {
     ns.write(REPOSITORY + '/' + hostname + '.json', JSON.stringify(data, null, 4), "w");
 }
 
-export function getHostPath(ns: NS, hostname: string): string {
+export function getHostPath(ns: NS, hostname: string): string[] {
     const data: TargetHost|null = get(ns, hostname);
-    const targets: Targets = TargetsRepositoryGet(ns);
-
-    const unlocked: string = data && !targets.unlockTargets.includes(hostname) ? 'unlocked' : 'locked';
-
     if (!data?.parent) {
-        return '/' + hostname;
+        return [hostname];
     }
 
-    return getHostPath(ns, data.parent) + '/' + hostname + `[${unlocked}]`;
+    return [...getHostPath(ns, data.parent), hostname];
+}
+
+export function getHostPathLibelle(ns: NS, hostname: string): string {
+    const targets: Targets = TargetsRepositoryGet(ns);
+
+    return getHostPath(ns, hostname).map(x => {
+        const unlocked: string = !targets.unlockTargets.includes(x) ? 'unlocked' : 'locked';
+
+        return '/' + hostname + `[${unlocked}]`
+    }).reduce((a, b) => a + b);
+}
+
+export function getConnectCommand(ns: NS, hostname: string): string {
+    return getHostPath(ns, hostname).map(x => {
+        return `connect ${hostname};`
+    }).reduce((a, b) => a + ' ' + b);
 }

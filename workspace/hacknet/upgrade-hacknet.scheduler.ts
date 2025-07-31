@@ -106,5 +106,5 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null)
         ns.print('Next refresh on ', Log.date(ns,new Date(new Date().getTime() + interval * 1000)));
     }
     ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
-    ns.print(Log.INFO(`Reserve`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(currentMoney))}`));
+    ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(currentMoney))}`));
 }
