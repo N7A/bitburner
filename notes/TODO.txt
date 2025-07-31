@@ -9,6 +9,7 @@
 - see https://github.com/alainbryden/bitburner-scripts
 - next objectif
 - permettre call by cmd & by run (cf payload.launcher)
+- Alias "GOTO" ou "deep-connect" : find path to {server} and connect
 
 # Réflexions
 
