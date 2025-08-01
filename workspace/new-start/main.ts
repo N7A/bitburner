@@ -5,10 +5,16 @@ import * as ExecutionsRepository from 'workspace/domain/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
 
+//#region Constants
+export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
+export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts';
+//#endregion Constants
+
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
+    // reset reserve money
     MoneyPiggyBank.setReserveMoney(0);
     
     // TODO : objectif dépend de la vitesse de gain
@@ -22,19 +28,29 @@ export async function main(ns: NS) {
     ExecutionsRepository.reset(ns);
 
     // lancement du hacking automatisé
-    ns.run(Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts', 1);
+    ns.run(INFECTION_SCRIPT);
 
     // TODO : lancement du gestionnaire d'embauche
 
     // lancement de l'achat de node automatisé
-    ns.run(Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts', 1, true);
+    ns.run(HACKNET_SCRIPT, 1, true);
 
-    // TODO : affichage de la TODO list + informations diverses
+    // affichage de la TODO list et informations diverses
+    showTodo(ns);
+}
+
+function showTodo(ns: NS) {
+    ns.disableLog("ALL");
+    ns.clearLog();
+    
+    Log.initTailTitle(ns, 'TODO');
+
+    // TODO : compléter
     ns.tprint(Log.getStartLog());
-    ns.tprint(Log.color('TODO', Log.Color.MAGENTA));
-    ns.tprint(Log.color('==========', Log.Color.GREEN));
-    ns.tprint('Go get a job');
-    ns.tprint('Run alias');
-    ns.tprint('Go to City > [alpha ent.]; Purchase TOR router; cmd : buy -l')
+    ns.tprint('[ ] Go get a job');
+    ns.tprint('[ ] Run alias');
+    ns.tprint('[ ] Go to City > [alpha ent.]; Purchase TOR router; cmd : buy -l')
     ns.tprint(Log.getEndLog());
+
+    ns.ui.openTail();
 }
