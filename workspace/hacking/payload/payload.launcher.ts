@@ -44,7 +44,7 @@ export async function main(ns: NS) {
         const execution: ExecutionParameters = getAvailableServer(ns, payloadRam, 1, target);
 
         let payload: Payload = new HomePayload(ns);
-        if (execution.hostname === target) {
+        if (execution.hostname === target && execution.nbThread > 0) {
             payload = new SelfPayload(ns);
         }
 

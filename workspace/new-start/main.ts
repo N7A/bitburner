@@ -46,11 +46,11 @@ function showTodo(ns: NS) {
     Log.initTailTitle(ns, 'TODO');
 
     // TODO : compléter
-    ns.tprint(Log.getStartLog());
-    ns.tprint('[ ] Go get a job');
-    ns.tprint('[ ] Run alias');
-    ns.tprint('[ ] Go to City > [alpha ent.]; Purchase TOR router; cmd : buy -l')
-    ns.tprint(Log.getEndLog());
+    ns.print(Log.getStartLog());
+    ns.print('[ ] Go get a job');
+    ns.print('[ ] Run alias');
+    ns.print('[ ] Go to City > [alpha ent.]; Purchase TOR router; cmd : buy -l')
+    ns.print(Log.getEndLog());
 
     ns.ui.openTail();
 }
