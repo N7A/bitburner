@@ -7,6 +7,12 @@ import { getAvailableServer } from 'workspace/load-balancer/main'
 import { execFitRam } from 'workspace/load-balancer/fit-ram.service'
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
 
+//#region Constants
+export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts';
+export const WEAKEN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/weaken.looper.ts';
+export const GROW_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/grow.looper.ts';
+//#endregion Constants
+
 /**
  * Hack les cibles données par le unlock.
  */
@@ -57,14 +63,14 @@ function getPayloadScript(ns:NS, targetHost: string) {
     const data: ServerData|null = ServersRepository.get(ns, targetHost);
     const hackData: HackData = data!.hackData;
 
-    scripts.push(Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts');
-    scripts.push(Referentiel.HACKING_DIRECTORY + '/payload/weaken.looper.ts');
+    scripts.push(HACK_SCRIPT);
+    scripts.push(WEAKEN_SCRIPT);
 
     if (hackData.moneyMax === 0) {
         ns.tprint('WARN', ' ', '[', targetHost, '] ', 'No money in there');
     } else {
-        scripts.push(Referentiel.HACKING_DIRECTORY + '/payload/grow.looper.ts');
-        scripts.push(Referentiel.HACKING_DIRECTORY + '/payload/weaken.looper.ts');
+        scripts.push(GROW_SCRIPT);
+        scripts.push(WEAKEN_SCRIPT);
     }
     return scripts;
 }

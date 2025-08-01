@@ -6,6 +6,12 @@ import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import { waitEndExecution } from 'workspace/frameworks/execution'
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
 
+//#region Constants
+export const SCAN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
+export const UNLOCK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/unlock/unlock.launcher.ts';
+export const PAYLOAD_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts';
+//#endregion Constants
+
 export async function main(ns: NS) {
     // load input arguments
 	const input: InputArg = getInput(ns);
@@ -39,7 +45,7 @@ export async function main(ns: NS) {
         
         if (nextTarget !== undefined) {
             // ouverture accès root
-            const pidUnlock = ns.run(Referentiel.HACKING_DIRECTORY + '/unlock/unlock.launcher.ts');
+            const pidUnlock = ns.run(UNLOCK_SCRIPT);
             
             if (pidUnlock !== 0) {
                 ns.print(`Wait ${Log.action('unlock')} end...`);
@@ -53,7 +59,7 @@ export async function main(ns: NS) {
 
         // Spreading + Payload
         if (targets.hackTargets.length > 0) {
-            ns.run(Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts');
+            ns.run(PAYLOAD_SCRIPT);
         }
 
         ns.print(Log.getEndLog());
@@ -71,8 +77,8 @@ function setupDashboard(ns: NS) {
     ns.disableLog('getHackingLevel');
     ns.clearLog();
     
-    ns.ui.openTail();
     Log.initTailTitle(ns, 'Infection', 'Scheduler');
+    ns.ui.openTail();
 }
 
 //#region Input arguments
@@ -100,6 +106,6 @@ function needLoop(ns: NS, input: InputArg, nextTarget: ServerData | undefined): 
         // il reste des cibles
         nextTarget !== undefined 
         // scan en cours
-        || ns.isRunning(Referentiel.HACKING_DIRECTORY + '/scan/scan.scheduler.ts')
+        || ns.isRunning(SCAN_SCRIPT)
     )
 }

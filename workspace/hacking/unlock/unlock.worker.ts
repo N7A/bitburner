@@ -15,7 +15,6 @@ export async function main(ns: NS, targetHost: string) {
     ns.atExit(async() => {
         if (nuked) {
             ns.tprint('SUCCESS', ' ', `${input.hostnameTarget} [nuked]`, resultMessage ? ` : ${resultMessage}` : '');
-            saveUnlocked(ns, input.hostnameTarget)
             await handleUnlock(ns, input.hostnameTarget);
         } else {
             ns.print('WARN', ' ', `${input.hostnameTarget} nuke ${Log.color('KO', Log.Color.RED)}`, resultMessage ? ` : ${resultMessage}` : '');
@@ -103,6 +102,8 @@ function saveUnlocked(ns: NS, targetUnlocked: string) {
 async function handleUnlock(ns: NS, targetUnlocked: string) {
     ns.tprint('SUCCESS', ' ', `${targetUnlocked} [unlocked]`);
     
+    saveUnlocked(ns, targetUnlocked);
+
     //#region Spreading
     ns.print('Spreading ', targetUnlocked);
     // copie du toolkit

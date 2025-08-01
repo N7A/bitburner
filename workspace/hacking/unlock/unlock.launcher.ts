@@ -1,10 +1,10 @@
 import * as Referentiel from 'workspace/referentiel'
 import * as Log from 'workspace/frameworks/logging';
 import { getUnlockTarget } from 'workspace/hacking/unlock/unlock.selector'
+import { waitEndExecution } from 'workspace/frameworks/execution'
 
 //#region Constants
 const UNLOCK_WORKER_SCRIPT = Referentiel.HACKING_DIRECTORY + '/unlock/unlock.worker.ts';
-const UNLOCK_HANDLER_SCRIPT = Referentiel.HACKING_DIRECTORY + '/unlock/unlock.handler.ts';
 //#endregion Constants
 
 /**
@@ -15,12 +15,12 @@ export async function main(ns: NS) {
     // load target files
     let targetsHostname: string[] = getUnlockTarget(ns);
 
-    let unlockLaunched: string[] = [];
+    let unlockLaunched: number[] = [];
     
     //#region accès root
     for (const targetHostname of targetsHostname) {
         ns.print(Log.getStartLog())
-        ns.print('START [Unlock] ', targetHostname);
+        ns.print(`START ${Log.action('Unlock')} ${Log.target(targetHostname)}`);
 
         // TODO : wait until ram dispo
         var pidUnlock: number = ns.run(UNLOCK_WORKER_SCRIPT, 1, targetHostname);
@@ -30,15 +30,13 @@ export async function main(ns: NS) {
             continue;
         }
 
-        unlockLaunched.push(targetHostname);
+        unlockLaunched.push(pidUnlock);
+        ns.print(`END ${Log.action('Unlock')} ${Log.target(targetHostname)}`);
         ns.print(Log.getEndLog())
     }
-
-    if(unlockLaunched.length > 0) {
-        if (!ns.isRunning(UNLOCK_HANDLER_SCRIPT, 'home')) {
-            ns.exec(UNLOCK_HANDLER_SCRIPT, 'home');
-        }
-    }
     //#endregion
-
+    
+    for (const pid of unlockLaunched) {
+        await waitEndExecution(ns, pid);
+    }
 }

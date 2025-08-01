@@ -1,22 +1,27 @@
 import * as Referentiel from 'workspace/referentiel'
 import * as Log from 'workspace/frameworks/logging';
 
+//#region Constants
+export const SCAN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
+export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/infection.scheduler.ts';
+//#endregion Constants
+
 export async function main(ns: NS) {
     setupDashboard(ns);
 
     // démarrage du scan
     ns.print(`Start ${Log.action('scan')} execution`);
     ns.tprint(`Start ${Log.action('scan')} execution`);
-    ns.run(Referentiel.HACKING_DIRECTORY + '/scan/scan.scheduler.ts', 1, true);
+    ns.run(SCAN_SCRIPT, 1, true);
     
     ns.print(`Start ${Log.action('infection')} execution`);
     ns.tprint(`Start ${Log.action('infection')} execution`);
-    ns.run(Referentiel.HACKING_DIRECTORY + '/infection/infection.scheduler.ts');
+    ns.run(INFECTION_SCRIPT);
 }
 
 function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    ns.ui.setTailTitle('Infection #Launcher');
+    Log.initTailTitle(ns, 'Infection', 'Launcher');
 }

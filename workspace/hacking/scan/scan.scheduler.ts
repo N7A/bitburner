@@ -51,6 +51,6 @@ function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    ns.ui.openTail();
     ns.ui.setTailTitle('Scan #Scheduler');
+    ns.ui.openTail();
 }
