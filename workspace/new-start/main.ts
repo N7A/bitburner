@@ -4,7 +4,6 @@ import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ExecutionsRepository from 'workspace/domain/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
-import {PORT} from 'workspace/hacking/unlock/unlock.handler';
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
@@ -17,7 +16,6 @@ export async function main(ns: NS) {
         MoneyPiggyBank.setReserveMoney(200 * 1000);
     }*/
 
-    ns.clearPort(PORT);
     // reset des bases de données
     OwnedServersRepository.reset(ns);
     TargetsRepository.reset(ns);

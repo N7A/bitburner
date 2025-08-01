@@ -1,3 +1,7 @@
+export function initTailTitle(ns: NS, service: string, role: string) {
+    ns.ui.setTailTitle(`[${service}] #${role.toLowerCase()}`);
+}
+
 /**
  * Create a Table display of the provided data
  * 

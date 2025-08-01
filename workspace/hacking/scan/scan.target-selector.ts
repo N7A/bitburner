@@ -1,4 +1,4 @@
-import {Targets} from 'workspace/domain/targets/model/Targets'
+import { Targets } from 'workspace/domain/targets/model/Targets';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 
 export function getScanTarget(ns: NS): string[] {

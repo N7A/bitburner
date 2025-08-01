@@ -80,8 +80,8 @@ function setupDashboard(ns: NS) {
     ns.clearLog();
     
     ns.ui.openTail();
-    ns.ui.setTailTitle('Hacknet Manager');
-    ns.ui.moveTail(1200, 50);
+    Log.initTailTitle(ns, 'Hacknet', 'manager');
+    ns.ui.moveTail(1000, 50);
     
     ns.print('Waiting to purchase next upgrade...');
 }
@@ -114,4 +114,5 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
     }
     ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
     ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(currentMoney))}`));
+    ns.ui.resizeTail(650, nodes.length * 25 + 300)
 }

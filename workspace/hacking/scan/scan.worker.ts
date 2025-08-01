@@ -1,4 +1,4 @@
-import {Targets} from 'workspace/domain/targets/model/Targets'
+import { Targets } from 'workspace/domain/targets/model/Targets';
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'

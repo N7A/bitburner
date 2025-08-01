@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import {Targets} from 'workspace/domain/targets/model/Targets'
+import { Targets } from 'workspace/domain/targets/model/Targets';
 import {getAvailablePortProgram, getNextTarget} from 'workspace/hacking/unlock/utils'
 import * as Log from 'workspace/frameworks/logging';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
@@ -15,7 +15,7 @@ export async function main(ns: NS) {
     let nextTarget: ServerData | undefined;
     do {
         ns.print(Log.getStartLog());
-        
+            
         // wait until next target unlockable
         ns.print(`Wait until ${Log.action('unlock')} possible...`);
         do {
@@ -72,7 +72,7 @@ function setupDashboard(ns: NS) {
     ns.clearLog();
     
     ns.ui.openTail();
-    ns.ui.setTailTitle('Infection #Scheduler');
+    Log.initTailTitle(ns, 'Infection', 'Scheduler');
 }
 
 //#region Input arguments

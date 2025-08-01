@@ -1,6 +1,6 @@
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import * as Referentiel from 'workspace/referentiel'
-import {Targets} from 'workspace/domain/targets/model/Targets'
+import { Targets } from 'workspace/domain/targets/model/Targets';
 import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
 
 export function getAvailablePortProgram(ns: NS) {
