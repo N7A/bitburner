@@ -23,9 +23,13 @@ export async function main(ns: NS) {
     }*/
 
     // reset des bases de données
+    OwnedServersRepository.getAll(ns)
+        .filter(x => x.hostname !== 'home')
+        .forEach(x => ns.rm(`repositories/servers/${x.hostname}.json`));
     OwnedServersRepository.reset(ns);
     TargetsRepository.reset(ns);
     ExecutionsRepository.reset(ns);
+    ns.rm('repositories/servers/darkweb.json');
 
     // lancement du hacking automatisé
     ns.run(INFECTION_SCRIPT);
