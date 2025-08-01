@@ -1,5 +1,5 @@
 import {Targets} from 'workspace/domain/targets/model/Targets'
-import {TargetHost} from 'workspace/hacking/model/TargetHost'
+import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
@@ -107,7 +107,7 @@ function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean
         depth = 1;
     } else {
         // get parent data
-        let data: TargetHost|null = ServersRepository.get(ns, parent);
+        let data: ServerData|null = ServersRepository.get(ns, parent);
         depth = data?.depth ? data.depth + 1 : null;
     }
     

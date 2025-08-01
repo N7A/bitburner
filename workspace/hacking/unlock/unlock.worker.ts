@@ -1,6 +1,6 @@
 import { main as openPorts } from 'workspace/hacking/unlock/open-ports.worker'
 import * as Log from 'workspace/frameworks/logging';
-import { TargetHost, UnlockRequirements } from 'workspace/hacking/model/TargetHost'
+import { ServerData, UnlockRequirements } from 'workspace/domain/servers/model/ServerData'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import { main as copyToolkit } from 'workspace/hacking/spreading/copy-toolkit.launcher'
@@ -24,7 +24,7 @@ export async function main(ns: NS, targetHost: string) {
 
 
     // load host data
-    const data: TargetHost | null = ServersRepository.get(ns, input.hostnameTarget);
+    const data: ServerData | null = ServersRepository.get(ns, input.hostnameTarget);
     const requirements: UnlockRequirements = data!.unlockRequirements
 
     if (ns.hasRootAccess(data!.name)) {

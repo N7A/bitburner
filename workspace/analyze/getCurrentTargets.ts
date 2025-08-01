@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import {TargetHost} from 'workspace/hacking/model/TargetHost'
+import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import {Targets} from 'workspace/domain/targets/model/Targets'
 import * as Log from 'workspace/frameworks/logging';
 import {getNextTarget} from 'workspace/hacking/unlock/utils'
@@ -10,9 +10,9 @@ export async function main(ns: NS) {
     ns.ui.openTail();
 
     // load target files
-    let targets: TargetHost[] = Array.from((JSON.parse(ns.read(Referentiel.TARGETS_REPOSITORY_FILE)) as Targets).unlockTargets)
+    let targets: ServerData[] = Array.from((JSON.parse(ns.read(Referentiel.TARGETS_REPOSITORY_FILE)) as Targets).unlockTargets)
         // load host data
-        .map(target => JSON.parse(ns.read(Referentiel.SERVERS_REPOSITORY + `/${target}.json`)) as TargetHost)
+        .map(target => JSON.parse(ns.read(Referentiel.SERVERS_REPOSITORY + `/${target}.json`)) as ServerData)
         .sort((a, b) => (a.unlockRequirements.requiredHackingSkill as number) - (b.unlockRequirements.requiredHackingSkill as number))
         .reverse();
 
@@ -32,6 +32,6 @@ export async function main(ns: NS) {
 	ns.print(Log.getEndLog());
 }
 
-function getRemaning(ns: NS, data: TargetHost) {
+function getRemaning(ns: NS, data: ServerData) {
     return Math.max((data.unlockRequirements.numOpenPortsRequired as number) - (ns.getServer(data.name).openPortCount as number), 0)
 }

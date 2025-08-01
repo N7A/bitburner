@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import {TargetHost, UnlockRequirements, HackData} from 'workspace/hacking/model/TargetHost'
+import {ServerData, UnlockRequirements, HackData} from 'workspace/domain/servers/model/ServerData'
 import {get as TargetsRepositoryGet} from 'workspace/domain/targets/targets.repository';
 import { Targets } from 'workspace/domain/targets/model/Targets';
 
@@ -21,7 +21,7 @@ export function getAll(ns: NS): string[] {
  * 
  * @param ns Bitburner API
  */
-export function get(ns: NS, hostname: string): TargetHost|null {
+export function get(ns: NS, hostname: string): ServerData|null {
     if (!ns.fileExists(REPOSITORY + '/' + hostname + '.json', 'home')) {
         return null;
     }
@@ -49,7 +49,7 @@ export function add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', de
         cpuCores: server.cpuCores
     }
 
-    const targetData: TargetHost = {
+    const targetData: ServerData = {
         name: hostname,
         parent: parentHost,
         depth: depth,
@@ -63,7 +63,7 @@ export function add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', de
 
 export function refresh(ns: NS) {
     const serversFile: string[] = ns.ls('home', REPOSITORY)
-    const knownServers = serversFile.map(file => (JSON.parse(ns.read(file)) as TargetHost).name)
+    const knownServers = serversFile.map(file => (JSON.parse(ns.read(file)) as ServerData).name)
     for (const server of knownServers) {
         add(ns, server)
     }
@@ -76,13 +76,13 @@ export function refresh(ns: NS) {
  * @param hostname serveur qui porte l'execution
  * @param executions executions à sauvegarder
  */
-function resetWith(ns: NS, hostname: string, data: TargetHost) {
+function resetWith(ns: NS, hostname: string, data: ServerData) {
     // TODO : {parentTargetHost}/{targetHost}.json
     ns.write(REPOSITORY + '/' + hostname + '.json', JSON.stringify(data, null, 4), "w");
 }
 
 export function getHostPath(ns: NS, hostname: string): string[] {
-    const data: TargetHost|null = get(ns, hostname);
+    const data: ServerData|null = get(ns, hostname);
     if (!data?.parent) {
         return [hostname];
     }

@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import {TargetHost, HackData} from 'workspace/hacking/model/TargetHost'
+import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
 import{getAvailableServer} from 'workspace/load-balancer/main'
 import {ExecutionParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
@@ -19,7 +19,7 @@ export async function main(ns: NS) {
     setupDashboard(ns, targetHost);
 
     // load host data
-    const data: TargetHost|null = ServersRepository.get(ns, targetHost);
+    const data: ServerData|null = ServersRepository.get(ns, targetHost);
     const hackData: HackData = data!.hackData
 
     //#region Setup

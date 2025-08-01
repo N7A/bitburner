@@ -1,4 +1,4 @@
-export type TargetHost = {
+export type ServerData = {
     name: string;
     parent?: string;
     depth?: number;

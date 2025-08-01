@@ -1,4 +1,4 @@
-import {TargetHost, UnlockRequirements} from 'workspace/hacking/model/TargetHost'
+import {ServerData, UnlockRequirements} from 'workspace/domain/servers/model/ServerData'
 import {PortProgram, getPortPrograms} from 'workspace/hacking/model/PortProgram'
 import {get as ServersRepositoryGet} from 'workspace/domain/servers/servers.repository'
 import {getAvailablePortProgram} from 'workspace/hacking/unlock/utils'
@@ -10,7 +10,7 @@ export async function main(ns: NS, targetHost: string) {
     let result: boolean = true;
 
 	// load host data
-	const data: TargetHost = ServersRepositoryGet(ns, input.hostnameTarget) as TargetHost;
+	const data: ServerData = ServersRepositoryGet(ns, input.hostnameTarget) as ServerData;
 	const requirements: UnlockRequirements = data.unlockRequirements
     const serverData = ns.getServer(input.hostnameTarget);
     

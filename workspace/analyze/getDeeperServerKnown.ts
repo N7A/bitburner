@@ -1,10 +1,10 @@
 import * as ServersRepository from 'workspace/domain/servers/servers.repository';
-import {TargetHost} from 'workspace/hacking/model/TargetHost'
+import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {
     const servers = ServersRepository.getAll(ns);
-    let sortedServers: TargetHost[] = servers.map(x => ServersRepository.get(ns, x) as TargetHost)
+    let sortedServers: ServerData[] = servers.map(x => ServersRepository.get(ns, x) as ServerData)
     .sort((a, b) => {
         return (a.depth ?? 0) - (b.depth ?? 0)
     });

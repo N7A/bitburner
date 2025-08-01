@@ -4,7 +4,7 @@ import {getAvailablePortProgram, getNextTarget} from 'workspace/hacking/unlock/u
 import * as Log from 'workspace/frameworks/logging';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import { waitEndExecution } from 'workspace/frameworks/execution'
-import { TargetHost } from 'workspace/hacking/model/TargetHost'
+import {ServerData} from 'workspace/domain/servers/model/ServerData'
 
 export async function main(ns: NS) {
     // load input arguments
@@ -12,10 +12,10 @@ export async function main(ns: NS) {
 
     setupDashboard(ns);
 
-    let nextTarget: TargetHost | undefined;
+    let nextTarget: ServerData | undefined;
     do {
         ns.print(Log.getStartLog());
-            
+        
         // wait until next target unlockable
         ns.print(`Wait until ${Log.action('unlock')} possible...`);
         do {
@@ -93,7 +93,7 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
-function needLoop(ns: NS, input: InputArg, nextTarget: TargetHost | undefined): boolean {
+function needLoop(ns: NS, input: InputArg, nextTarget: ServerData | undefined): boolean {
     // scprit lancé en mode loop
     return input.runHasLoop 
     && (
