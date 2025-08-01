@@ -9,6 +9,7 @@ export async function main(ns: NS): Promise<Contract[]> {
 
 function getCurrentContracts(ns: NS, hostnames: string[]): Contract[] {
     return hostnames.flatMap(
+        // TODO : hostname can inexist
         hostname => ns.ls(hostname)
         .filter(x => x.endsWith('.cct'))
         .map(x => {return {hostname: hostname, filepath: x} as Contract})

@@ -1,6 +1,6 @@
 import {TargetHost} from 'workspace/hacking/model/TargetHost'
 import * as Referentiel from 'workspace/referentiel'
-import {Targets} from 'workspace/hacking/model/Targets'
+import {Targets} from 'workspace/domain/targets/model/Targets'
 import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
 
 export function getAvailablePortProgram(ns: NS) {

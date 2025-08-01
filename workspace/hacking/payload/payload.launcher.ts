@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import {Targets} from 'workspace/hacking/model/Targets'
+import {Targets} from 'workspace/domain/targets/model/Targets'
 import {TargetHost, HackData} from 'workspace/hacking/model/TargetHost'
 import * as Log from 'workspace/frameworks/logging';
 import * as ServersRepository from 'workspace/domain/servers/servers.repository';

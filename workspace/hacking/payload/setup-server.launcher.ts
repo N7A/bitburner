@@ -1,7 +1,7 @@
 import * as ServersRepository from 'workspace/domain/servers/servers.repository';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
-import {Targets} from 'workspace/hacking/model/Targets'
+import {Targets} from 'workspace/domain/targets/model/Targets'
 import * as Log from 'workspace/frameworks/logging';
 import * as Referentiel from 'workspace/referentiel'
 

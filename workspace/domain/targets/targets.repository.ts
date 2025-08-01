@@ -1,6 +1,13 @@
 import * as Referentiel from 'workspace/referentiel'
-import { Targets } from 'workspace/hacking/model/Targets';
+import { Targets } from 'workspace/domain/targets/model/Targets';
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
+import { CommitRequest } from "workspace/domain/targets/model/CommitRequest";
+import { CommitType } from "workspace/domain/targets/model/CommitType";
+import { PORT as COMMIT_HANDLER_PORT } from "workspace/domain/targets/commit-handler";
+
+//#region Constants
+const COMMIT_HANDLER = "workspace/domain/targets/commit-handler";
+//#endregion Constants
 
 /**
  * Récupère les cibles enregistrés en base de donnée.
@@ -11,27 +18,19 @@ export function get(ns: NS) {
     return JSON.parse(ns.read(Referentiel.TARGETS_REPOSITORY_FILE)) as Targets;
 }
 
-/**
- * Enregistre en base un nouveau serveur à scanner.
- * 
- * @param ns Bitburner API
- * @param hostname serveur à ajouter
- */
-export function addScan(ns: NS, hostnames: string[]) {
-    // get last version
-    let targets: Targets = get(ns);
+export async function addScan(ns: NS, hostnames: string[]) {
+    const commitRequest: CommitRequest = {
+        data: hostnames, 
+        type: CommitType.ADD_SCAN
+    };
 
-    if (hostnames.every(hostname => targets.scanTargets.includes(hostname))) {
-        return;
+    while(!ns.tryWritePort(COMMIT_HANDLER_PORT, commitRequest)) {
+        await ns.asleep(500);
     }
-    
-    // add to owned servers
-    targets.scanTargets = Array.from(new Set([...targets.scanTargets, ...hostnames]));
-    
-    // save data
-    resetWith(ns, targets);
 
-    ns.tprint('INFO', ' ', 'New targets to scan : ' + hostnames);
+    if (!ns.isRunning(COMMIT_HANDLER)) {
+        ns.run(COMMIT_HANDLER);
+    }
 }
 
 /**

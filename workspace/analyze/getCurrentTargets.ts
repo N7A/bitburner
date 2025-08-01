@@ -1,6 +1,6 @@
 import * as Referentiel from 'workspace/referentiel'
 import {TargetHost} from 'workspace/hacking/model/TargetHost'
-import {Targets} from 'workspace/hacking/model/Targets'
+import {Targets} from 'workspace/domain/targets/model/Targets'
 import * as Log from 'workspace/frameworks/logging';
 import {getNextTarget} from 'workspace/hacking/unlock/utils'
 import {getPortPrograms} from 'workspace/hacking/model/PortProgram'

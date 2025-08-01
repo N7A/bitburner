@@ -1,4 +1,4 @@
-import {Targets} from 'workspace/hacking/model/Targets'
+import {Targets} from 'workspace/domain/targets/model/Targets'
 import {TargetHost} from 'workspace/hacking/model/TargetHost'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ServersRepository from 'workspace/domain/servers/servers.repository'

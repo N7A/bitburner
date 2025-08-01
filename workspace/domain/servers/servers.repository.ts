@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
 import {TargetHost, UnlockRequirements, HackData} from 'workspace/hacking/model/TargetHost'
 import {get as TargetsRepositoryGet} from 'workspace/domain/targets/targets.repository';
-import { Targets } from 'workspace/hacking/model/Targets';
+import { Targets } from 'workspace/domain/targets/model/Targets';
 
 const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
 
