@@ -6,7 +6,7 @@ import { CommitType } from "workspace/domain/targets/model/CommitType";
 import { PORT as COMMIT_HANDLER_PORT } from "workspace/domain/targets/commit-handler";
 
 //#region Constants
-const COMMIT_HANDLER = "workspace/domain/targets/commit-handler";
+const COMMIT_HANDLER = "workspace/domain/targets/commit-handler.ts";
 //#endregion Constants
 
 /**

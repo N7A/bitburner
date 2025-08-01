@@ -48,7 +48,7 @@ export async function main(ns: NS) {
             payload = new SelfPayload(ns);
         }
 
-        payload.execute(execution.hostname, target);
+        await payload.execute(execution.hostname, target);
         //#endregion Payload
 
         ns.print(`END ${Log.action('Payload')} ${Log.target(target)}`);
@@ -56,8 +56,8 @@ export async function main(ns: NS) {
     }
 }
 
-function getPayloadScript(ns:NS, targetHost: string) {
-    const scripts = [];
+function getPayloadScript(ns:NS, targetHost: string): string[] {
+    const scripts: string[] = [];
 
     // load host data
     const data: ServerData|null = ServersRepository.get(ns, targetHost);
@@ -75,7 +75,7 @@ function getPayloadScript(ns:NS, targetHost: string) {
     return scripts;
 }
 interface Payload {
-    execute(sourceHost: string, targetHost: string): void;
+    execute(sourceHost: string, targetHost: string): Promise<void>;
 }
 
 class HomePayload implements Payload {
@@ -85,7 +85,7 @@ class HomePayload implements Payload {
         this.ns = ns;
     }
     
-    execute(sourceHost: string, targetHost: string): void {
+    async execute(sourceHost: string, targetHost: string): Promise<void> {
         this.ns.tprint('WARN', ' ', `Payload on self (${targetHost}) impossible`);
         const scripts = getPayloadScript(this.ns, targetHost);
         for (const script of scripts) {
@@ -106,11 +106,11 @@ class SelfPayload implements Payload {
         this.ns = ns;
     }
 
-    execute(sourceHost: string, targetHost: string): void {
+    async execute(sourceHost: string, targetHost: string): Promise<void> {
         this.ns.tprint('SUCCESS', ' ', `Payload on self (${targetHost}) possible`);
         const scripts = getPayloadScript(this.ns, targetHost);
         // execute payload on distant
-        execFitRam(this.ns, [targetHost], scripts.map(x => {
+        await execFitRam(this.ns, [targetHost], scripts.map(x => {
             return {scriptsFilepath: x} as ScriptParameters
         }));
     }
