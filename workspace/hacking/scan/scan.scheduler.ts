@@ -7,7 +7,7 @@ const selectTarget = getScanTarget
 const work = doScan
 const isKillConditionReached = (scanTargets: string[]): boolean => {
     // tant qu'on a de nouvelles cibles
-    return scanTargets.length > 0
+    return scanTargets.length === 0
 }
 //#endregion Constantes
 
