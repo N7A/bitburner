@@ -1,8 +1,8 @@
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
-import * as Properties from 'workspace/load-balancer/application-properties'
 import * as Log from 'workspace/frameworks/logging';
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import * as Referentiel from 'workspace/referentiel'
+import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
 
 export async function execFitRam(ns: NS, hostnames: string[], scripts: ScriptParameters[], threadNeeded?: number): Promise<boolean> {
     let threadLaunched: number = 0;
@@ -130,5 +130,5 @@ function getNbPossibleThreads(availiableRam: number, ramNeededByThread: number) 
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return ns.getServerMaxRam(targetHost) - (Properties.ramReserve.get(targetHost) ?? 0) - ns.getServerUsedRam(targetHost);
+    return Ram.getDisponibleRam(getCurrentRam(ns, targetHost), targetHost);
 }

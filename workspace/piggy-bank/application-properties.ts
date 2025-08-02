@@ -28,12 +28,30 @@ export class Money {
 
 export class Ram {
     /** pourcentage de RAM à ne pas utiliser */
-    static readonly rateToKeep: number = 70/100;
+    static readonly rateToKeep: Map<string, number> = new Map([
+        ['home', 10/100], 
+        ['f1rst', 10/100]
+    ]);
     /** quantité de RAM à ne pas utiliser */
     static readonly toReserve: Map<string, number> = new Map([
-        ['home', 4096], 
-        ['f1rst', 2048]
+        ['home', 0], 
+        ['f1rst', 0]
     ]);
+    
+    static getDisponibleRam(currentRam: number, hostname: string): number {
+        return Math.max(
+            currentRam - Ram.getReserveRam(currentRam, hostname),
+            0
+        );
+    }
+    static getReserveRam(currentRam: number, hostname: string): number {
+        return Math.max(currentRam * (Ram.rateToKeep.get(hostname) ?? 0), Ram.toReserve.get(hostname) ?? 0);
+    }
+
+}
+
+export function getCurrentRam(ns: NS, hostname: string) {
+    return ns.getServerMaxRam(hostname) - ns.getServerUsedRam(hostname)
 }
 
 // TODO : time ?

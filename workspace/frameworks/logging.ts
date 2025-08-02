@@ -1,6 +1,8 @@
-export function initTailTitle(ns: NS, service: string, role?: string) {
+export function initTailTitle(ns: NS, service: string, role?: string, hostSource?: string) {
     const roleLabel = role ? ` #${role.toLowerCase()}` : ''
-    ns.ui.setTailTitle(`[${service}]${roleLabel}`);
+    const sourceLabel = hostSource ? `${source(hostSource)} ` : ''
+    
+    ns.ui.setTailTitle(`${sourceLabel}[${service}]${roleLabel}`);
 }
 
 /**
