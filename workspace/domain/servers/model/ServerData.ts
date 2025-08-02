@@ -2,8 +2,14 @@ export type ServerData = {
     name: string;
     parent?: string;
     depth?: number;
+    state: ServerState;
     unlockRequirements: UnlockRequirements;
     hackData: HackData;
+}
+
+export type ServerState = {
+    unlocked?: boolean;
+    scanned?: boolean;
 }
 
 export type UnlockRequirements = {

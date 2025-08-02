@@ -35,7 +35,7 @@ export function get(ns: NS, hostname: string): ServerData|null {
  * @param hostname serveur qui porte l'execution
  * @param execution nouvelle execution
  */
-export function add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', depth?: number) {
+export function add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', depth?: number, unlocked?: boolean) {
     const server = ns.getServer(hostname);
     
     const unlockRequirements: UnlockRequirements = {
@@ -54,11 +54,40 @@ export function add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', de
         parent: parentHost,
         depth: depth,
         unlockRequirements: unlockRequirements,
-        hackData: hackData
+        hackData: hackData,
+        state: {
+            unlocked: unlocked
+        }
     };
     
     // save data
     resetWith(ns, hostname, targetData);
+}
+
+/**
+ * Enregistre en base la mise à jour d'un serveur.
+ * 
+ * @param ns Bitburner API
+ * @param server serveur à mettre à jour
+ */
+export function handleUnlock(ns: NS, hostname: string) {
+    let serverData: ServerData = get(ns, hostname)
+
+    serverData.state.unlocked = true;
+
+    // save data
+    resetWith(ns, hostname, serverData);
+}
+
+/**
+ * Enregistre en base la mise à jour d'un serveur.
+ * 
+ * @param ns Bitburner API
+ * @param server serveur à mettre à jour
+ */
+export function save(ns: NS, serverData: ServerData) {
+    // save data
+    resetWith(ns, serverData.name, serverData);
 }
 
 export function refresh(ns: NS) {

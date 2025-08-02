@@ -7,5 +7,5 @@ export async function main(ns: NS) {
     const depth: number|undefined = ns.args.length >= 3 ? ns.args[2] as number : undefined;
     //#endregion
     
-    ServersRepository.add(ns, targetHost, parentHost, depth);
+    ServersRepository.add(ns, targetHost, parentHost, depth, false);
 }
