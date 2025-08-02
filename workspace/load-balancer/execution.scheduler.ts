@@ -18,39 +18,35 @@ export async function main(ns: NS) {
     do {
         const orders: Order[] = ExecutionsRepository.getAll(ns);
 
-        // TODO : if orders change
-        // TODO : or if execution link with order not running ?
-        // TODO : then kill all; recalcul repartition; execution
+        // TODO : IF execution link with order not running THEN remove from orders (kill manuel ou script KO -> alert)
+        // TODO : IF orders change THEN kill all; recalcul repartition; execution
 
         const availableServers: string[] = ServersRepository.getAll(ns)
             .map(x => ServersRepository.get(ns, x))
             .filter(x => x.state.unlocked)
             .map(x => x.name);
 
+        // init ram disponible by server
+        let ramByServer: Map<string, number> = new Map(availableServers.map(x => [x, availableRam(ns, x)]));
+
         let executions: ExecutionParameters[] = [];
-        // recherche du nombre de thread possible sur le serveur
         for(const order of orders) {
 
             // TODO : only worker (run loop)
             let scriptsFilepath: ScriptParameters[] = [];
-            let specifiqueAvailableServers: string[] = availableServers
             if (order.type === OrderType.SHARE_RAM) {
                 scriptsFilepath.push({scriptsFilepath: SHARE_RAM_SCRIPT_FILENAME} as ScriptParameters);
-                specifiqueAvailableServers = ['home']
             }
-            const weight = weights.get(order.type) / orders.filter(x => x.type === order.type).length;
 
-            for(const server of specifiqueAvailableServers) {
-                let execution: ExecutionParameters = {
-                    hostname: server, 
-                    nbThread: await getExecutionPossible(ns, server, scriptsFilepath), 
-                    scripts: scriptsFilepath
-                };
-                executions.push(execution)
-            }
+            const weightType = weights.get(order.type) / orders.filter(x => x.type === order.type).length;
+            const weightPerso = order.weight / orders.filter(x => x.type === order.type).map(x => x.weight).reduce((a,b) => a+b);
+            const ramDisponible = availableServers.map(x => availableRam(ns, x)).reduce((a,b) => a+b);
+
+            const ramAuthorized = weightPerso * weightType * ramDisponible;
+
+            // recherche de la répartition possible sur les serveurs
+            executions.push(...await getExecutionRepartition(ns, ramByServer, scriptsFilepath, ramAuthorized));
         }
-
-        // TODO : reppartition with weight
 
         // lancement des scripts
         for(const execution of executions) {
@@ -82,17 +78,34 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 //#region Répartition
-async function getExecutionPossible(ns: NS, hostname: string, scripts: ScriptParameters[]): Promise<number> {
-    const ramNeededByThread = await getRamNeeded(ns, hostname, scripts);
-    if (ramNeededByThread === undefined) {
-        return 0;
+async function getExecutionRepartition(ns: NS, hostnames: Map<string, number>, scripts: ScriptParameters[], ramAuthorized: number): Promise<ExecutionParameters[]> {
+    let executions: ExecutionParameters[] = [];
+
+    let ramNeeded = ramAuthorized;
+    let hostname = hostnames.keys().next();
+    while(ramNeeded > 0 && hostname !== undefined) {
+        const ramNeededByThread = await getRamNeeded(ns, hostname.value, scripts);
+        if (ramNeededByThread === undefined || ramAuthorized < ramNeededByThread) {
+            continue;
+        }
+        const currentAvailableRam: number = hostnames.get(hostname.value);
+
+        // find possible thread number
+        const nbThread = getNbPossibleThreads(currentAvailableRam, ramNeededByThread);
+
+        let execution: ExecutionParameters = {
+            hostname: hostname.value, 
+            nbThread: nbThread, 
+            scripts: scripts
+        };
+        executions.push(execution);
+
+        hostnames.set(hostname.value, currentAvailableRam-nbThread * ramNeededByThread);
+        ramNeeded -= nbThread * ramNeededByThread;
+        hostname = hostnames.keys().next();
     }
 
-    const currentAvailableRam: number = availableRam(ns, hostname);
-    ns.tprint(`[${hostname}]`, ' ', Log.INFO('Available RAM', ns.formatRam(currentAvailableRam)));
-
-    // find possible thread number
-    return getNbPossibleThreads(currentAvailableRam, ramNeededByThread);
+    return executions;
 }
 
 async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptParameters[]): Promise<number|undefined> {
