@@ -24,7 +24,7 @@ export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: 
     const availableServers = getAvailableServers(ns, priorityTarget, ramNeededByThread*nbThread);
     if (availableServers.length > 0) {
         result = {
-            hostname: availableServers[0],
+            hostname: availableServers.shift(),
             nbThread: nbThread
         }
     }

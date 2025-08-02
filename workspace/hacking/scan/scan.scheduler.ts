@@ -2,8 +2,17 @@ import { getScanTarget } from 'workspace/hacking/scan/scan.target-selector'
 import { main as doScan } from 'workspace/hacking/scan/scan.worker'
 import * as Log from 'workspace/frameworks/logging';
 
+//#region Constantes
+const selectTarget = getScanTarget
+const work = doScan
+const isKillConditionReached = (scanTargets: string[]): boolean => {
+    // tant qu'on a de nouvelles cibles
+    return scanTargets.length > 0
+}
+//#endregion Constantes
+
 /**
- * Scan les cibles données par le unlock.
+ * Cartographie et enregistre les données des serveurs du réseau.
  */
 export async function main(ns: NS) {
     // load input arguments
@@ -12,19 +21,19 @@ export async function main(ns: NS) {
     setupDashboard(ns);
 
     // load targets
-    let scanTargets: string[] = getScanTarget(ns);
+    let targets: string[] = selectTarget(ns);
     do {
         ns.print(Log.getStartLog());
-        ns.print(Log.INFO('Selected targets', scanTargets));
+        ns.print(Log.INFO('Selected targets', targets));
 
         ns.print('Wait scan end...');
-        await doScan(ns, scanTargets);
+        await work(ns, targets);
 
-        scanTargets = getScanTarget(ns);
+        targets = selectTarget(ns);
 
         // TODO : when new unlock target, si infection not running -> execute infection
         ns.print(Log.getEndLog());
-	} while (input.runHasLoop && scanTargets.length > 0) // tant qu'on a de nouvelles cibles
+	} while (input.runHasLoop && !isKillConditionReached(targets))
 
     ns.ui.closeTail();
 }
@@ -47,10 +56,12 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
+//#region Dashboard
 function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    ns.ui.setTailTitle('Scan #Scheduler');
+    Log.initTailTitle(ns, 'Scan', 'Scheduler');
     ns.ui.openTail();
 }
+//#endregion Dashboard
