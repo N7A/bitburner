@@ -1,6 +1,6 @@
 import {ExecutionParameters, ExecutionType} from 'workspace/load-balancer/model/ExecutionServer'
-import * as Properties from 'workspace/load-balancer/application-properties'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
+import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
 
 /**
  * Check RAM availability to priorize
@@ -85,5 +85,5 @@ function hasEnoughRam(ns: NS, targetHost: string, ramNeeded: number) {
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return Math.max(ns.getServerMaxRam(targetHost) - ns.getServerUsedRam(targetHost) - (Properties.ramReserve.get(targetHost) ?? 0), 0);
+    return Ram.getDisponibleRam(getCurrentRam(ns, targetHost), targetHost);
 }
