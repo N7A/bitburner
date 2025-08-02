@@ -1,6 +1,5 @@
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import * as Referentiel from 'workspace/referentiel'
 import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
 
@@ -94,35 +93,6 @@ async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptParameters[
         result += ramNeededByThread;
     }
     return result;
-}
-
-function getAllLoopExecution(ns: NS, hostname: string): ScriptParameters[] {
-    const process: ProcessInfo[] = ns.ps(hostname).filter(x => x.filename.endsWith('.looper.ts'));
-    return process.map(x => {
-        return {
-            scriptsFilepath: x.filename,
-            args: x.args,
-            pid: x.pid
-        } as ScriptParameters
-    })
-}
-
-export async function execFitRamLoop(ns: NS, scripts: ScriptParameters[]) {
-    const availableServers = OwnedServersRepository.getAll(ns).map(x => x.hostname);
-
-    for (const targetHost of availableServers) {        
-        // load executions data
-        let executionsToRefresh: ScriptParameters[] = getAllLoopExecution(ns, targetHost);
-        
-        // kill all current executions
-        for (const executionToRefresh of executionsToRefresh) {
-            if (executionToRefresh.pid !== 0) {
-                ns.kill(executionToRefresh.pid);
-            }
-        }
-
-        execFitRam(ns, [targetHost], [...scripts, ...executionsToRefresh])
-    }
 }
 
 function getNbPossibleThreads(availiableRam: number, ramNeededByThread: number) {

@@ -1,5 +1,4 @@
 import * as Log from 'workspace/frameworks/logging';
-import * as ExecutionsRepository from 'workspace/domain/executions.repository'
 
 /**
  * Share RAM to faction.
@@ -10,9 +9,6 @@ export async function main(ns: NS) {
  
     setupDashboard(ns);
 
-    ns.atExit(() => {
-        ExecutionsRepository.remove(ns, ns.getHostname(), ns.pid);
-    })
     const startTime = new Date();
 
     do {
