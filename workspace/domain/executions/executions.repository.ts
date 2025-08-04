@@ -9,6 +9,9 @@ const REPOSITORY = Referentiel.EXECUTION_ORDERS_REPOSITORY;
  * @param ns Bitburner API
  */
 export function getAll(ns: NS): Order[] {
+    if (!ns.fileExists(REPOSITORY)) {
+        return [];
+    }
     return JSON.parse(ns.read(REPOSITORY));
 }
 

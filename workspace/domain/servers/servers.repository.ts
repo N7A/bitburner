@@ -71,8 +71,12 @@ export function add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', de
  * @param server serveur à mettre à jour
  */
 export function handleUnlock(ns: NS, hostname: string) {
-    let serverData: ServerData = get(ns, hostname)
+    let serverData: ServerData|null = get(ns, hostname);
 
+    if (serverData === null) {
+        return;
+    }
+    
     serverData.state.unlocked = true;
 
     // save data

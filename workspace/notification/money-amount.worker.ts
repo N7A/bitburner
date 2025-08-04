@@ -8,6 +8,8 @@ export async function main(ns: NS) {
     const input: InputArg = getInput(ns);
 
     const startTime: Date = new Date();
+    const secondRestantes = (input.threshold - ns.getPlayer().money) / getCurrentProduction(ns);
+    ns.print(secondRestantes / 60, ' minutes avant d\'atteindre $', Log.money(ns, input.threshold));
     while(ns.getPlayer().money < input.threshold) {
         await ns.sleep(500);
     }
@@ -44,3 +46,13 @@ function getInput(ns: NS): InputArg {
     };
 }
 //#endregion Input parameters
+
+function getCurrentProduction(ns: NS) {
+    const numNodes = ns.hacknet.numNodes();
+	let hacknetProduction: number = 0;
+    for (let i = 0; i < numNodes; i++) {
+		hacknetProduction += ns.hacknet.getNodeStats(i).production;
+	}
+
+    return ns.getTotalScriptIncome()[0] + hacknetProduction
+}
