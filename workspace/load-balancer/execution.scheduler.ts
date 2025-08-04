@@ -7,9 +7,10 @@ import * as Log from 'workspace/frameworks/logging';
 import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
 import { weights } from 'workspace/load-balancer/application-properties'
 import * as OwnedServers from 'workspace/domain/owned-servers.repository'
+import { ShareRamExecution } from '../faction/model/ShareRamExecution'
 
 //#region Constantes
-const SHARE_RAM_SCRIPT_FILENAME: string = Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.looper.ts'
+const SHARE_RAM_SCRIPT_FILENAME: string = Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.worker.ts'
 //#endregion Constantes
 
 export async function main(ns: NS) {
@@ -20,7 +21,14 @@ export async function main(ns: NS) {
 
     do {
         Log.getStartLog();
-        const orders: Order[] = ExecutionsRepository.getAll(ns);
+        const orders: Order[] = ExecutionsRepository.getAll(ns)
+            .filter(order => {
+                if (order.type === OrderType.SHARE_RAM) {
+                    return !new ShareRamExecution().isExecutionUsless(ns);
+                }
+
+                return true;
+            });
 
         // TODO : IF execution link with order not running THEN remove from orders (kill manuel ou script KO -> alert);
         // TODO : IF orders change THEN kill all; recalcul repartition; execution
@@ -41,21 +49,15 @@ export async function main(ns: NS) {
         let executions: ExecutionParameters[] = [];
         for(const order of orders) {
 
-            let weightType = weights.get(order.type) ?? 0 / orders.filter(x => x.type === order.type).length;
-            let weightPerso = order.weight ?? 0 / (orders ?? [])
-                .filter(x => x.type === order.type)
-                .map(x => x.weight ?? 0)
-                .reduce((a,b) => a+b);
+            let weightType = weights.get(order.type) ?? 1 / orders.filter(x => x.type === order.type).length;
+            let weightPerso = order.weight ?? 1 / Math.max(orders.filter(x => x.type === order.type)
+                .map(x => x.weight ?? 1)
+                .reduce((a,b) => a+b), 1);
                 
             // TODO : only worker (run loop)
             let scriptsFilepath: ScriptParameters[] = [];
             if (order.type === OrderType.SHARE_RAM) {
                 scriptsFilepath.push({scriptsFilepath: SHARE_RAM_SCRIPT_FILENAME} as ScriptParameters);
-                weightType = weights.get(order.type) ?? 1 / orders.filter(x => x.type === order.type).length;
-                weightPerso = order.weight ?? 1 / (orders ?? [])
-                    .filter(x => x.type === order.type)
-                    .map(x => x.weight ?? 1)
-                    .reduce((a,b) => a+b);
             }
             ns.print(Log.INFO('Order', scriptsFilepath.map(x => x.scriptsFilepath)));
 
@@ -75,6 +77,7 @@ export async function main(ns: NS) {
         ns.print('Executions');
         // lancement des scripts
         for(const execution of executions) {
+            // TODO : setup dashboard, pour reduire au minimum la ram
             await execute(ns, execution);
         }
 

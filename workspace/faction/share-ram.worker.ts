@@ -7,7 +7,7 @@ export async function main(ns: NS) {
     // load input arguments
 	const input: InputArg = getInput(ns);
  
-    setupDashboard(ns);
+    setupDashboard(ns, input);
 
     const startTime = new Date();
 
@@ -22,6 +22,7 @@ export async function main(ns: NS) {
 //#region Input arguments
 type InputArg = {
 	/** Serveur cible */
+    targetHost: string;
 	runHasLoop: boolean;
 }
 
@@ -32,18 +33,20 @@ type InputArg = {
  */
 function getInput(ns: NS): InputArg {
 	return {
-		runHasLoop: ns.args[0] ? (ns.args[0] as boolean) : true
+		runHasLoop: ns.args[0] ? (ns.args[0] as boolean) : true,
+        // TODO : get via arg, pour reduire au minimum la ram
+        targetHost: ns.getHostname()
 	};
 }
 //#endregion Input arguments
 
 //#region Dashboard
-function setupDashboard(ns: NS) {
+function setupDashboard(ns: NS, input: InputArg) {
 	ns.disableLog("ALL");
     ns.enableLog("share")
     ns.clearLog();
 	
-    Log.initTailTitle(ns, 'Share RAM', 'looper', ns.getHostname());
+    Log.initTailTitle(ns, 'Share RAM', 'looper', input.targetHost);
 	ns.ui.moveTail(1200, 50);
 	
 	ns.print('Waiting to share...');

@@ -3,7 +3,7 @@ export const WORKSPACE_DIRECTORY: string = 'workspace';
 export const HACKING_DIRECTORY: string = WORKSPACE_DIRECTORY + '/hacking';
 export const HACKNET_DIRECTORY: string = WORKSPACE_DIRECTORY + '/hacknet';
 export const FACTION_DIRECTORY: string = WORKSPACE_DIRECTORY + '/faction';
-export const LOGGING_DIRECTORY: string = WORKSPACE_DIRECTORY + '/logging-framework';
+export const DOMAIN_DIRECTORY: string = WORKSPACE_DIRECTORY + '/domain';
 //#endregion Workspace
 //#region Repositories
 export const REPOSITORIES_DIRECTORY: string = 'repositories';
