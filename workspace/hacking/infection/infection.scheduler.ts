@@ -5,6 +5,7 @@ import * as Log from 'workspace/frameworks/logging';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import { waitEndExecution } from 'workspace/frameworks/execution'
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
+import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
 
 //#region Constants
 export const SCAN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
@@ -32,6 +33,21 @@ export async function main(ns: NS) {
                 ns.print(Log.INFO('Next target', newNextTarget.name));
                 ns.print(Log.INFO('Next target ports needed', newNextTarget.unlockRequirements.numOpenPortsRequired));
                 ns.print(Log.INFO('Next target lvl needed', newNextTarget.unlockRequirements.requiredHackingSkill));
+                
+                if (getAvailablePortProgram(ns).length < (nextTarget.unlockRequirements.numOpenPortsRequired as number)) {
+                    const title = 'Port opener manquant pour continuer l\'infection'
+                    const moveMessage = '1. Go to City > [alpha ent.];'
+                    const buyMessage = '2. Purchase TOR router;'
+                    const commandMessage = 'cmd : buy ' + getPortPrograms(ns)
+                            .map(x => x.filename)
+                            .filter(x => getAvailablePortProgram(ns).some(y => y.filename === x))
+                            .shift() + ';'
+                    let todoList: string[] = [commandMessage]
+                    if (!ns.hasTorRouter()) {
+                        todoList = [moveMessage, buyMessage, '3. ' + commandMessage]
+                    }
+                    ns.alert(title + '\n\n' + todoList.join('\n'));
+                }
             }
             nextTarget = newNextTarget;
             await ns.asleep(500);
