@@ -8,10 +8,7 @@ import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
 import { weights } from 'workspace/load-balancer/application-properties'
 import * as OwnedServers from 'workspace/domain/owned-servers.repository'
 import { ShareRamExecution } from '../faction/model/ShareRamExecution'
-
-//#region Constantes
-const SHARE_RAM_SCRIPT_FILENAME: string = Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.worker.ts'
-//#endregion Constantes
+import { PayloadExecution } from '../hacking/model/PayloadExecution'
 
 export async function main(ns: NS) {
     // load input arguments
@@ -19,21 +16,24 @@ export async function main(ns: NS) {
 
     setupDashboard(ns);
 
+    let orders: Order[] = [];
+
+    ns.atExit(() => orders.flatMap(x => x.pid).forEach(x => ns.kill(x)));
+    
     do {
         Log.getStartLog();
-        const orders: Order[] = ExecutionsRepository.getAll(ns)
-            .filter(order => {
-                if (order.type === OrderType.SHARE_RAM) {
-                    return !new ShareRamExecution().isExecutionUsless(ns);
-                }
 
-                return true;
-            });
+        // TODO : wait orders change or ram disponible
+        // wait until orders change
+        const currentOrders = await waitOrderChange(ns, orders);
 
-        // TODO : IF execution link with order not running THEN remove from orders (kill manuel ou script KO -> alert);
-        // TODO : IF orders change THEN kill all; recalcul repartition; execution
+        // kill all for recalcul repartition
+        orders.flatMap(x => x.pid).forEach(x => ns.kill(x));
+        // maj orders
+        orders = currentOrders;
 
-        const availableServers: string[] = Array.from(new Set([
+        // get target servers
+        const targetServers: string[] = Array.from(new Set([
             ...OwnedServers.getAll(ns).map(x => x.hostname),
             ...ServersRepository.getAll(ns)
                 .map(x => ServersRepository.get(ns, x))
@@ -41,45 +41,18 @@ export async function main(ns: NS) {
                 .map(x => x.name)
         ]));
 
-            
-
-        // init ram disponible by server
-        let ramByServer: Map<string, number> = new Map(availableServers.map(x => [x, availableRam(ns, x)]));
-
-        let executions: ExecutionParameters[] = [];
-        for(const order of orders) {
-
-            let weightType = weights.get(order.type) ?? 1 / orders.filter(x => x.type === order.type).length;
-            let weightPerso = order.weight ?? 1 / Math.max(orders.filter(x => x.type === order.type)
-                .map(x => x.weight ?? 1)
-                .reduce((a,b) => a+b), 1);
-                
-            // TODO : only worker (run loop)
-            let scriptsFilepath: ScriptParameters[] = [];
-            if (order.type === OrderType.SHARE_RAM) {
-                scriptsFilepath.push({scriptsFilepath: SHARE_RAM_SCRIPT_FILENAME} as ScriptParameters);
-            }
-            ns.print(Log.INFO('Order', scriptsFilepath.map(x => x.scriptsFilepath)));
-
-            const ramDisponible = availableServers.map(x => availableRam(ns, x)).reduce((a,b) => a+b);
-            ns.print(Log.INFO('Ram disponible', ramDisponible));
-
-
-            const ramAuthorized = weightPerso * weightType * ramDisponible;
-            ns.print(Log.INFO('Weight perso', weightPerso));
-            ns.print(Log.INFO('Weight type', weightType));
-            ns.print(Log.INFO('Ram authorisée', ramAuthorized));
-
-            // recherche de la répartition possible sur les serveurs
-            executions.push(...await getExecutionRepartition(ns, ramByServer, scriptsFilepath, ramAuthorized));
-        }
+        // define servers repartion
+        const executions: Map<Order, ExecutionParameters[]> = await getRepartitions(ns, orders, targetServers);
 
         ns.print('Executions');
         // lancement des scripts
-        for(const execution of executions) {
-            // TODO : setup dashboard, pour reduire au minimum la ram
-            await execute(ns, execution);
-        }
+        executions.forEach(async(executions, order) => {
+            for(const execution of executions) {
+                // TODO : setup dashboard, pour reduire au minimum la ram
+                const pids = await execute(ns, execution);
+                order.pid = [...(order.pid ?? []), ...pids];
+            }
+        });
 
         Log.getEndLog();
         if (input.runHasLoop) {
@@ -118,35 +91,110 @@ function setupDashboard(ns: NS) {
 }
 //#endregion Dashboard
 
+async function waitOrderChange(ns: NS, oldOrders: Order[]): Promise<Order[]> {
+    let currentOrders: Order[] = ExecutionsRepository.getAll(ns)
+            .filter(order => {
+                if (order.type === OrderType.SHARE_RAM) {
+                    return !new ShareRamExecution().isExecutionUsless(ns);
+                }
+
+                return true;
+            });
+        while (
+            oldOrders.filter(x => !currentOrders.includes(x)).length === 0 
+            && currentOrders.filter(x => !oldOrders.includes(x)).length === 0
+        ) {
+            await ns.sleep(500);
+            
+            // remove from orders manual killed or script KO 
+            // TODO : alert ?
+            const killedOrders: Order[] = ExecutionsRepository.getAll(ns)
+                .filter(x => x.pid?.some(y => !ns.isRunning(y)));
+            killedOrders.forEach(x => ExecutionsRepository.remove(ns, x));
+            ns.print('Execution order killed : ', killedOrders.map(x => x.type + ' ' + x.target));
+            
+            currentOrders = ExecutionsRepository.getAll(ns)
+                .filter(order => {
+                    if (order.type === OrderType.SHARE_RAM) {
+                        return !new ShareRamExecution().isExecutionUsless(ns);
+                    }
+
+                    return true;
+                });
+        }
+
+        return currentOrders;
+}
+
 //#region Répartition
-async function getExecutionRepartition(ns: NS, hostnames: Map<string, number>, scripts: ScriptParameters[], ramAuthorized: number): Promise<ExecutionParameters[]> {
+async function getRepartitions(ns: NS, orders: Order[], targetServers: string[]): Promise<Map<Order, ExecutionParameters[]>> {
+    let executions: Map<Order, ExecutionParameters[]> = new Map();
+    
+    // init ram disponible by server
+    let ramByServer: Map<string, number> = new Map(targetServers.map(x => [x, availableRam(ns, x)]));
+
+    for(const order of orders) {
+        let weightType = weights.get(order.type) ?? 1 / orders.filter(x => x.type === order.type).length;
+        let weightPerso = order.weight ?? 1 / Math.max(orders.filter(x => x.type === order.type)
+            .map(x => x.weight ?? 1)
+            .reduce((a,b) => a+b), 1);
+            
+        // TODO : only worker (run loop)
+        let scriptsFilepath: ScriptParameters[] = [];
+        if (order.type === OrderType.SHARE_RAM) {
+            scriptsFilepath.push(...new ShareRamExecution().getScript().map(x => {return {scriptsFilepath: x} as ScriptParameters}));
+        } else if (order.type === OrderType.HACK) {
+            scriptsFilepath.push(...new PayloadExecution(ns, order.target).getScript().map(x => {return {scriptsFilepath: x} as ScriptParameters}));
+        }
+        ns.print(Log.INFO('Order', scriptsFilepath.map(x => x.scriptsFilepath)));
+
+        const ramDisponible = targetServers.map(x => availableRam(ns, x)).reduce((a,b) => a+b);
+        ns.print(Log.INFO('Ram disponible', ramDisponible));
+
+        const ramAuthorized = weightPerso * weightType * ramDisponible;
+        ns.print(Log.INFO('Weight perso', weightPerso));
+        ns.print(Log.INFO('Weight type', weightType));
+        ns.print(Log.INFO('Ram authorisée', ramAuthorized));
+
+        order.pid = []
+        // recherche de la répartition possible sur les serveurs
+        executions.set(order, await getExecutionRepartition(ns, ramByServer, scriptsFilepath, ramAuthorized));
+    }
+
+    return executions;
+}
+
+async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>, scripts: ScriptParameters[], ramAuthorized: number): Promise<ExecutionParameters[]> {
     let executions: ExecutionParameters[] = [];
 
     let ramNeeded = ramAuthorized;
-    const iterator = hostnames.keys();
-    let hostname = iterator.next();
-    while(ramNeeded > 0 && hostname.value !== undefined) {
-        const ramNeededByThread = await getRamNeeded(ns, hostname.value, scripts);
+    const entries = Array.from(ramByServer.entries())
+        .sort((a,b) => a[1] - b[1]);
+    
+    for(const entry of entries) {
+        const ramNeededByThread = await getRamNeeded(ns, entry[0], scripts);
         if (ramNeededByThread === undefined || ramAuthorized < ramNeededByThread) {
             continue;
         }
-        const currentAvailableRam: number = hostnames.get(hostname.value) ?? 0;
+        const currentAvailableRam: number = entry[1] ?? 0;
 
         // find possible thread number
         const nbThread = getNbPossibleThreads(currentAvailableRam, ramNeededByThread);
 
         if (nbThread > 0) {
                 let execution: ExecutionParameters = {
-                    hostname: hostname.value, 
+                    hostname: entry[0], 
                     nbThread: nbThread, 
                     scripts: scripts
                 };
                 executions.push(execution);
 
-                hostnames.set(hostname.value, currentAvailableRam-nbThread * ramNeededByThread);
+                ramByServer.set(entry[0], currentAvailableRam-nbThread * ramNeededByThread);
                 ramNeeded -= nbThread * ramNeededByThread;
+                if (ramNeeded <= 0) {
+                    break;
+                }
         }
-        hostname = iterator.next();
     }
 
     return executions;
@@ -183,9 +231,10 @@ function getNbPossibleThreads(availiableRam: number, ramNeededByThread: number) 
 //#endregion Répartition
 
 //#region Execution
-async function execute(ns: NS, execution: ExecutionParameters): Promise<boolean> {
+async function execute(ns: NS, execution: ExecutionParameters): Promise<number[]> {
+    let pids: number[] = []
     if (execution.nbThread === 0) {
-        return true;
+        return pids;
     }
 
     for (const script of execution.scripts) {
@@ -201,14 +250,15 @@ async function execute(ns: NS, execution: ExecutionParameters): Promise<boolean>
         ns.tprint("INFO", " ", `${Log.color(ns.formatNumber(execution.nbThread, 0), Log.Color.CYAN)} threads of ${script.scriptsFilepath} can be runned from ${Log.color(execution.hostname, Log.Color.CYAN)}`);
 
         const executionPid: number = ns.exec(script.scriptsFilepath, execution.hostname, execution.nbThread, ...script.args ?? []);
+        pids.push(executionPid);
 
         if (executionPid === 0) {
-            return false;
+            return pids;
         }
 
         ns.tprint("SUCCESS", " ", `Starting ${Log.color(ns.formatNumber(execution.nbThread, 0), Log.Color.CYAN)} threads of ${script.scriptsFilepath} from ${Log.color(execution.hostname, Log.Color.CYAN)}`);
     }
 
-    return true;
+    return pids;
 }
 //#endregion Execution

@@ -1,4 +1,4 @@
 export interface RamResourceExecution {
-    readonly SCRIPTS: string[];
+    getScript(): string[];
     isExecutionUsless(ns: NS): boolean;
 }

@@ -2,7 +2,14 @@ import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 
 export class ShareRamExecution implements RamResourceExecution {
-    readonly SCRIPTS: string[] = [Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.worker.ts'];
+    private scripts: string[];
+
+    constructor() {
+        this.scripts = [Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.worker.ts']
+    }
+    getScript() {
+        return this.scripts;
+    }
 
     isExecutionUsless(ns: NS): boolean {
         // check if script useless

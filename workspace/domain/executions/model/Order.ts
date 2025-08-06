@@ -2,8 +2,8 @@ export type Order = {
     type: OrderType;
     target?: string;
     weight?: number;
-    /*args: ScriptArg[];
-    pid: number;*/
+    pid?: number[];
+    /*args: ScriptArg[];*/
 }
 
 export enum OrderType {
