@@ -1,7 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
 import {ServerData, UnlockRequirements, HackData} from 'workspace/domain/servers/model/ServerData'
-import {get as TargetsRepositoryGet} from 'workspace/domain/targets/targets.repository';
-import { Targets } from 'workspace/domain/targets/model/Targets';
 
 const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
 
@@ -124,17 +122,16 @@ export function getHostPath(ns: NS, hostname: string): string[] {
 }
 
 export function getHostPathLibelle(ns: NS, hostname: string): string {
-    const targets: Targets = TargetsRepositoryGet(ns);
-
     return getHostPath(ns, hostname).map(x => {
-        const unlocked: string = !targets.unlockTargets.includes(x) ? 'unlocked' : 'locked';
+        const data: ServerData|null = get(ns, x);
+        const unlocked: string = data?.state.unlocked ? 'unlocked' : 'locked';
 
-        return '/' + hostname + `[${unlocked}]`
+        return '/' + x + `[${unlocked}]`
     }).reduce((a, b) => a + b);
 }
 
 export function getConnectCommand(ns: NS, hostname: string): string {
     return getHostPath(ns, hostname).map(x => {
-        return `connect ${hostname};`
+        return `connect ${x};`
     }).reduce((a, b) => a + ' ' + b);
 }

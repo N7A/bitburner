@@ -43,7 +43,7 @@ function printData(ns: NS, data: Server) {
         ns.tprint(message);
     }
     ns.tprint('Path : ', ServersRepository.getHostPathLibelle(ns, data.hostname));
-    ns.tprint('Deep connect command : ', ServersRepository.getConnectCommand(ns, data.hostname));
+    ns.tprint('Deep connect command : ', ServersRepository.getConnectCommand(ns, data.hostname) + ' backdoor;');
 
     ns.tprint(data.hostname)
 }
