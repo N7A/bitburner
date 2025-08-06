@@ -7,8 +7,8 @@ import * as Log from 'workspace/frameworks/logging';
 import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
 import { weights } from 'workspace/load-balancer/application-properties'
 import * as OwnedServers from 'workspace/domain/owned-servers.repository'
-import { ShareRamExecution } from '../faction/model/ShareRamExecution'
-import { PayloadExecution } from '../hacking/model/PayloadExecution'
+import { ShareRamExecution } from 'workspace/faction/model/ShareRamExecution'
+import { PayloadExecution } from 'workspace/hacking/model/PayloadExecution'
 
 export async function main(ns: NS) {
     // load input arguments
