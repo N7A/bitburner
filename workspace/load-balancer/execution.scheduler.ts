@@ -4,7 +4,7 @@ import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
-import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
+import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
 import { weights } from 'workspace/load-balancer/application-properties'
 import * as OwnedServers from 'workspace/domain/owned-servers.repository'
 import { ShareRamExecution } from 'workspace/faction/model/ShareRamExecution'

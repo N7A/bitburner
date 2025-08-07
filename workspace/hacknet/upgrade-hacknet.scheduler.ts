@@ -3,7 +3,7 @@ import { getBestProfits } from 'workspace/hacknet/upgrade-hacknet.target-selecto
 import * as Log from 'workspace/frameworks/logging';
 import * as Properties from 'workspace/hacknet/application-properties'
 import { UpgradeExecution } from 'workspace/hacknet/model/UpgradeExecution'
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
+import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
 
 /**
  * Runner qui gère l'achat des nodes Hacknet.

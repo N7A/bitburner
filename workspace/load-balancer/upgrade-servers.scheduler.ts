@@ -1,5 +1,5 @@
 import * as Log from 'workspace/frameworks/logging';
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
+import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
 import {selectUpgrade} from 'workspace/load-balancer/upgrade-servers.selector'
 import {executeUpgrade} from 'workspace/load-balancer/upgrade-servers.worker'
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'

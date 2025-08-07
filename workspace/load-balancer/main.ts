@@ -1,6 +1,6 @@
 import {ExecutionParameters, ExecutionType} from 'workspace/load-balancer/model/ExecutionServer'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
-import { Ram, getCurrentRam } from 'workspace/piggy-bank/application-properties'
+import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
 
 /**
  * Check RAM availability to priorize

@@ -3,7 +3,7 @@ import * as OwnedServersRepository from 'workspace/domain/owned-servers.reposito
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/application-properties'
+import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
 
 //#region Constants
 export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
