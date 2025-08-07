@@ -85,5 +85,5 @@ function hasEnoughRam(ns: NS, targetHost: string, ramNeeded: number) {
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return Ram.getDisponibleRam(getCurrentRam(ns, targetHost), targetHost);
+    return Ram.getDisponibleRam(ns, getCurrentRam(ns, targetHost), targetHost);
 }

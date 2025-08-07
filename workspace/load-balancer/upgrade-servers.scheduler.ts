@@ -26,13 +26,13 @@ export async function main(ns: NS) {
 
         ns.print('Waiting to have enough money...');
         // wait purchase to be possible
-        while(MoneyPiggyBank.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
+        while(MoneyPiggyBank.getDisponibleMoney(ns, getMoney()) < nextUpgrade.cost) {
             // sleep to prevent crash because of infinite loop
             await ns.sleep(500);
         }
 
         // get best purchase with max amount disponible
-        const selectedUpgrade = await selectUpgrade(ns, MoneyPiggyBank.getDisponibleMoney(getMoney()));
+        const selectedUpgrade = await selectUpgrade(ns, MoneyPiggyBank.getDisponibleMoney(ns, getMoney()));
         
         ns.print('Buy upgrade');
         // do purchase

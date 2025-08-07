@@ -35,14 +35,14 @@ export async function main(ns: NS) {
         }
 
         // wait purchase to be possible
-        while(MoneyPiggyBank.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
+        while(MoneyPiggyBank.getDisponibleMoney(ns, getMoney()) < nextUpgrade.cost) {
             refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
             // sleep to prevent crash because of infinite loop
             await ns.sleep(500);
         }
 
         // get best purchase with max amount disponible
-        const selectedUpgrade = getBestProfits(ns, MoneyPiggyBank.getDisponibleMoney(getMoney()));
+        const selectedUpgrade = getBestProfits(ns, MoneyPiggyBank.getDisponibleMoney(ns, getMoney()));
         // do purchase
         executeUpgrade(ns, selectedUpgrade);
         
@@ -118,6 +118,6 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
         ns.print(Log.INFO('Next upgrade cost', Log.money(ns, nextUpgrade.cost)));
     }
     ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
-    ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(currentMoney))}`));
+    ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(ns, currentMoney))}`));
     ns.ui.resizeTail(650, Math.min(nodes.length * 25 + 300, 600))
 }

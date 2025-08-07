@@ -281,7 +281,7 @@ async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptParameters[
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return Ram.getDisponibleRam(getCurrentRam(ns, targetHost), targetHost);
+    return Ram.getDisponibleRam(ns, getCurrentRam(ns, targetHost), targetHost);
 }
 
 function getNbPossibleThreads(availiableRam: number, ramNeededByThread: number) {

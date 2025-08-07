@@ -1,22 +1,21 @@
+import { PiggyBankRepository } from "workspace/domain/piggy-bank/piggy-bank.repository";
+
 export enum MoneyNeeder {
     HACKNET,
     SERVERS
 }
 
 export class Money {
-    /** pourcentage d'argent à ne pas utiliser */
-    private static rateToKeep: number = 30/100;
-    /** montant à ne pas utiliser */
-    private static toReserve: number = 0 * 1000 * 1000;
-
-    static getDisponibleMoney(currentMoney: number): number {
-        return currentMoney - Money.getReserveMoney(currentMoney);
+    static getDisponibleMoney(ns: NS, currentMoney: number): number {
+        return currentMoney - Money.getReserveMoney(ns, currentMoney);
     }
-    static getReserveMoney(currentMoney: number): number {
-        return Math.max(currentMoney * Money.rateToKeep, Money.toReserve);
+    static getReserveMoney(ns: NS, currentMoney: number): number {
+        return Math.max(currentMoney * PiggyBankRepository.get(ns).moneyBank.rateToKeep, PiggyBankRepository.get(ns).moneyBank.toReserve);
     }
-    static setReserveMoney(amount: number) {
-        Money.toReserve = amount;
+    static setReserveMoney(ns: NS, amount: number) {
+        let bank = PiggyBankRepository.get(ns);
+        bank.moneyBank.toReserve = amount;
+        PiggyBankRepository.save(ns, bank);
     }
     /** repartition du disponible */
     // TODO
@@ -27,25 +26,17 @@ export class Money {
 }
 
 export class Ram {
-    /** pourcentage de RAM à ne pas utiliser */
-    static readonly rateToKeep: Map<string, number> = new Map([
-        ['home', 10/100], 
-        ['f1rst', 10/100]
-    ]);
-    /** quantité de RAM à ne pas utiliser */
-    static readonly toReserve: Map<string, number> = new Map([
-        ['home', 20], 
-        ['f1rst', 0]
-    ]);
-
-    static getDisponibleRam(currentRam: number, hostname: string): number {
+    static getDisponibleRam(ns: NS, currentRam: number, hostname: string): number {
         return Math.max(
-            currentRam - Ram.getReserveRam(currentRam, hostname),
+            currentRam - Ram.getReserveRam(ns, currentRam, hostname),
             0
         );
     }
-    static getReserveRam(currentRam: number, hostname: string): number {
-        return Math.max(currentRam * (Ram.rateToKeep.get(hostname) ?? 0), Ram.toReserve.get(hostname) ?? 0);
+    static getReserveRam(ns: NS, currentRam: number, hostname: string): number {
+        return Math.max(
+            currentRam * (PiggyBankRepository.get(ns).ramBank.rateToKeep.get(hostname) ?? 0), 
+            PiggyBankRepository.get(ns).ramBank.toReserve.get(hostname) ?? 0
+        );
     }
 
 }

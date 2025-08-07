@@ -15,11 +15,11 @@ export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.
  */
 export async function main(ns: NS) {
     // reset reserve money
-    MoneyPiggyBank.setReserveMoney(0);
+    MoneyPiggyBank.setReserveMoney(ns, 0);
     
     // TODO : objectif dépend de la vitesse de gain
     /*if (!ns.hasTorRouter()) {
-        MoneyPiggyBank.setReserveMoney(200 * 1000);
+        MoneyPiggyBank.setReserveMoney(ns, 200 * 1000);
     }*/
 
     // reset des bases de données
