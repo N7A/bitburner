@@ -1,5 +1,6 @@
 import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
+import * as Log from 'workspace/frameworks/logging';
 
 export class ShareRamExecution implements RamResourceExecution {
     private scripts: string[];
@@ -19,5 +20,15 @@ export class ShareRamExecution implements RamResourceExecution {
         }
 
         return false;
+    }
+
+    setupDashboard(ns: NS, targetHost: string) {
+        ns.disableLog("ALL");
+        ns.enableLog("share");
+        ns.clearLog();
+        
+        Log.initTailTitle(ns, 'Share RAM', 'looper', targetHost);
+        
+        ns.print('Waiting to share...');
     }
 }

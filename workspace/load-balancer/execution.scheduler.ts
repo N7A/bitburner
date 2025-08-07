@@ -307,6 +307,9 @@ async function execute(ns: NS, execution: ExecutionParameters): Promise<number[]
         }
 
         const executionPid: number = ns.exec(script.scriptsFilepath, execution.hostname, execution.nbThread, ...script.args ?? []);
+        if (executionPid !==0 && new ShareRamExecution().getScript().includes(script.scriptsFilepath)) {
+            new ShareRamExecution().setupDashboard(ns, execution.hostname);
+        }
         pids.push(executionPid);
 
         if (executionPid === 0) {
