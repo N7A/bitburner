@@ -3,6 +3,7 @@ import { UpgradeType } from 'workspace/load-balancer/model/UpgradeType'
 import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import { main as copyToolkit } from 'workspace/hacking/spreading/copy-toolkit.launcher'
+import * as Log from 'workspace/frameworks/logging';
 
 export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
     if (upgrade.upgradeType === UpgradeType.RAM) {
@@ -14,7 +15,7 @@ export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
         }
 
         if(ns.upgradePurchasedServer(upgrade.hostname, upgrade.ram)) {
-            ns.toast(`{${upgrade.hostname}} upgrade to (${ns.formatRam(upgrade.ram)}) RAM for \$${upgrade.cost}`, ns.enums.ToastVariant.SUCCESS, 5000);
+            ns.toast(`{${upgrade.hostname}} upgrade to (${ns.formatRam(upgrade.ram)}) RAM for ${Log.money(ns, upgrade.cost)}`, ns.enums.ToastVariant.SUCCESS, 5000);
             let serverToUp = OwnedServersRepository.get(ns, upgrade.hostname);
             if (serverToUp) {
                 serverToUp.ram = upgrade.ram;
