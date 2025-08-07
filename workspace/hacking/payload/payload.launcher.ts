@@ -3,9 +3,11 @@ import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
 import * as Log from 'workspace/frameworks/logging';
 import * as ServersRepository from 'workspace/domain/servers/servers.repository';
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
+import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository';
 import { getAvailableServer } from 'workspace/load-balancer/main'
 import { execFitRam } from 'workspace/load-balancer/fit-ram.service'
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
+import { OrderType } from '/workspace/domain/executions/model/Order';
 
 //#region Constants
 export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts';
@@ -31,6 +33,8 @@ export async function main(ns: NS) {
         // free self RAM script and trigger payload
         const scripts = getPayloadScript(ns, target);
 
+        ExecutionsRepository.add(ns, {type: OrderType.HACK, target: target, weight: 1});
+
         // TODO : check if payload already running
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.looper.ts', targetHost)
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.looper.ts', 'home', targetHost)
@@ -48,7 +52,7 @@ export async function main(ns: NS) {
             payload = new SelfPayload(ns);
         }
 
-        await payload.execute(execution.hostname, target);
+        //await payload.execute(execution.hostname, target);
         //#endregion Payload
 
         ns.print(`END ${Log.action('Payload')} ${Log.target(target)}`);
