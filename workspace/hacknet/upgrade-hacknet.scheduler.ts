@@ -89,8 +89,8 @@ function setupDashboard(ns: NS) {
 function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null, nextUpgrade?: UpgradeExecution | undefined) {
     ns.clearLog();
     let nodes: NodeStats[] = Array(ns.hacknet.numNodes()).fill(0)
-        .map(i => ns.hacknet.getNodeStats(i))
-        .filter(x => x.cores < 16 && x.level < 200 && x.ram < 64);
+        .map((value, index) => ns.hacknet.getNodeStats(index))
+        .filter(x => x.cores < 16 || x.level < 200 || x.ram < 64);
     
     ns.print(`Nodes: ${ns.hacknet.numNodes()}`);
 
