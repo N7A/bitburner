@@ -8,44 +8,37 @@ import * as ServersRepository from 'workspace/domain/servers/servers.repository'
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);
 
-    ns.tprint(Log.getStartLog());
-    ns.tprint('Analyse');
-    ns.tprint('-------');
-    ns.tprint('');
+    setupDashboard(ns, input);
+
+    ns.print(Log.getStartLog());
 
     const serverData = ns.getServer(input.hostnameTarget);
 
     printData(ns, serverData);
 
-    ns.tprint(Log.getEndLog());
+    ns.print(Log.getEndLog());
 }
 
+// TODO : use function from main class
 function nukeAchievable(ns: NS, hostToHack: string): boolean {
     return ns.getServerNumPortsRequired(hostToHack) == 0
         && ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(hostToHack)
 }
 
 function printData(ns: NS, data: Server) {
-    var dataMessages: string[] = []
-    dataMessages.push('root access : ' + data.hasAdminRights)
+    ns.print(Log.INFO('Organisation', data.organizationName));
+    ns.print(Log.INFO('Unlocked : ', data.hasAdminRights));
     if (!data.hasAdminRights) {
-        dataMessages.push('nuke achievable : ' + nukeAchievable(ns, data.hostname))
+        ns.print(Log.INFO('Unlock possible', nukeAchievable(ns, data.hostname)));
+        ns.print(Log.INFO('Backdoor installé', data.backdoorInstalled));
+    } else if (!data.backdoorInstalled) {
+        ns.print(Log.INFO('Deep connect command', ServersRepository.getConnectCommand(ns, data.hostname) + ' backdoor;'));
     }
-    dataMessages.push('Backdoor installé : ' + data.backdoorInstalled);
-    dataMessages.push('Organisation : ' + data.organizationName);
-
-    dataMessages.push('Money : ' + Log.money(ns, data.moneyAvailable as number) + ' / ' + ns.formatNumber(data.moneyMax as number)
-        + ' (~' + Log.money(ns, (data.moneyMax as number) - (data.moneyAvailable as number)) + ')');
-    dataMessages.push('Security level : ' + ns.formatNumber(data.hackDifficulty as number) + ' >>> ' + ns.formatNumber(data.minDifficulty as number)
-        + ' (~' + ns.formatNumber((data.hackDifficulty as number) - (data.minDifficulty as number)) + ')');
-    
-    for (const message of dataMessages) {
-        ns.tprint(message);
-    }
-    ns.tprint('Path : ', ServersRepository.getHostPathLibelle(ns, data.hostname));
-    ns.tprint('Deep connect command : ', ServersRepository.getConnectCommand(ns, data.hostname) + ' backdoor;');
-
-    ns.tprint(data.hostname)
+    ns.print(Log.INFO('Path', ServersRepository.getHostPathLibelle(ns, data.hostname)));
+    ns.print(Log.INFO('Money', Log.money(ns, data.moneyAvailable as number) + ' / ' + ns.formatNumber(data.moneyMax as number)
+        + ' (~' + Log.money(ns, (data.moneyMax as number) - (data.moneyAvailable as number)) + ')'));
+    ns.print(Log.INFO('Security level', ns.formatNumber(data.hackDifficulty as number) + ' >>> ' + ns.formatNumber(data.minDifficulty as number)
+        + ' (~' + ns.formatNumber((data.hackDifficulty as number) - (data.minDifficulty as number)) + ')'));
 }
 
 //#region Input parameters
@@ -60,7 +53,7 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
-    if (!ns.args[0]) {
+    if (ns.args[0] === undefined) {
         ns.tprint('ERROR', ' ', 'Merci de renseigner un hostname');
         ns.exit();
     }
@@ -70,3 +63,14 @@ function getInput(ns: NS): InputArg {
     };
 }
 //#endregion Input parameters
+
+//#region Dashboard
+function setupDashboard(ns: NS, input: InputArg) {
+    ns.disableLog("ALL");
+    ns.clearLog();
+    
+    Log.initTailTitle(ns, Log.target(input.hostnameTarget), 'info');
+    
+    ns.ui.openTail();
+}
+//#endregion Dashboard

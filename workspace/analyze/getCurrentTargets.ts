@@ -24,10 +24,10 @@ export async function main(ns: NS) {
         ns.print('    ', Log.color('Required hacking skill : ', Log.Color.MAGENTA), data.unlockRequirements.requiredHackingSkill);
         ns.print(Log.color('----------', Log.Color.WHITE))
     }
-    ns.print(Log.color('Nombre de cible : ', Log.Color.MAGENTA), targets.length);
-    ns.print(Log.color('Nombre de port opener : ', Log.Color.MAGENTA), getPortPrograms(ns)
-        .filter(x => ns.fileExists(x.filename)).length);
-    ns.print(Log.color('Hacking skill : ', Log.Color.MAGENTA), ns.getPlayer().skills.hacking);
+    ns.print(Log.INFO('Nombre de cible', targets.length));
+    ns.print(Log.INFO('Nombre de port opener', getPortPrograms(ns)
+        .filter(x => ns.fileExists(x.filename)).length));
+    ns.print(Log.INFO('Hacking skill', ns.getPlayer().skills.hacking));
     ns.print(Log.INFO('Next target', getNextTarget(ns)?.name));
 	ns.print(Log.getEndLog());
 }

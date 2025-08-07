@@ -14,3 +14,14 @@ export async function main(ns: NS) {
     }
     ns.tprint(Log.getEndLog())
 }
+
+//#region Dashboard
+function setupDashboard(ns: NS) {
+    ns.disableLog("ALL");
+    ns.clearLog();
+    
+    Log.initTailTitle(ns, 'Contracts', 'info');
+    
+    ns.ui.openTail();
+}
+//#endregion Dashboard
