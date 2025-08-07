@@ -70,6 +70,6 @@ export function reset(ns: NS) {
  * @param hostname serveur qui porte l'execution
  * @param executions executions à sauvegarder
  */
-function resetWith(ns: NS, executions: Order[]) {
+export function resetWith(ns: NS, executions: Order[]) {
     ns.write(REPOSITORY, JSON.stringify(executions, null, 4), "w");
 }

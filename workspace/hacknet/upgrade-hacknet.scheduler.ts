@@ -88,20 +88,25 @@ function setupDashboard(ns: NS) {
 
 function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null, nextUpgrade?: UpgradeExecution | undefined) {
     ns.clearLog();
-    let nodes = Array(ns.hacknet.numNodes()).fill(0);
+    let nodes: NodeStats[] = Array(ns.hacknet.numNodes()).fill(0)
+        .map(i => ns.hacknet.getNodeStats(i))
+        .filter(x => x.cores < 16 && x.level < 200 && x.ram < 64);
     
-    ns.print(`Nodes: ${nodes.length}`);
+    ns.print(`Nodes: ${ns.hacknet.numNodes()}`);
 
-    ns.print(Log.buildTable(
-            ["Node", "Produced", "Uptime", "Production", "Level", "RAM", "Cores"],
-            nodes.map((v, i) => `${i}`),
-            nodes.map((v, i) => `\$${ns.formatNumber(ns.hacknet.getNodeStats(i).totalProduction)}`),
-            nodes.map((v, i) => `${new Date(ns.hacknet.getNodeStats(i).timeOnline * 1000).toLocaleTimeString()}`),
-            nodes.map((v, i) => `\$${ns.formatNumber(ns.hacknet.getNodeStats(i).production)} /s`),
-            nodes.map((v, i) => `${ns.hacknet.getNodeStats(i).level}`),
-            nodes.map((v, i) => `${ns.hacknet.getNodeStats(i).ram}`),
-            nodes.map((v, i) => `${ns.hacknet.getNodeStats(i).cores}`),
-        ));
+    if (nodes.length > 0) {
+        ns.print(Log.buildTable(
+                ["Node", "Produced", "Uptime", "Production", "Level", "RAM", "Cores"],
+                nodes.map((v, i) => `${i}`),
+                nodes.map((v, i) => `\$${ns.formatNumber(v.totalProduction)}`),
+                nodes.map((v, i) => `${new Date(v.timeOnline * 1000).toLocaleTimeString()}`),
+                nodes.map((v, i) => `\$${ns.formatNumber(v.production)} /s`),
+                //nodes.map((v, i) => `\$${ns.formatRam(v.ramUsed ?? 0)}`),
+                nodes.map((v, i) => `${v.level}`),
+                nodes.map((v, i) => `${v.ram}`),
+                nodes.map((v, i) => `${v.cores}`),
+            ));
+    }
     
     if (interval !== null) {
         ns.print('\n');
@@ -114,5 +119,5 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
     }
     ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
     ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(currentMoney))}`));
-    ns.ui.resizeTail(650, nodes.length * 25 + 300)
+    ns.ui.resizeTail(650, Math.min(nodes.length * 25 + 300, 600))
 }

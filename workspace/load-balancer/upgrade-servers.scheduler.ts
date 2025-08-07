@@ -68,8 +68,7 @@ function getInput(ns: NS): InputArg {
 
 //#region Dashboard
 function setupDashboard(ns: NS) {
-    /*ns.disableLog("ALL");
-    ns.enableLog("share")*/
+    ns.disableLog("ALL");
     ns.clearLog();
     
     Log.initTailTitle(ns, 'Upgrade server', 'scheduler');

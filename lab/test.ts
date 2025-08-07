@@ -5,5 +5,5 @@ export async function main(ns: NS) {
     //ns.print(ns.ps())
     /*ns.clearPort(1)
     ns.tprint(ns.readPort(1))*/
-    ns.tprint(ns.ls('crush-fitness'))
+    ns.alert('test \n 1')
 }

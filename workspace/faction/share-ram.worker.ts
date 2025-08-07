@@ -50,7 +50,7 @@ function setupDashboard(ns: NS, input: InputArg) {
 	ns.ui.moveTail(1200, 50);
 	
 	ns.print('Waiting to share...');
-	ns.ui.openTail();
+	//ns.ui.openTail();
 }
 
 function refreshDashBoard(ns: NS, startTime: Date, shareStartTime: Date, shareEndTime: Date) {
