@@ -84,7 +84,7 @@ export async function main(ns: NS) {
 
         ns.print(Log.getEndLog());
         if (input.runHasLoop) {
-            await ns.asleep(1000);
+            await ns.asleep(500);
         }
     } while (input.runHasLoop)
     
@@ -229,7 +229,7 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
     let ramNeeded = ramAuthorized;
     const entries = Array.from(ramByServer.entries())
         .sort((a,b) => a[1] - b[1]);
-    ns.print(ns.formatRam(ramAuthorized))
+    
     for(const entry of entries) {
         const ramNeededByThread = await getRamNeeded(ns, entry[0], scripts);
         if (ramNeededByThread === undefined || ramAuthorized < ramNeededByThread) {
@@ -241,7 +241,6 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
         const nbThreadPossible = getNbPossibleThreads(Math.min(currentAvailableRam, ramNeeded), ramNeededByThread);
 
         if (nbThreadPossible > 0) {
-                const nbThread = nbThreadPossible;
                 let execution: ExecutionParameters = {
                     hostname: entry[0], 
                     nbThread: nbThreadPossible, 
