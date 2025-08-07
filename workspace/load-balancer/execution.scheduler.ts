@@ -18,45 +18,71 @@ export async function main(ns: NS) {
 
     let orders: Order[] = [];
 
-    ns.atExit(() => orders.flatMap(x => x.pid).forEach(x => ns.kill(x)));
+    ns.atExit(() => {
+        orders.flatMap(x => x.pid).forEach(x => {
+            if (x) {
+                ns.kill(x)
+            }
+        })
+        orders.forEach(x => {
+            x.pid = []
+        })
+        ExecutionsRepository.resetWith(ns, orders)
+    });
     
     do {
-        Log.getStartLog();
+        //ns.clearLog();
+        ns.print(Log.getStartLog());
 
+        ns.print('Waiting order modification...');
         // TODO : wait orders change or ram disponible
         // wait until orders change
-        const currentOrders = await waitOrderChange(ns, orders);
+        const currentOrders = await waitOrderChange(ns);
 
         // kill all for recalcul repartition
-        orders.flatMap(x => x.pid).forEach(x => ns.kill(x));
+        orders.flatMap(x => x.pid)
+            .forEach(x => {
+                if (x !== undefined) {
+                    ns.kill(x)
+                }
+            });
         // maj orders
-        orders = currentOrders;
+        orders = Array.from(currentOrders);
 
         // get target servers
-        const targetServers: string[] = Array.from(new Set([
-            ...OwnedServers.getAll(ns).map(x => x.hostname),
-            ...ServersRepository.getAll(ns)
-                .map(x => ServersRepository.get(ns, x))
-                .filter(x => x.state.unlocked)
-                .map(x => x.name)
-        ]));
+        const targetServers: string[] = getTargetServers(ns);
 
+        ns.print('Define servers repartion');
         // define servers repartion
         const executions: Map<Order, ExecutionParameters[]> = await getRepartitions(ns, orders, targetServers);
 
         ns.print('Executions');
+        let ordersToSave: Order[] = [];
         // lancement des scripts
-        executions.forEach(async(executions, order) => {
-            for(const execution of executions) {
+        for (const order of executions.keys()) {
+            let orderToSave = order;
+            let currentExecutions = executions.get(order)
+            if (!currentExecutions) {
+                ordersToSave.push(order)
+                continue;
+            }
+            for(const execution of currentExecutions) {
+                let action: string = '';
+                if (order.type === OrderType.SHARE_RAM) {
+                    action = 'Sharing';
+                }
+                ns.print(`${action} ${execution.nbThread} threads on ${execution.hostname}`)
                 // TODO : setup dashboard, pour reduire au minimum la ram
                 const pids = await execute(ns, execution);
-                order.pid = [...(order.pid ?? []), ...pids];
+                orderToSave.pid = [...(orderToSave.pid ?? []), ...pids];
             }
-        });
+            ordersToSave.push(order)
+        }
+        ExecutionsRepository.resetWith(ns, ordersToSave)
 
-        Log.getEndLog();
+        ns.print(Log.getEndLog());
         if (input.runHasLoop) {
-            await ns.sleep(500);
+            await ns.asleep(500);
         }
     } while (input.runHasLoop)
     
@@ -91,28 +117,38 @@ function setupDashboard(ns: NS) {
 }
 //#endregion Dashboard
 
-async function waitOrderChange(ns: NS, oldOrders: Order[]): Promise<Order[]> {
+async function waitOrderChange(ns: NS): Promise<Order[]> {
     let currentOrders: Order[] = ExecutionsRepository.getAll(ns)
-            .filter(order => {
-                if (order.type === OrderType.SHARE_RAM) {
-                    return !new ShareRamExecution().isExecutionUsless(ns);
-                }
+        .filter(order => {
+            if (order.type === OrderType.SHARE_RAM) {
+                return !new ShareRamExecution().isExecutionUsless(ns);
+            }
 
-                return true;
-            });
-        while (
-            oldOrders.filter(x => !currentOrders.includes(x)).length === 0 
-            && currentOrders.filter(x => !oldOrders.includes(x)).length === 0
-        ) {
-            await ns.sleep(500);
-            
-            // remove from orders manual killed or script KO 
-            // TODO : alert ?
-            const killedOrders: Order[] = ExecutionsRepository.getAll(ns)
-                .filter(x => x.pid?.some(y => !ns.isRunning(y)));
+            return true;
+        });
+    
+    const ramDisponible = getTargetServers(ns)
+            .map(x => availableRam(ns, x))
+            .reduce((a,b) => a+b);
+    let newRamDisponible = ramDisponible
+
+    while (
+        currentOrders.every(x => x.pid && x.pid.length > 0)
+        && newRamDisponible === ramDisponible
+    ) {
+        await ns.sleep(500);
+        
+        newRamDisponible = getTargetServers(ns)
+            .map(x => availableRam(ns, x))
+            .reduce((a,b) => a+b);
+
+        // remove from orders manual killed or script KO 
+        // TODO : alert ?
+        const killedOrders: Order[] = ExecutionsRepository.getAll(ns)
+            .filter(x => x.pid?.some(y => !ns.isRunning(y)));
+        if (killedOrders.length > 0) {
             killedOrders.forEach(x => ExecutionsRepository.remove(ns, x));
             ns.print('Execution order killed : ', killedOrders.map(x => x.type + ' ' + x.target));
-            
             currentOrders = ExecutionsRepository.getAll(ns)
                 .filter(order => {
                     if (order.type === OrderType.SHARE_RAM) {
@@ -121,12 +157,34 @@ async function waitOrderChange(ns: NS, oldOrders: Order[]): Promise<Order[]> {
 
                     return true;
                 });
+            break;
         }
+        
+        currentOrders = ExecutionsRepository.getAll(ns)
+            .filter(order => {
+                if (order.type === OrderType.SHARE_RAM) {
+                    return !new ShareRamExecution().isExecutionUsless(ns);
+                }
 
-        return currentOrders;
+                return true;
+            });
+        
+    }
+
+    return currentOrders;
 }
 
 //#region Répartition
+function getTargetServers(ns: NS) {
+    return Array.from(new Set([
+            ...OwnedServers.getAll(ns).map(x => x.hostname),
+            ...ServersRepository.getAll(ns)
+                .map(x => ServersRepository.get(ns, x))
+                .filter(x => x.state.unlocked)
+                .map(x => x.name)
+        ]));
+}
+
 async function getRepartitions(ns: NS, orders: Order[], targetServers: string[]): Promise<Map<Order, ExecutionParameters[]>> {
     let executions: Map<Order, ExecutionParameters[]> = new Map();
     
@@ -143,7 +201,7 @@ async function getRepartitions(ns: NS, orders: Order[], targetServers: string[])
         let scriptsFilepath: ScriptParameters[] = [];
         if (order.type === OrderType.SHARE_RAM) {
             scriptsFilepath.push(...new ShareRamExecution().getScript().map(x => {return {scriptsFilepath: x} as ScriptParameters}));
-        } else if (order.type === OrderType.HACK) {
+        } else if (order.type === OrderType.HACK && order.target) {
             scriptsFilepath.push(...new PayloadExecution(ns, order.target).getScript().map(x => {return {scriptsFilepath: x} as ScriptParameters}));
         }
         ns.print(Log.INFO('Order', scriptsFilepath.map(x => x.scriptsFilepath)));
