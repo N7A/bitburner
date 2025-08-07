@@ -52,11 +52,11 @@ export async function main(ns: NS) {
         // get target servers
         const targetServers: string[] = getTargetServers(ns);
 
-        ns.print('Define servers repartion');
+        ns.print(Log.action('Define servers repartion'));
         // define servers repartion
         const executions: Map<Order, ExecutionParameters[]> = await getRepartitions(ns, orders, targetServers);
 
-        ns.print('Executions');
+        ns.print(Log.action('Executions'));
         let ordersToSave: Order[] = [];
         // lancement des scripts
         for (const order of executions.keys()) {
@@ -69,11 +69,13 @@ export async function main(ns: NS) {
             for(const execution of currentExecutions) {
                 let action: string = '';
                 if (order.type === OrderType.SHARE_RAM) {
-                    action = 'Sharing';
+                    action = Log.action('Sharing');
+                } else if (order.type === OrderType.HACK) {
+                    action = `${Log.action('Hacking')} ${order.target ? Log.target(order.target) + ' ': ''}`;
                 }
-                ns.print(`${action} ${execution.nbThread} threads on ${execution.hostname}`)
                 // TODO : setup dashboard, pour reduire au minimum la ram
                 const pids = await execute(ns, execution);
+                ns.print(`${action} ${ns.formatNumber(execution.nbThread, 0)} threads on ${Log.source(execution.hostname)}`);
                 orderToSave.pid = [...(orderToSave.pid ?? []), ...pids];
             }
             ordersToSave.push(order)
@@ -82,7 +84,7 @@ export async function main(ns: NS) {
 
         ns.print(Log.getEndLog());
         if (input.runHasLoop) {
-            await ns.asleep(500);
+            await ns.asleep(1000);
         }
     } while (input.runHasLoop)
     
@@ -119,7 +121,7 @@ function setupDashboard(ns: NS) {
 
 async function waitOrderChange(ns: NS): Promise<Order[]> {
     let currentOrders: Order[] = ExecutionsRepository.getAll(ns)
-        .filter(order => {
+        .filter((order: Order) => {
             if (order.type === OrderType.SHARE_RAM) {
                 return !new ShareRamExecution().isExecutionUsless(ns);
             }
@@ -191,9 +193,11 @@ async function getRepartitions(ns: NS, orders: Order[], targetServers: string[])
     // init ram disponible by server
     let ramByServer: Map<string, number> = new Map(targetServers.map(x => [x, availableRam(ns, x)]));
 
+    const ramDisponible = targetServers.map(x => availableRam(ns, x)).reduce((a,b) => a+b);
+
     for(const order of orders) {
-        let weightType = weights.get(order.type) ?? 1 / orders.filter(x => x.type === order.type).length;
-        let weightPerso = order.weight ?? 1 / Math.max(orders.filter(x => x.type === order.type)
+        let weightType = (weights.get(order.type) ?? 1) / Array.from(new Set(orders.map(x => x.type))).length;
+        let weightPerso = (order.weight ?? 1) / Math.max(orders.filter(x => x.type === order.type)
             .map(x => x.weight ?? 1)
             .reduce((a,b) => a+b), 1);
             
@@ -202,17 +206,14 @@ async function getRepartitions(ns: NS, orders: Order[], targetServers: string[])
         if (order.type === OrderType.SHARE_RAM) {
             scriptsFilepath.push(...new ShareRamExecution().getScript().map(x => {return {scriptsFilepath: x} as ScriptParameters}));
         } else if (order.type === OrderType.HACK && order.target) {
-            scriptsFilepath.push(...new PayloadExecution(ns, order.target).getScript().map(x => {return {scriptsFilepath: x} as ScriptParameters}));
+            scriptsFilepath.push(...new PayloadExecution(ns, order.target).getScript().map(x => {return {scriptsFilepath: x, args: [order.target]} as ScriptParameters}));
         }
         ns.print(Log.INFO('Order', scriptsFilepath.map(x => x.scriptsFilepath)));
-
-        const ramDisponible = targetServers.map(x => availableRam(ns, x)).reduce((a,b) => a+b);
-        ns.print(Log.INFO('Ram disponible', ramDisponible));
 
         const ramAuthorized = weightPerso * weightType * ramDisponible;
         ns.print(Log.INFO('Weight perso', weightPerso));
         ns.print(Log.INFO('Weight type', weightType));
-        ns.print(Log.INFO('Ram authorisée', ramAuthorized));
+        ns.print(Log.INFO('Ram authorisée', ns.formatRam(ramAuthorized) + '/' + ns.formatRam(ramDisponible)));
 
         order.pid = []
         // recherche de la répartition possible sur les serveurs
@@ -228,7 +229,7 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
     let ramNeeded = ramAuthorized;
     const entries = Array.from(ramByServer.entries())
         .sort((a,b) => a[1] - b[1]);
-    
+    ns.print(ns.formatRam(ramAuthorized))
     for(const entry of entries) {
         const ramNeededByThread = await getRamNeeded(ns, entry[0], scripts);
         if (ramNeededByThread === undefined || ramAuthorized < ramNeededByThread) {
@@ -237,18 +238,19 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
         const currentAvailableRam: number = entry[1] ?? 0;
 
         // find possible thread number
-        const nbThread = getNbPossibleThreads(currentAvailableRam, ramNeededByThread);
+        const nbThreadPossible = getNbPossibleThreads(Math.min(currentAvailableRam, ramNeeded), ramNeededByThread);
 
-        if (nbThread > 0) {
+        if (nbThreadPossible > 0) {
+                const nbThread = nbThreadPossible;
                 let execution: ExecutionParameters = {
                     hostname: entry[0], 
-                    nbThread: nbThread, 
+                    nbThread: nbThreadPossible, 
                     scripts: scripts
                 };
                 executions.push(execution);
 
-                ramByServer.set(entry[0], currentAvailableRam-nbThread * ramNeededByThread);
-                ramNeeded -= nbThread * ramNeededByThread;
+                ramByServer.set(entry[0], currentAvailableRam-nbThreadPossible * ramNeededByThread);
+                ramNeeded -= nbThreadPossible * ramNeededByThread;
                 if (ramNeeded <= 0) {
                     break;
                 }
@@ -305,16 +307,12 @@ async function execute(ns: NS, execution: ExecutionParameters): Promise<number[]
             }
         }
 
-        ns.tprint("INFO", " ", `${Log.color(ns.formatNumber(execution.nbThread, 0), Log.Color.CYAN)} threads of ${script.scriptsFilepath} can be runned from ${Log.color(execution.hostname, Log.Color.CYAN)}`);
-
         const executionPid: number = ns.exec(script.scriptsFilepath, execution.hostname, execution.nbThread, ...script.args ?? []);
         pids.push(executionPid);
 
         if (executionPid === 0) {
             return pids;
         }
-
-        ns.tprint("SUCCESS", " ", `Starting ${Log.color(ns.formatNumber(execution.nbThread, 0), Log.Color.CYAN)} threads of ${script.scriptsFilepath} from ${Log.color(execution.hostname, Log.Color.CYAN)}`);
     }
 
     return pids;
