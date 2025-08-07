@@ -34,7 +34,7 @@ export async function main(ns: NS) {
                 ns.print(Log.INFO('Next target ports needed', newNextTarget.unlockRequirements.numOpenPortsRequired));
                 ns.print(Log.INFO('Next target lvl needed', newNextTarget.unlockRequirements.requiredHackingSkill));
                 
-                if (getAvailablePortProgram(ns).length < (nextTarget.unlockRequirements.numOpenPortsRequired as number)) {
+                if (getAvailablePortProgram(ns).length < (nextTarget?.unlockRequirements.numOpenPortsRequired as number)) {
                     const title = 'Port opener manquant pour continuer l\'infection'
                     const moveMessage = '1. Go to City > [alpha ent.];'
                     const buyMessage = '2. Purchase TOR router;'

@@ -7,7 +7,7 @@ import * as ExecutionsRepository from 'workspace/domain/executions/executions.re
 import { getAvailableServer } from 'workspace/load-balancer/main'
 import { execFitRam } from 'workspace/load-balancer/fit-ram.service'
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
-import { OrderType } from '/workspace/domain/executions/model/Order';
+import { OrderType } from 'workspace/domain/executions/model/Order';
 
 //#region Constants
 export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts';
