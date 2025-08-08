@@ -1,4 +1,4 @@
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import * as Log from 'workspace/frameworks/logging';
 

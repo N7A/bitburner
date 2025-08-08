@@ -3,7 +3,7 @@ import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
 import{getAvailableServer} from 'workspace/load-balancer/main'
 import {ExecutionParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
 
 /**

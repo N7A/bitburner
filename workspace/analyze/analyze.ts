@@ -1,5 +1,5 @@
 import * as Log from 'workspace/frameworks/logging';
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import { ServersService } from 'workspace/servers/servers.service';
 
 /**
  * Affiche les données utiles pour backdoor un serveur.
@@ -32,9 +32,9 @@ function printData(ns: NS, data: Server) {
         ns.print(Log.INFO('Unlock possible', nukeAchievable(ns, data.hostname)));
         ns.print(Log.INFO('Backdoor installé', data.backdoorInstalled));
     } else if (!data.backdoorInstalled) {
-        ns.print(Log.INFO('Deep connect command', ServersRepository.getConnectCommand(ns, data.hostname) + ' backdoor;'));
+        ns.print(Log.INFO('Deep connect command', ServersService.getConnectCommand(ns, data.hostname) + ' backdoor;'));
     }
-    ns.print(Log.INFO('Path', ServersRepository.getHostPathLibelle(ns, data.hostname)));
+    ns.print(Log.INFO('Path', ServersService.getHostPathLibelle(ns, data.hostname)));
     ns.print(Log.INFO('Money', Log.money(ns, data.moneyAvailable as number) + ' / ' + ns.formatNumber(data.moneyMax as number)
         + ' (~' + Log.money(ns, (data.moneyMax as number) - (data.moneyAvailable as number)) + ')'));
     ns.print(Log.INFO('Security level', ns.formatNumber(data.hackDifficulty as number) + ' >>> ' + ns.formatNumber(data.minDifficulty as number)

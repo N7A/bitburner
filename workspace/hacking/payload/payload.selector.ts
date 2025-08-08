@@ -1,4 +1,4 @@
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 
 export function getPayloadTargets(ns: NS): string[] {
     return ServersRepository.getAll(ns)

@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
-import * as ServersRepository from 'workspace/domain/servers/servers.repository';
+import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 
 //#region Constants
 export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts';

@@ -1,6 +1,6 @@
 import {Order, OrderType} from 'workspace/domain/executions/model/Order'
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
-import * as ServersRepository from 'workspace/domain/servers/servers.repository'
+import { ServersRepository } from 'workspace/domain/servers/servers.repository'
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
