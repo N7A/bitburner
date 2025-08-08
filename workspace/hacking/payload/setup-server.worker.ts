@@ -24,7 +24,7 @@ export async function main(ns: NS) {
     const hackData: HackData = data!.hackData
 
     // disable execution
-    ExecusionsRepository.add(ns, {type: OrderType.SETUP_HACK, target: targetHost, weight: 0});
+    ExecusionsRepository.add(ns, {type: OrderType.SETUP_HACK, target: targetHost, weight: 1});
 
     //#region Setup
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Weaken', Log.Color.CYAN)}`);

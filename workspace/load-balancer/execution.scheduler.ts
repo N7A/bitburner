@@ -126,8 +126,6 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
                 return !new ShareRamExecution().isExecutionUsless(ns);
             } else if (order.type === OrderType.HACK) {
                 return !new PayloadExecution(ns, order.target).isExecutionUsless(ns);
-            } else if (order.type === OrderType.SETUP_HACK) {
-                return false;
             }
 
             return true;
@@ -140,7 +138,7 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
 
     while (
         // commandes inchangées
-        currentOrders.every(x => x.pid && x.pid.length > 0)
+        currentOrders.filter(x => x.type !== OrderType.SETUP_HACK).every(x => x.pid && x.pid.length > 0)
         // RAM inchangée
         && newRamDisponible === ramDisponible
     ) {
@@ -153,6 +151,7 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
         // remove from orders manual killed or script KO 
         // TODO : alert ?
         const killedOrders: Order[] = ExecutionsRepository.getAll(ns)
+            .filter(x => x.type !== OrderType.SETUP_HACK)
             .filter(x => x.pid?.some(y => !ns.isRunning(y)));
         if (killedOrders.length > 0) {
             killedOrders.forEach(x => ExecutionsRepository.remove(ns, x));
@@ -163,8 +162,6 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
                         return !new ShareRamExecution().isExecutionUsless(ns);
                     } else if (order.type === OrderType.HACK) {
                         return !new PayloadExecution(ns, order.target).isExecutionUsless(ns);
-                    } else if (order.type === OrderType.SETUP_HACK) {
-                        return false;
                     }
 
                     return true;
@@ -178,8 +175,6 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
                     return !new ShareRamExecution().isExecutionUsless(ns);
                 } else if (order.type === OrderType.HACK) {
                     return !new PayloadExecution(ns, order.target).isExecutionUsless(ns);
-                } else if (order.type === OrderType.SETUP_HACK) {
-                    return false;
                 }
 
                 return true;
@@ -206,8 +201,10 @@ async function getRepartitions(ns: NS, orders: Order[], targetServers: string[])
 
     const ramDisponible = targetServers.map(x => availableRam(ns, x)).reduce((a,b) => a+b);
 
-    for(const order of orders) {
-        let weightType = (weights.get(order.type) ?? 1) / Array.from(new Set(orders.map(x => x.type))).length;
+    for(const order of orders.filter(x => x.type !== OrderType.SETUP_HACK)) {
+        let weightType = (weights.get(order.type) ?? 1) / Math.max(Array.from(new Set(orders.map(x => x.type)))
+            .map(x => weights.get(x) ?? 1)
+            .reduce((a,b) => a+b), 1);
         let weightPerso = (order.weight ?? 1) / Math.max(orders.filter(x => x.type === order.type)
             .map(x => x.weight ?? 1)
             .reduce((a,b) => a+b), 1);
