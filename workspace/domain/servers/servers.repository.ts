@@ -34,7 +34,7 @@ export class ServersRepository {
      * @param hostname serveur qui porte l'execution
      * @param execution nouvelle execution
      */
-    static add(ns: NS, hostname: string, type: ServerType, parentHost: string = 'UNKNOWN', depth?: number, unlocked?: boolean) {
+    static add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', depth?: number) {
         const server = ns.getServer(hostname);
         
         const unlockRequirements: UnlockRequirements = {
@@ -50,13 +50,13 @@ export class ServersRepository {
 
         const targetData: ServerData = {
             name: hostname,
-            type: type,
+            type: hostname === 'home' ? ServerType.MAIN : server.purchasedByPlayer ? ServerType.BOUGHT : ServerType.EXTERNAL,
             parent: parentHost,
             depth: depth,
             unlockRequirements: unlockRequirements,
             hackData: hackData,
             state: {
-                unlocked: unlocked
+                unlocked: server.hasAdminRights
             }
         };
         
@@ -116,12 +116,23 @@ export class ServersRepository {
         ServersRepository.resetWith(ns, serverData.name, serverData);
     }
 
-    static refresh(ns: NS) {
-        const serversFile: string[] = ServersRepository.getAll(ns)
-        const knownServers: ServerData[] = serversFile.map(file => (JSON.parse(ns.read(file)) as ServerData))
-        for (const server of knownServers) {
-            ServersRepository.add(ns, server.name, server.type);
-        }
+    static refresh(ns: NS, hostname: string) {
+        const server = ns.getServer(hostname);
+        let serverData = ServersRepository.get(ns, hostname);
+        
+        serverData.unlockRequirements.numOpenPortsRequired = server.numOpenPortsRequired;
+        serverData.unlockRequirements.requiredHackingSkill = server.requiredHackingSkill;
+
+        serverData.hackData.minDifficulty = server.minDifficulty;
+        serverData.hackData.moneyMax = server.moneyMax;
+        serverData.hackData.maxRam = server.maxRam;
+        serverData.hackData.cpuCores = server.cpuCores;
+
+        serverData.name = hostname;
+        serverData.type = hostname === 'home' ? ServerType.MAIN : server.purchasedByPlayer ? ServerType.BOUGHT : ServerType.EXTERNAL,
+        serverData.state.unlocked = server.hasAdminRights;
+        
+        ServersRepository.resetWith(ns, serverData.name, serverData);
     }
 
     static reset(ns: NS) {
@@ -129,9 +140,9 @@ export class ServersRepository {
         for (const server of knownServers) {
             ns.mv('home', REPOSITORY + '/' + server + '.json', REPOSITORY + '/archive/' + server + '.json')
         }
-        ServersRepository.add(ns, 'home', ServerType.MAIN);
+        ServersRepository.add(ns, 'home');
         ns.getPurchasedServers().forEach(x => {
-            ServersRepository.add(ns, x, ServerType.BOUGHT);
+            ServersRepository.add(ns, x);
         })
     }
 

@@ -1,18 +1,18 @@
-import * as Referentiel from 'workspace/referentiel'
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
-import {Targets} from 'workspace/domain/targets/model/Targets'
 import * as Log from 'workspace/frameworks/logging';
 import { getNextTarget } from 'workspace/hacking/unlock/unlock.selector'
 import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
+import { ServersService } from 'workspace/servers/servers.service';
+import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 
 export async function main(ns: NS) {
     ns.ui.setTailTitle('Unlock targets');
     ns.ui.openTail();
 
     // load target files
-    let targets: ServerData[] = Array.from((JSON.parse(ns.read(Referentiel.TARGETS_REPOSITORY_FILE)) as Targets).unlockTargets)
+    let targets: ServerData[] = ServersService.getAllLocked(ns)
         // load host data
-        .map(target => JSON.parse(ns.read(Referentiel.SERVERS_REPOSITORY + `/${target}.json`)) as ServerData)
+        .map(target => ServersRepository.get(ns, target) as ServerData)
         .sort((a, b) => (a.unlockRequirements.requiredHackingSkill as number) - (b.unlockRequirements.requiredHackingSkill as number))
         .reverse();
 

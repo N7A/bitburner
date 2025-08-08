@@ -1,5 +1,4 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
@@ -23,7 +22,6 @@ export async function main(ns: NS) {
     }*/
 
     // reset des bases de données
-    OwnedServersRepository.reset(ns);
     ServersRepository.reset(ns);
     ExecutionsRepository.reset(ns);
 

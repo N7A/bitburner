@@ -1,15 +1,14 @@
 import { ServersService } from 'workspace/servers/servers.service';
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import * as Log from 'workspace/frameworks/logging';
 import * as Referentiel from 'workspace/referentiel'
+import { ServersRepository } from 'workspace/domain/servers/servers.repository';
+import { ServerType } from 'workspace/domain/servers/model/ServerData';
 
 export async function main(ns: NS) {
     ns.print(Log.getStartLog())
-    // load targets
-    const ownedServers = OwnedServersRepository.getAll(ns);
     // load host data
     var serversHackable: string[] = ServersService.getAllUnlocked(ns)
-        .filter(x => !ownedServers.map(y => y.hostname).includes(x));
+        .filter(x => ServersRepository.get(ns, x).type !== ServerType.BOUGHT);
 
     let scripts = [
         Referentiel.HACKING_DIRECTORY + '/payload/grow.looper.ts',
@@ -24,8 +23,8 @@ export async function main(ns: NS) {
     for (const server of serversHackable) {
         // kill payload scripts
         for (const script of scripts) {
-            for (const owned of ownedServers) {
-                ns.kill(script, owned.hostname, server);
+            for (const scriptableServer of ServersService.getAllUnlocked(ns)) {
+                ns.kill(script, scriptableServer, server);
             }
             ns.scriptKill(script, server);
         }

@@ -1,6 +1,6 @@
 import {ExecutionParameters, ExecutionType} from 'workspace/load-balancer/model/ExecutionServer'
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
+import { ServersService } from 'workspace/servers/servers.service';
 
 /**
  * Check RAM availability to priorize
@@ -66,8 +66,7 @@ function getOwnedServers(ns: NS, priorityTarget?: string) {
         ownedHosts.push(priorityTarget);
     }
     ownedHosts.push(
-        ...OwnedServersRepository.getAll(ns)
-        .map(x => x.hostname)
+        ...ServersService.getAllUnlocked(ns)
         .sort((a, b) =>  availableRam(ns, a) - availableRam(ns, b))
         .reverse()
     );

@@ -6,7 +6,6 @@ import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/mod
 import * as Log from 'workspace/frameworks/logging';
 import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
 import { weights } from 'workspace/load-balancer/application-properties'
-import * as OwnedServers from 'workspace/domain/owned-servers.repository'
 import { ShareRamExecution } from 'workspace/faction/model/ShareRamExecution'
 import { PayloadExecution } from 'workspace/hacking/model/PayloadExecution'
 
@@ -187,10 +186,7 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
 
 //#region Répartition
 function getTargetServers(ns: NS) {
-    return Array.from(new Set([
-            ...OwnedServers.getAll(ns).map(x => x.hostname),
-            ...ServersService.getAllUnlocked(ns)
-        ]));
+    return Array.from(new Set(ServersService.getAllUnlocked(ns)));
 }
 
 async function getRepartitions(ns: NS, orders: Order[], targetServers: string[]): Promise<Map<Order, ExecutionParameters[]>> {

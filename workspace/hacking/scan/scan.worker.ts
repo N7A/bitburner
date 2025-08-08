@@ -1,7 +1,5 @@
-import {ServerData, ServerType} from 'workspace/domain/servers/model/ServerData'
+import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import { ServersRepository } from 'workspace/domain/servers/servers.repository'
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
-import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
 import * as Log from 'workspace/frameworks/logging';
 
 /**
@@ -27,8 +25,7 @@ export async function main(ns: NS, scanTargets: string[]) {
 
         // load targets
         const newTargets = neighbors
-            .filter(x => !ServersRepository.getAll(ns).includes(x))
-            .filter(x => !(OwnedServersRepository.getAll(ns) as OwnedServer[]).map(x => x.hostname).includes(x));
+            .filter(x => !ServersRepository.getAll(ns).includes(x));
 
         handleNewTargets(ns, newTargets, target);
         
@@ -106,7 +103,7 @@ function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean
     for (const newTarget of newTargets) {
         // add to scan targets
         // add to unlock targets
-        ServersRepository.add(ns, newTarget, ServerType.EXTERNAL, parent, depth ?? undefined, false);
+        ServersRepository.add(ns, newTarget, parent, depth ?? undefined);
     }
 
     return true;

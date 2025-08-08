@@ -1,18 +1,15 @@
-import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'
 import { UpgradeType } from 'workspace/load-balancer/model/UpgradeType'
+import { ServersRepository } from 'workspace/domain/servers/servers.repository';
+import { ServerData, ServerType } from 'workspace/domain/servers/model/ServerData';
 
 export async function selectUpgrade(ns: NS, maxMoneyToSpend?: number): Promise<UpgradeExecution> {
-    let upgradableServers: OwnedServer[] = OwnedServersRepository.getAll(ns)
-        .filter(x => x.hostname !== 'home')
-        .filter(x => x.ram < ns.getPurchasedServerMaxRam());
+    let upgradableServers: ServerData[] = ServersRepository.getAll(ns)
+        .map(x => ServersRepository.get(ns, x))
+        .filter(x => x.type === ServerType.BOUGHT)
+        .filter(x => x.hackData.maxRam < ns.getPurchasedServerMaxRam());
 
-    if (upgradableServers.some(x => x.ram === undefined)) {
-        OwnedServersRepository.reset(ns);
-    }
-
-    upgradableServers = upgradableServers.sort((a, b) => a.ram - b.ram);
+    upgradableServers = upgradableServers.sort((a, b) => a.hackData.maxRam - b.hackData.maxRam);
 
     const serverToUp = upgradableServers.shift();
     if (serverToUp) {
@@ -23,27 +20,27 @@ export async function selectUpgrade(ns: NS, maxMoneyToSpend?: number): Promise<U
     
 }
 
-async function getProfitUpgrade(ns: NS, server: OwnedServer, maxMoneyToSpend?: number): Promise<UpgradeExecution> {
+async function getProfitUpgrade(ns: NS, server: ServerData, maxMoneyToSpend?: number): Promise<UpgradeExecution> {
     let pow = 1;
 
     if (maxMoneyToSpend !== undefined) {
         // found max upgrade possible
         ns.print('Recherche de la RAM maximum');
-        let nextCost = ns.getPurchasedServerUpgradeCost(server.hostname, getNewRam(server.ram, pow+1));
-        while (nextCost < maxMoneyToSpend && getNewRam(server.ram, pow+1) <= ns.getPurchasedServerMaxRam()) {
+        let nextCost = ns.getPurchasedServerUpgradeCost(server.name, getNewRam(server.hackData.maxRam, pow+1));
+        while (nextCost < maxMoneyToSpend && getNewRam(server.hackData.maxRam, pow+1) <= ns.getPurchasedServerMaxRam()) {
             pow++;
             await ns.sleep(500);
-            nextCost = ns.getPurchasedServerUpgradeCost(server.hostname, getNewRam(server.ram, pow+1));
+            nextCost = ns.getPurchasedServerUpgradeCost(server.name, getNewRam(server.hackData.maxRam, pow+1));
         }
     }
 
-    let ram = getNewRam(server.ram, pow);
+    let ram = getNewRam(server.hackData.maxRam, pow);
     
     return {
-        hostname: server.hostname,
+        hostname: server.name,
         upgradeType: UpgradeType.RAM,
         ram: ram,
-        cost: ns.getPurchasedServerUpgradeCost(server.hostname, ram)
+        cost: ns.getPurchasedServerUpgradeCost(server.name, ram)
     }
 }
 

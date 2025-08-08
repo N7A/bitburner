@@ -1,7 +1,6 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
-import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
+import { ServersService } from 'workspace/servers/servers.service';
 
 //#region Constants
 export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
@@ -13,7 +12,7 @@ export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.
  */
 export async function main(ns: NS) {
     // kill all scripts
-    (OwnedServersRepository.getAll(ns) as OwnedServer[]).forEach(x => ns.killall(x.hostname))
+    ServersService.getAllUnlocked(ns).forEach(x => ns.killall(x))
 
     // reset des bases de données
     ExecutionsRepository.reset(ns);
