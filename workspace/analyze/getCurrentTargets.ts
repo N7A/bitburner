@@ -2,7 +2,7 @@ import * as Referentiel from 'workspace/referentiel'
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import {Targets} from 'workspace/domain/targets/model/Targets'
 import * as Log from 'workspace/frameworks/logging';
-import {getNextTarget} from 'workspace/hacking/unlock/utils'
+import { getNextTarget } from 'workspace/hacking/unlock/unlock.selector'
 import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
 
 export async function main(ns: NS) {
