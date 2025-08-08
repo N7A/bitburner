@@ -124,6 +124,10 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
         .filter((order: Order) => {
             if (order.type === OrderType.SHARE_RAM) {
                 return !new ShareRamExecution().isExecutionUsless(ns);
+            } else if (order.type === OrderType.HACK) {
+                return !new PayloadExecution(ns, order.target).isExecutionUsless(ns);
+            } else if (order.type === OrderType.SETUP_HACK) {
+                return false;
             }
 
             return true;
@@ -135,7 +139,9 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
     let newRamDisponible = ramDisponible
 
     while (
+        // commandes inchangées
         currentOrders.every(x => x.pid && x.pid.length > 0)
+        // RAM inchangée
         && newRamDisponible === ramDisponible
     ) {
         await ns.sleep(500);
@@ -155,6 +161,10 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
                 .filter(order => {
                     if (order.type === OrderType.SHARE_RAM) {
                         return !new ShareRamExecution().isExecutionUsless(ns);
+                    } else if (order.type === OrderType.HACK) {
+                        return !new PayloadExecution(ns, order.target).isExecutionUsless(ns);
+                    } else if (order.type === OrderType.SETUP_HACK) {
+                        return false;
                     }
 
                     return true;
@@ -166,6 +176,10 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
             .filter(order => {
                 if (order.type === OrderType.SHARE_RAM) {
                     return !new ShareRamExecution().isExecutionUsless(ns);
+                } else if (order.type === OrderType.HACK) {
+                    return !new PayloadExecution(ns, order.target).isExecutionUsless(ns);
+                } else if (order.type === OrderType.SETUP_HACK) {
+                    return false;
                 }
 
                 return true;

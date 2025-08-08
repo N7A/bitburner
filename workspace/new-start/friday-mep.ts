@@ -1,6 +1,6 @@
 import * as Referentiel from 'workspace/referentiel'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
-import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
+import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
 import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
 
 //#region Constants
@@ -16,7 +16,7 @@ export async function main(ns: NS) {
     (OwnedServersRepository.getAll(ns) as OwnedServer[]).forEach(x => ns.killall(x.hostname))
 
     // reset des bases de données
-    TargetsRepository.reset(ns);
+    ExecutionsRepository.reset(ns);
 
     // lancement du hacking automatisé
     ns.run(INFECTION_SCRIPT);

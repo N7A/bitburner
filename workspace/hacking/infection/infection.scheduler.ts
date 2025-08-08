@@ -1,9 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
-import { Targets } from 'workspace/domain/targets/model/Targets';
 import { getNextTarget } from 'workspace/hacking/unlock/unlock.selector'
 import {getAvailablePortProgram} from 'workspace/hacking/unlock/open-ports.worker'
 import * as Log from 'workspace/frameworks/logging';
-import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import { waitEndExecution } from 'workspace/frameworks/execution'
 import {ServerData} from 'workspace/domain/servers/model/ServerData'
 import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
@@ -71,13 +69,8 @@ export async function main(ns: NS) {
             }
         }
 
-        // load targets
-        const targets: Targets = TargetsRepository.get(ns);
-
         // Spreading + Payload
-        if (targets.hackTargets.length > 0) {
-            ns.run(PAYLOAD_SCRIPT);
-        }
+        ns.run(PAYLOAD_SCRIPT);
 
         ns.print(Log.getEndLog());
 

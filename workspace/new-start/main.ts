@@ -1,6 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository';
-import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
@@ -24,14 +23,9 @@ export async function main(ns: NS) {
     }*/
 
     // reset des bases de données
-    OwnedServersRepository.getAll(ns)
-        .filter(x => x.hostname !== 'home')
-        .forEach(x => ns.rm(`repositories/servers/${x.hostname}.json`));
     OwnedServersRepository.reset(ns);
-    TargetsRepository.reset(ns);
     ServersRepository.reset(ns);
     ExecutionsRepository.reset(ns);
-    ns.rm('repositories/servers/darkweb.json');
 
     // lancement du hacking automatisé
     ns.run(INFECTION_SCRIPT);

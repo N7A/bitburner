@@ -2,9 +2,10 @@ import * as Referentiel from 'workspace/referentiel'
 import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
 import{getAvailableServer} from 'workspace/load-balancer/main'
 import {ExecutionParameters} from 'workspace/load-balancer/model/ExecutionServer'
-import * as TargetsRepository from 'workspace/domain/targets/targets.repository';
 import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
+import * as ExecusionsRepository from 'workspace/domain/executions/executions.repository'
+import { OrderType } from '/workspace/domain/executions/model/Order';
 
 /**
  * Augmente au maximum l'argent disponible sur un serveur,
@@ -22,6 +23,9 @@ export async function main(ns: NS) {
     const data: ServerData|null = ServersRepository.get(ns, targetHost);
     const hackData: HackData = data!.hackData
 
+    // disable execution
+    ExecusionsRepository.add(ns, {type: OrderType.SETUP_HACK, target: targetHost, weight: 0});
+
     //#region Setup
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Weaken', Log.Color.CYAN)}`);
     await runScriptUntilEnoughThread(ns, targetHost, hackData, Referentiel.HACKING_DIRECTORY + '/payload/weaken.worker.ts', getWeakenNeededThreads)
@@ -36,7 +40,9 @@ export async function main(ns: NS) {
     }
     //#endregion Setup
 
-    TargetsRepository.addHack(ns, targetHost)
+    // enable execution
+    ExecusionsRepository.remove(ns, {type: OrderType.SETUP_HACK, target: targetHost});
+
     ns.run(Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts');
 
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Payload launched', Log.Color.CYAN)}`);

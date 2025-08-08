@@ -17,4 +17,6 @@ export async function main(ns: NS) {
     for (const target of targets) {
         ExecutionsRepository.add(ns, {type: OrderType.HACK, target: target, weight: 1});
     }
+
+    // TODO : run execution.scheduler if not running
 }

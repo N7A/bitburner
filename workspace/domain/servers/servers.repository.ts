@@ -62,6 +62,7 @@ export class ServersRepository {
         
         // save data
         ServersRepository.resetWith(ns, hostname, targetData);
+        ns.tprint('INFO', ' ', 'New target to scan : ' + hostname);
     }
 
     /**
@@ -81,6 +82,7 @@ export class ServersRepository {
 
         // save data
         ServersRepository.resetWith(ns, hostname, serverData);
+        ns.tprint('INFO', ' ', 'New targets to unlock : ' + hostname);
     }
 
     /**
@@ -100,6 +102,7 @@ export class ServersRepository {
 
         // save data
         ServersRepository.resetWith(ns, hostname, serverData);
+        ns.tprint('INFO', ' ', 'New target hackable : ' + hostname);
     }
 
     /**
@@ -122,13 +125,14 @@ export class ServersRepository {
     }
 
     static reset(ns: NS) {
-        const serversFile: string[] = ServersRepository.getAll(ns)
-        const knownServers = serversFile.map(file => (JSON.parse(ns.read(file)) as ServerData).name)
+        const knownServers: string[] = ServersRepository.getAll(ns);
         for (const server of knownServers) {
             ns.mv('home', REPOSITORY + '/' + server + '.json', REPOSITORY + '/archive/' + server + '.json')
         }
         ServersRepository.add(ns, 'home', ServerType.MAIN);
-        // TODO :  ...ns.getPurchasedServers()
+        ns.getPurchasedServers().forEach(x => {
+            ServersRepository.add(ns, x, ServerType.BOUGHT);
+        })
     }
 
     /**

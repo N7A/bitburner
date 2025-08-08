@@ -2,6 +2,8 @@ import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
 import { ServersRepository } from 'workspace/domain/servers/servers.repository';
+import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
+import { OrderType } from '/workspace/domain/executions/model/Order';
 
 //#region Constants
 export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts';
@@ -46,6 +48,6 @@ export class PayloadExecution implements RamResourceExecution {
     }
 
     isExecutionUsless(ns: NS): boolean {
-        return false;
+        return ExecutionsRepository.getAll(ns).some(x => x.target === this.targetHost && x.type === OrderType.SETUP_HACK);
     }
 }

@@ -36,6 +36,26 @@ export function add(ns: NS, execution: Order) {
  * Supprime une execution de la base de données.
  * 
  * @param ns Bitburner API
+ * @param execution execution à mettre à jour
+ */
+export function save(ns: NS, execution: Order) {
+    // get last version of executions
+    let executions: Order[] = getAll(ns);
+
+    // remove execution
+    executions = executions.filter(execution => {
+        return execution.type !== execution.type && execution.target !== execution.target
+    });
+    executions.push(execution);
+
+    // save data
+    resetWith(ns, executions);
+}
+
+/**
+ * Supprime une execution de la base de données.
+ * 
+ * @param ns Bitburner API
  * @param executionToRemove execution à supprimer
  */
 export function remove(ns: NS, executionToRemove: Order) {
