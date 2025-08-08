@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import {ServerData, UnlockRequirements, HackData} from 'workspace/domain/servers/model/ServerData'
+import {ServerData, UnlockRequirements, HackData, ServerType} from 'workspace/domain/servers/model/ServerData'
 
 const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
 
@@ -34,7 +34,7 @@ export class ServersRepository {
      * @param hostname serveur qui porte l'execution
      * @param execution nouvelle execution
      */
-    static add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', depth?: number, unlocked?: boolean) {
+    static add(ns: NS, hostname: string, type: ServerType, parentHost: string = 'UNKNOWN', depth?: number, unlocked?: boolean) {
         const server = ns.getServer(hostname);
         
         const unlockRequirements: UnlockRequirements = {
@@ -50,6 +50,7 @@ export class ServersRepository {
 
         const targetData: ServerData = {
             name: hostname,
+            type: type,
             parent: parentHost,
             depth: depth,
             unlockRequirements: unlockRequirements,
@@ -69,7 +70,26 @@ export class ServersRepository {
      * @param ns Bitburner API
      * @param server serveur à mettre à jour
      */
-    static handleUnlock(ns: NS, hostname: string) {
+    static setScanned(ns: NS, hostname: string) {
+        let serverData: ServerData|null = ServersRepository.get(ns, hostname);
+
+        if (serverData === null) {
+            return;
+        }
+        
+        serverData.state.scanned = true;
+
+        // save data
+        ServersRepository.resetWith(ns, hostname, serverData);
+    }
+
+    /**
+     * Enregistre en base la mise à jour d'un serveur.
+     * 
+     * @param ns Bitburner API
+     * @param server serveur à mettre à jour
+     */
+    static setUnlocked(ns: NS, hostname: string) {
         let serverData: ServerData|null = ServersRepository.get(ns, hostname);
 
         if (serverData === null) {
@@ -94,11 +114,21 @@ export class ServersRepository {
     }
 
     static refresh(ns: NS) {
-        const serversFile: string[] = ns.ls('home', REPOSITORY)
+        const serversFile: string[] = ServersRepository.getAll(ns)
+        const knownServers: ServerData[] = serversFile.map(file => (JSON.parse(ns.read(file)) as ServerData))
+        for (const server of knownServers) {
+            ServersRepository.add(ns, server.name, server.type);
+        }
+    }
+
+    static reset(ns: NS) {
+        const serversFile: string[] = ServersRepository.getAll(ns)
         const knownServers = serversFile.map(file => (JSON.parse(ns.read(file)) as ServerData).name)
         for (const server of knownServers) {
-            ServersRepository.add(ns, server)
+            ns.mv('home', REPOSITORY + '/' + server + '.json', REPOSITORY + '/archive/' + server + '.json')
         }
+        ServersRepository.add(ns, 'home', ServerType.MAIN);
+        // TODO :  ...ns.getPurchasedServers()
     }
 
     /**

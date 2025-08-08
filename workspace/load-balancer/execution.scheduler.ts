@@ -1,6 +1,6 @@
 import {Order, OrderType} from 'workspace/domain/executions/model/Order'
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
-import { ServersRepository } from 'workspace/domain/servers/servers.repository'
+import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionParameters, ScriptParameters} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
@@ -180,10 +180,7 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
 function getTargetServers(ns: NS) {
     return Array.from(new Set([
             ...OwnedServers.getAll(ns).map(x => x.hostname),
-            ...ServersRepository.getAll(ns)
-                .map(x => ServersRepository.get(ns, x))
-                .filter(x => x.state.unlocked)
-                .map(x => x.name)
+            ...ServersService.getAllUnlocked(ns)
         ]));
 }
 

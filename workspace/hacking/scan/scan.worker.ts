@@ -1,6 +1,4 @@
-import { Targets } from 'workspace/domain/targets/model/Targets';
-import {ServerData} from 'workspace/domain/servers/model/ServerData'
-import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
+import {ServerData, ServerType} from 'workspace/domain/servers/model/ServerData'
 import { ServersRepository } from 'workspace/domain/servers/servers.repository'
 import * as OwnedServersRepository from 'workspace/domain/owned-servers.repository'
 import {OwnedServer} from 'workspace/load-balancer/model/OwnedServer'
@@ -20,7 +18,7 @@ export async function main(ns: NS, scanTargets: string[]) {
         ns.print(Log.action('Scan'), ' ', Log.target(target));
 
         // update targets repository
-        TargetsRepository.removeScan(ns, target);
+        ServersRepository.setScanned(ns, target);
 
         // listing des voisins
         const neighbors = getNeighbors(ns, target);
@@ -28,10 +26,8 @@ export async function main(ns: NS, scanTargets: string[]) {
         ns.tprint('SUCCESS', ' ', `${target} [scanned]`);
 
         // load targets
-        const targets: Targets = TargetsRepository.get(ns);
         const newTargets = neighbors
-            .filter(x => !targets.unlockTargets.includes(x))
-            .filter(x => !targets.hackableTargets.includes(x))
+            .filter(x => !ServersRepository.getAll(ns).includes(x))
             .filter(x => !(OwnedServersRepository.getAll(ns) as OwnedServer[]).map(x => x.hostname).includes(x));
 
         handleNewTargets(ns, newTargets, target);
@@ -94,11 +90,6 @@ function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean
     if (newTargets.length <= 0) {
         return false;
     }
-
-    // add to scan targets
-    TargetsRepository.addScan(ns, newTargets);
-    // add to unlock targets
-    TargetsRepository.addUnlock(ns, newTargets);
     
     ns.tprint('INFO', ' ', `New targets (${newTargets.length}) to unlock from ${parent} : `, newTargets);
 
@@ -113,11 +104,9 @@ function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean
     
     // enregistrement des données des serveurs voisins
     for (const newTarget of newTargets) {
-        if (depth) {
-            ns.run('workspace/domain/servers/save-server.worker.ts', undefined, newTarget, parent, depth)
-        } else {
-            ns.run('workspace/domain/servers/save-server.worker.ts', undefined, newTarget, parent)
-        }
+        // add to scan targets
+        // add to unlock targets
+        ServersRepository.add(ns, newTarget, ServerType.EXTERNAL, parent, depth ?? undefined, false);
     }
 
     return true;

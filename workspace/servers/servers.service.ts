@@ -1,5 +1,5 @@
 import { ServersRepository } from 'workspace/domain/servers/servers.repository'
-import {ServerData} from 'workspace/domain/servers/model/ServerData'
+import {ServerData, ServerType} from 'workspace/domain/servers/model/ServerData'
 
 export class ServersService {
     
@@ -25,5 +25,26 @@ export class ServersService {
         return ServersService.getHostPath(ns, hostname).map(x => {
             return `connect ${x};`
         }).reduce((a, b) => a + ' ' + b);
+    }
+
+    static getAllLocked(ns: NS): string[] {
+        return ServersRepository.getAll(ns)
+                .map(x => ServersRepository.get(ns, x))
+                .filter(x => !x.state.unlocked && x.type === ServerType.EXTERNAL)
+                .map(x => x.name)
+    }
+    
+    static getAllUnlocked(ns: NS): string[] {
+        return ServersRepository.getAll(ns)
+                .map(x => ServersRepository.get(ns, x))
+                .filter(x => x.state.unlocked)
+                .map(x => x.name)
+    }
+    
+    static getAllUnscanned(ns: NS): string[] {
+        return Array.from(new Set(ServersRepository.getAll(ns)
+                .map(x => ServersRepository.get(ns, x))
+                .filter(x => !x.state.scanned)
+                .map(x => x.name)))
     }
 }

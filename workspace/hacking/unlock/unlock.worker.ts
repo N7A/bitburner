@@ -89,10 +89,7 @@ function missedHackingLevels(ns: NS, requiredHackingLevel: number): number {
  * Enregistre en base le fait qu'on ai débloqué la cible ainsi que les nouvelles cibles accessibles.
  */
 function saveUnlocked(ns: NS, targetUnlocked: string) {
-    ServersRepository.handleUnlock(ns, targetUnlocked);
-
-    // remove from unlock targets
-    TargetsRepository.removeUnlock(ns, targetUnlocked);
+    ServersRepository.setUnlocked(ns, targetUnlocked);
 
     // add to hack targets
     TargetsRepository.addHack(ns, targetUnlocked);

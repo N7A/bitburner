@@ -1,5 +1,6 @@
 export type ServerData = {
     name: string;
+    type: ServerType;
     parent?: string;
     depth?: number;
     state: ServerState;
@@ -29,3 +30,9 @@ export type HackData = {
     /** How many CPU cores this server has. Affects magnitude of grow and weaken ran from this server. */
     cpuCores: number;
 }
+
+export enum ServerType {
+    MAIN,
+    EXTERNAL,
+    BOUGHT
+} 

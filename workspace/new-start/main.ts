@@ -4,6 +4,7 @@ import * as TargetsRepository from 'workspace/domain/targets/targets.repository'
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
+import { ServersRepository } from 'workspace/domain/servers/servers.repository'
 
 //#region Constants
 export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
@@ -28,6 +29,7 @@ export async function main(ns: NS) {
         .forEach(x => ns.rm(`repositories/servers/${x.hostname}.json`));
     OwnedServersRepository.reset(ns);
     TargetsRepository.reset(ns);
+    ServersRepository.reset(ns);
     ExecutionsRepository.reset(ns);
     ns.rm('repositories/servers/darkweb.json');
 
