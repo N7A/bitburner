@@ -66,7 +66,7 @@ function getOwnedServers(ns: NS, priorityTarget?: string) {
         ownedHosts.push(priorityTarget);
     }
     ownedHosts.push(
-        ...ServersService.getAllUnlocked(ns)
+        ...ServersService.getAllExecutable(ns)
         .sort((a, b) =>  availableRam(ns, a) - availableRam(ns, b))
         .reverse()
     );

@@ -1,10 +1,7 @@
-import { ServersRepository } from 'workspace/domain/servers/servers.repository';
+import { ServersService } from 'workspace/servers/servers.service';
 
 export function getPayloadTargets(ns: NS): string[] {
-    return ServersRepository.getAll(ns)
-        .map(x => ServersRepository.get(ns, x))
-        .filter(x => x.state.unlocked)
-        .map(x => x.name);
+    return ServersService.getAllHackable(ns);
 }
 
 export function getBestPayloadTarget(ns: NS): string | undefined {

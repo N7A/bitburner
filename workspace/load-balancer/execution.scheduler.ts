@@ -186,7 +186,7 @@ async function waitOrderChange(ns: NS): Promise<Order[]> {
 
 //#region Répartition
 function getTargetServers(ns: NS) {
-    return Array.from(new Set(ServersService.getAllUnlocked(ns)));
+    return Array.from(new Set(ServersService.getAllExecutable(ns)));
 }
 
 async function getRepartitions(ns: NS, orders: Order[], targetServers: string[]): Promise<Map<Order, ExecutionParameters[]>> {

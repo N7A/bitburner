@@ -12,7 +12,7 @@ export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.
  */
 export async function main(ns: NS) {
     // kill all scripts
-    ServersService.getAllUnlocked(ns).forEach(x => ns.killall(x))
+    ServersService.getAllExecutable(ns).forEach(x => ns.killall(x))
 
     // reset des bases de données
     ExecutionsRepository.reset(ns);

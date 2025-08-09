@@ -1,13 +1,10 @@
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'
 import { UpgradeType } from 'workspace/load-balancer/model/UpgradeType'
-import { ServersRepository } from 'workspace/domain/servers/servers.repository';
-import { ServerData, ServerType } from 'workspace/domain/servers/model/ServerData';
+import { ServerData } from 'workspace/domain/servers/model/ServerData';
+import { ServersService } from 'workspace/servers/servers.service';
 
 export async function selectUpgrade(ns: NS, maxMoneyToSpend?: number): Promise<UpgradeExecution> {
-    let upgradableServers: ServerData[] = ServersRepository.getAll(ns)
-        .map(x => ServersRepository.get(ns, x))
-        .filter(x => x.type === ServerType.BOUGHT)
-        .filter(x => x.hackData.maxRam < ns.getPurchasedServerMaxRam());
+    let upgradableServers: ServerData[] = ServersService.getAllUpgradable(ns);
 
     upgradableServers = upgradableServers.sort((a, b) => a.hackData.maxRam - b.hackData.maxRam);
 

@@ -1,14 +1,11 @@
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Log from 'workspace/frameworks/logging';
 import * as Referentiel from 'workspace/referentiel'
-import { ServersRepository } from 'workspace/domain/servers/servers.repository';
-import { ServerType } from 'workspace/domain/servers/model/ServerData';
 
 export async function main(ns: NS) {
     ns.print(Log.getStartLog())
     // load host data
-    var serversHackable: string[] = ServersService.getAllUnlocked(ns)
-        .filter(x => ServersRepository.get(ns, x).type !== ServerType.BOUGHT);
+    var serversHackable: string[] = ServersService.getAllHackable(ns);
 
     let scripts = [
         Referentiel.HACKING_DIRECTORY + '/payload/grow.looper.ts',
@@ -23,7 +20,7 @@ export async function main(ns: NS) {
     for (const server of serversHackable) {
         // kill payload scripts
         for (const script of scripts) {
-            for (const scriptableServer of ServersService.getAllUnlocked(ns)) {
+            for (const scriptableServer of ServersService.getAllExecutable(ns)) {
                 ns.kill(script, scriptableServer, server);
             }
             ns.scriptKill(script, server);
