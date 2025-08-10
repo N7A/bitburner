@@ -25,10 +25,7 @@ export class ShareRamExecution implements RamResourceExecution {
     setupDashboard(ns: NS, pid: number, targetHost: string) {
         ns.disableLog("ALL");
         ns.enableLog("share");
-        ns.clearLog();
         
         Log.initTailTitle(ns, 'Share RAM', 'looper', targetHost, pid);
-        
-        ns.print('Waiting to share...');
     }
 }
