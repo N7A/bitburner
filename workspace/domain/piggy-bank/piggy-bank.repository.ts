@@ -15,7 +15,13 @@ export class PiggyBankRepository {
         if (!ns.fileExists(REPOSITORY)) {
             return {moneyBank: undefined, ramBank: undefined};
         }
-        return JSON.parse(ns.read(REPOSITORY));
+        let bank: Bank = JSON.parse(ns.read(REPOSITORY));
+        bank.ramBank = {
+            rateToKeep: new Map(Object.entries(bank.ramBank.rateToKeep)),
+            toReserve: new Map(Object.entries(bank.ramBank.toReserve))
+        }
+
+        return bank;
     }
 
     /**

@@ -1,7 +1,7 @@
 
 import { CommitRequest } from "lab/repo-broker/model/CommitRequest";
 import { CommitType } from "lab/repo-broker/model/CommitType";
-import { PORT as COMMIT_HANDLER_PORT } from "/lab/repo-broker/commit-handler";
+import { PORT as COMMIT_HANDLER_PORT } from "lab/repo-broker/commit-handler";
 
 //#region Constants
 const COMMIT_HANDLER = "workspace/domain/targets/commit-handler.ts";

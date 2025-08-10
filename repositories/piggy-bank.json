@@ -1,0 +1,10 @@
+{
+    "moneyBank": {
+        "rateToKeep": 0.3,
+        "toReserve": 0
+    },
+    "ramBank": {
+        "rateToKeep": {"home": 0.01, "f1rst": 0.01},
+        "toReserve": {"home": 20, "f1rst": 0}
+    }
+}
