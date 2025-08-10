@@ -5,7 +5,7 @@ import {ExecutionParameters} from 'workspace/load-balancer/model/ExecutionServer
 import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
 import * as ExecusionsRepository from 'workspace/domain/executions/executions.repository'
-import { OrderType } from '/workspace/domain/executions/model/Order';
+import { OrderType } from 'workspace/domain/executions/model/Order';
 
 /**
  * Augmente au maximum l'argent disponible sur un serveur,

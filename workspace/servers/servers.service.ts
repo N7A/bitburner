@@ -31,7 +31,7 @@ export class ServersService {
         return Array.from(new Set(ServersRepository.getAll(ns)
                 .map(x => ServersRepository.get(ns, x))
                 .filter(x => !x.state.scanned)
-                .map(x => x.name)))
+                .map(x => x?.name ?? '')))
     }
 
     static getAllLocked(ns: NS): string[] {
@@ -44,13 +44,13 @@ export class ServersService {
     static getAllUnlocked(ns: NS): string[] {
         return ServersRepository.getAll(ns)
                 .map(x => ServersRepository.get(ns, x))
-                .filter(x => x.state.unlocked)
-                .map(x => x.name)
+                .filter(x => x?.state.unlocked)
+                .map(x => x?.name ?? '')
     }
     
     static getAllHackable(ns: NS): string[] {
         return ServersService.getAllExecutable(ns)
-            .filter(x => ServersRepository.get(ns, x).type === ServerType.EXTERNAL);
+            .filter(x => ServersRepository.get(ns, x)?.type === ServerType.EXTERNAL);
     }
 
     static getAllExecutable(ns: NS): string[] {
@@ -60,8 +60,8 @@ export class ServersService {
     static getOwned(ns: NS): string[] {
         return ServersRepository.getAll(ns)
             .map(x => ServersRepository.get(ns, x))
-            .filter(x => x.type === ServerType.BOUGHT)
-            .map(x => x.name);
+            .filter(x => x?.type === ServerType.BOUGHT)
+            .map(x => x?.name ?? '');
     }
 
     static getAllUpgradable(ns: NS): ServerData[] {
