@@ -30,6 +30,7 @@ export class ServersService {
     static getAllUnscanned(ns: NS): string[] {
         return Array.from(new Set(ServersRepository.getAll(ns)
                 .map(x => ServersRepository.get(ns, x))
+                .filter(x => x !== null)
                 .filter(x => !x.state.scanned)
                 .map(x => x?.name ?? '')))
     }
@@ -37,6 +38,7 @@ export class ServersService {
     static getAllLocked(ns: NS): string[] {
         return ServersRepository.getAll(ns)
                 .map(x => ServersRepository.get(ns, x))
+                .filter(x => x !== null)
                 .filter(x => !x.state.unlocked && x.type === ServerType.EXTERNAL)
                 .map(x => x.name)
     }
@@ -67,6 +69,7 @@ export class ServersService {
     static getAllUpgradable(ns: NS): ServerData[] {
         return ServersService.getOwned(ns)
             .map(x => ServersRepository.get(ns, x))
+            .filter(x => x !== null)
             .filter(x => x.hackData.maxRam < ns.getPurchasedServerMaxRam());
     }
 }

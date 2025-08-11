@@ -1,4 +1,4 @@
-import { PiggyBankRepository } from "workspace/domain/piggy-bank/piggy-bank.repository";
+import { ServersRepository } from "workspace/domain/servers/servers.repository";
 
 export async function main(ns: NS) {
     //ns.print(ns.hacknet.maxNumNodes())
@@ -8,6 +8,8 @@ export async function main(ns: NS) {
     /*ns.clearPort(1)
     ns.tprint(ns.readPort(1))
     ns.alert('test \n 1')*/
-    ns.tprint(JSON.stringify(ns.getServer('home')));
-    ns.tprint(JSON.stringify(ns.getServer('f1rst')));
+    //ns.tprint(JSON.stringify(ns.getServer('home')));
+    //ns.tprint(JSON.stringify(ns.getServer('f1rst')));
+    
+    ServersRepository.add(ns, 'f1rst');
 }
