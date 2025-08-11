@@ -1,8 +1,8 @@
 import * as Log from 'workspace/frameworks/logging';
-import { ServersRepository } from 'workspace/domain/servers/servers.repository';
+import { ServersService } from 'workspace/servers/servers.service';
 
 export async function main(ns: NS) {
-    const servers = ServersRepository.getAll(ns);
+    const servers = ServersService.getAllHackable(ns);
     ns.tprint(Log.getStartLog())
     for (const server of servers) {
         const indices = ns.ls(server).filter(x => !x.startsWith('repositories') && !x.startsWith('workspace') && !x.endsWith('.cct'));
