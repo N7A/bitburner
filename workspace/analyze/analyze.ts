@@ -69,7 +69,7 @@ function setupDashboard(ns: NS, input: InputArg) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    Log.initTailTitle(ns, Log.target(input.hostnameTarget), 'info');
+    Log.initTailTitle(ns, Log.targetColorLess(input.hostnameTarget), 'info');
     
     ns.ui.openTail();
 }

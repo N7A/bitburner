@@ -141,6 +141,15 @@ export function target(hostname: string): string {
 }
 
 /**
+ * @param hostname cible
+ * 
+ * Ram cost : 0
+ */
+export function targetColorLess(hostname: string): string {
+    return '> ' + hostname + ' <';
+}
+
+/**
  * @param hostname source
  * 
  * Ram cost : 0

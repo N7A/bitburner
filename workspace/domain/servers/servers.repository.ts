@@ -12,6 +12,7 @@ export class ServersRepository {
     static getAll(ns: NS): string[] {
         return ns.ls('home', REPOSITORY)
             .filter(x => x.startsWith(REPOSITORY))
+            .filter(x => !x.startsWith(REPOSITORY + '/archive/'))
             .map(x => x.substring(x.lastIndexOf('/')+1, x.lastIndexOf('.json')));
     }
 
@@ -140,9 +141,9 @@ export class ServersRepository {
         for (const server of knownServers) {
             ns.mv('home', REPOSITORY + '/' + server + '.json', REPOSITORY + '/archive/' + server + '.json')
         }
-        ServersRepository.add(ns, 'home');
+        ServersRepository.add(ns, 'home', null);
         ns.getPurchasedServers().forEach(x => {
-            ServersRepository.add(ns, x);
+            ServersRepository.add(ns, x, 'home');
         })
     }
 
