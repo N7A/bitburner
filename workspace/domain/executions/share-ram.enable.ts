@@ -1,15 +1,15 @@
 import * as ExecusionsRepository from 'workspace/domain/executions/executions.repository'
-import {Order, OrderType} from 'workspace/domain/executions/model/Order'
+import {ProcessRequest, ProcessRequestType} from 'workspace/domain/executions/model/ProcessRequest'
 
 export async function main(ns: NS) {
     // si déjà actif
-    if (ExecusionsRepository.getAll(ns).some(x => x.type === OrderType.SHARE_RAM)) {
+    if (ExecusionsRepository.getAll(ns).some(x => x.type === ProcessRequestType.SHARE_RAM)) {
         // on ne fait rien
         return;
     }
 
-    const shareRamOrder: Order = {
-        type: OrderType.SHARE_RAM
+    const shareRamOrder: ProcessRequest = {
+        type: ProcessRequestType.SHARE_RAM
     }
     ExecusionsRepository.add(ns, shareRamOrder);
 }

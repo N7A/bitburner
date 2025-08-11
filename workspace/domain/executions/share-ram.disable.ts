@@ -1,9 +1,9 @@
 import * as ExecusionsRepository from 'workspace/domain/executions/executions.repository'
-import {Order, OrderType} from 'workspace/domain/executions/model/Order'
+import {ProcessRequest, ProcessRequestType} from 'workspace/domain/executions/model/ProcessRequest'
 
 export async function main(ns: NS) {
-    const shareRamOrder: Order = {
-        type: OrderType.SHARE_RAM
+    const shareRamOrder: ProcessRequest = {
+        type: ProcessRequestType.SHARE_RAM
     }
     ExecusionsRepository.remove(ns, shareRamOrder);
 }

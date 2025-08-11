@@ -1,11 +1,15 @@
 import * as Referentiel from 'workspace/referentiel'
 import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
 import{getAvailableServer} from 'workspace/load-balancer/main'
-import {ExecutionParameters} from 'workspace/load-balancer/model/ExecutionServer'
+import {ExecutionOrder} from 'workspace/load-balancer/model/ExecutionServer'
 import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
 import * as ExecusionsRepository from 'workspace/domain/executions/executions.repository'
-import { OrderType } from 'workspace/domain/executions/model/Order';
+import { ProcessRequestType } from 'workspace/domain/executions/model/ProcessRequest';
+
+//#region Constants
+const ENABLE_PAYLOAD_SCRIPT = "workspace/domain/executions/payload.enable.ts";
+//#endregion Constants
 
 /**
  * Augmente au maximum l'argent disponible sur un serveur,
@@ -23,9 +27,6 @@ export async function main(ns: NS) {
     const data: ServerData|null = ServersRepository.get(ns, targetHost);
     const hackData: HackData = data!.hackData
 
-    // disable execution
-    ExecusionsRepository.add(ns, {type: OrderType.SETUP_HACK, target: targetHost, weight: 1});
-
     //#region Setup
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Weaken', Log.Color.CYAN)}`);
     await runScriptUntilEnoughThread(ns, targetHost, hackData, Referentiel.HACKING_DIRECTORY + '/payload/weaken.worker.ts', getWeakenNeededThreads)
@@ -40,10 +41,9 @@ export async function main(ns: NS) {
     }
     //#endregion Setup
 
-    // enable execution
-    ExecusionsRepository.remove(ns, {type: OrderType.SETUP_HACK, target: targetHost});
+    ExecusionsRepository.remove(ns, {type: ProcessRequestType.SETUP_HACK, target: targetHost});
 
-    ns.run(Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts');
+    ns.run(ENABLE_PAYLOAD_SCRIPT, 1, targetHost);
 
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Payload launched', Log.Color.CYAN)}`);
 }
@@ -72,15 +72,15 @@ async function growToMax(ns: NS, targetHost: string, hackData: HackData) {
     
     ns.print(Log.getStartLog());
     while(neededThread > 0) {
-        const availableServer: ExecutionParameters = getAvailableServer(ns, ramCost, neededThread);
+        const availableServer: ExecutionOrder = getAvailableServer(ns, ramCost, neededThread);
         refreshGrowDashBoard(ns, neededThread, availableServer.nbThread);
         const threadToLaunch = Math.min(neededThread, availableServer.nbThread);
         if (threadToLaunch > 0) {
             ns.print('----------')
             // execute grow with max threads possible
-            let pidExecution = ns.exec(scriptFilepath, availableServer.hostname, threadToLaunch, targetHost);
+            let pidExecution = ns.exec(scriptFilepath, availableServer.sourceHostname, threadToLaunch, targetHost);
             // on attend la fin du grow
-            ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${scriptFilepath.substring(scriptFilepath.lastIndexOf('/'), scriptFilepath.lastIndexOf('.ts'))} on {${availableServer.hostname}}...`);
+            ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${scriptFilepath.substring(scriptFilepath.lastIndexOf('/'), scriptFilepath.lastIndexOf('.ts'))} on {${availableServer.sourceHostname}}...`);
             while (pidExecution != 0 && ns.isRunning(pidExecution)) {
                 await ns.asleep(500)
             }
@@ -108,15 +108,15 @@ async function runScriptUntilEnoughThread(
     
     ns.print(Log.getStartLog());
     while(neededThread > 0) {
-        const availableServer: ExecutionParameters = getAvailableServer(ns, ramCost, neededThread);
+        const availableServer: ExecutionOrder = getAvailableServer(ns, ramCost, neededThread);
         refreshGrowDashBoard(ns, neededThread, availableServer.nbThread);
         const threadToLaunch = Math.min(neededThread, availableServer.nbThread);
         if (threadToLaunch > 0) {
             ns.print('----------')
             // execute grow with max threads possible
-            let pidExecution = ns.exec(scriptFilepath, availableServer.hostname, threadToLaunch, targetHost);
+            let pidExecution = ns.exec(scriptFilepath, availableServer.sourceHostname, threadToLaunch, targetHost);
             // on attend la fin du grow
-            ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${scriptFilepath.substring(scriptFilepath.lastIndexOf('/'), scriptFilepath.lastIndexOf('.ts'))} on {${availableServer.hostname}}...`)
+            ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${scriptFilepath.substring(scriptFilepath.lastIndexOf('/'), scriptFilepath.lastIndexOf('.ts'))} on {${availableServer.sourceHostname}}...`)
             while (pidExecution != 0 && ns.isRunning(pidExecution)) {
                 await ns.asleep(500)
             }

@@ -3,7 +3,9 @@ import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceE
 import {ServerData, HackData} from 'workspace/domain/servers/model/ServerData'
 import { ServersRepository } from 'workspace/domain/servers/servers.repository';
 import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
-import { OrderType } from '/workspace/domain/executions/model/Order';
+import { ProcessRequest, ProcessRequestType } from 'workspace/domain/executions/model/ProcessRequest';
+import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
+import * as Log from 'workspace/frameworks/logging';
 
 //#region Constants
 export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts';
@@ -12,31 +14,39 @@ export const GROW_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/grow.looper
 //#endregion Constants
 
 export class PayloadExecution implements RamResourceExecution {
-    private scripts: string[];
+    private executionRequest: ExecutionRequest;
     private targetHost: string;
+    request: ProcessRequest;
 
-    constructor(ns: NS, targetHost: string) {
-        const scripts: string[] = [];
-        this.targetHost = targetHost
+    constructor(ns: NS, request: ProcessRequest) {
+        this.request = request;
+        this.targetHost = request.target;
     
         // load host data
         const data: ServerData|null = ServersRepository.get(ns, this.targetHost);
         const hackData: HackData = data!.hackData;
     
-        scripts.push(HACK_SCRIPT);
-        scripts.push(WEAKEN_SCRIPT);
+        let scripts = [];
+        scripts.push({scriptsFilepath: HACK_SCRIPT, args: [this.targetHost]});
+        scripts.push({scriptsFilepath: WEAKEN_SCRIPT, args: [this.targetHost]});
     
         if (hackData.moneyMax === 0) {
             ns.print('WARN', ' ', '[', this.targetHost, '] ', 'No money in there');
         } else {
-            scripts.push(GROW_SCRIPT);
-            scripts.push(WEAKEN_SCRIPT);
+            scripts.push({scriptsFilepath: GROW_SCRIPT, args: [this.targetHost]});
+            scripts.push({scriptsFilepath: WEAKEN_SCRIPT, args: [this.targetHost]});
         }
 
-        this.scripts = scripts;
+        this.executionRequest = {
+            scripts: scripts
+        }
+    }
+    
+    getActionLog(): string {
+        return `${Log.action('Hacking')} ${this.request.target ? Log.target(this.request.target) + ' ': ''}`;
     }
 
-    getScript() {
+    getExecutionRequest(): ExecutionRequest {
         // TODO : check if payload already running
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.looper.ts', targetHost)
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.looper.ts', 'home', targetHost)
@@ -44,10 +54,10 @@ export class PayloadExecution implements RamResourceExecution {
         // TODO : split nb thread (plutot que nb RAM) <- pour que le grow et weaken aient la force pour soutenir le hack
         // TODO : dynamique répartition : hack then weaken then grow then weaken then repeate
         // TODO : weaken thread nb >= grow + hack thread nb; grow thread nb >= hack thread nb
-        return this.scripts;
+        return this.executionRequest;
     }
 
     isExecutionUsless(ns: NS): boolean {
-        return ExecutionsRepository.getAll(ns).some(x => x.target === this.targetHost && x.type === OrderType.SETUP_HACK);
+        return ExecutionsRepository.getAll(ns).some(x => x.target === this.targetHost && x.type === ProcessRequestType.SETUP_HACK);
     }
 }

@@ -1,10 +1,10 @@
-import {OrderType} from 'workspace/domain/executions/model/Order'
+import {ProcessRequestType} from 'workspace/domain/executions/model/ProcessRequest'
 
 /** temps maximum pour une execution */
 export const timeExecutionMax: number = 60 * 60 * 1000;
 
-export const weights: Map<OrderType, number> = new Map([
-    [OrderType.SHARE_RAM, 1],
-    [OrderType.HACK, 1],
-    [OrderType.SETUP_HACK, 1]
+export const weights: Map<ProcessRequestType, number> = new Map([
+    [ProcessRequestType.SHARE_RAM, 1],
+    [ProcessRequestType.HACK, 1],
+    [ProcessRequestType.SETUP_HACK, 1]
 ])

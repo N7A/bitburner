@@ -1,15 +1,26 @@
 import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import * as Log from 'workspace/frameworks/logging';
+import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
+import { ProcessRequest } from 'workspace/domain/executions/model/ProcessRequest';
 
 export class ShareRamExecution implements RamResourceExecution {
-    private scripts: string[];
+    private executionRequest: ExecutionRequest;
+    request: ProcessRequest;
 
-    constructor() {
-        this.scripts = [Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.worker.ts']
+    constructor(request: ProcessRequest) {
+        this.request = request;
+        this.executionRequest = {
+            scripts: [{scriptsFilepath: Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.worker.ts'}]
+        }
     }
-    getScript() {
-        return this.scripts;
+
+    getActionLog(): string {
+        return Log.action('Sharing');
+    }
+    
+    getExecutionRequest(): ExecutionRequest {
+        return this.executionRequest;
     }
 
     isExecutionUsless(ns: NS): boolean {

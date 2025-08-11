@@ -1,13 +1,19 @@
-export type ExecutionParameters = {
-    hostname: string;
-    nbThread: number;
-    scripts: ScriptParameters[];
+export type ExecutionRequest = {
+    wantedThreadNumber?: number;
+    scripts: ScriptRequest[];
 }
-export type ScriptParameters = {
+
+export type ScriptRequest = {
     scriptsFilepath: string;
-    args: ScriptArg[];
-    pid: number;
+    args?: ScriptArg[];
 }
+
+export type ExecutionOrder = {
+    sourceHostname: string;
+    nbThread: number;
+    request: ExecutionRequest;
+}
+
 export enum ExecutionType {
     ONESHOT,
     RUNNER,

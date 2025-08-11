@@ -1,4 +1,4 @@
-import {ExecutionParameters, ExecutionType} from 'workspace/load-balancer/model/ExecutionServer'
+import {ExecutionOrder, ExecutionType} from 'workspace/load-balancer/model/ExecutionServer'
 import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
 import { ServersService } from 'workspace/servers/servers.service';
 
@@ -6,14 +6,15 @@ import { ServersService } from 'workspace/servers/servers.service';
  * Check RAM availability to priorize
  */
 // TODO : ajout possibilité de split entre plusieurs serveurs
-export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: number = 1, priorityTarget?: string): ExecutionParameters {
+export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: number = 1, priorityTarget?: string): ExecutionOrder {
     //#region input parameters
     var executionType: ExecutionType = ns.args.length >= 2 ? ns.args[1] as ExecutionType : ExecutionType.ONESHOT
     //#endregion input parameters
 
-    let result: ExecutionParameters = {
-        hostname: '',
-        nbThread: 0
+    let result: ExecutionOrder = {
+        sourceHostname: '',
+        nbThread: 0,
+        request: undefined
     }
 
     if (ramNeededByThread === undefined) {
@@ -24,8 +25,9 @@ export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: 
     const availableServers = getAvailableServers(ns, priorityTarget, ramNeededByThread*nbThread);
     if (availableServers.length > 0) {
         result = {
-            hostname: availableServers.shift(),
-            nbThread: nbThread
+            sourceHostname: availableServers.shift(),
+            nbThread: nbThread,
+            request: undefined
         }
     }
 
@@ -43,7 +45,7 @@ export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: 
 
 
         if (maxRamServer) {
-            result.hostname = maxRamServer;
+            result.sourceHostname = maxRamServer;
             result.nbThread = getNbPossibleThreads(availableRam(ns, maxRamServer), 1, ramNeededByThread);
         }
     }
@@ -76,7 +78,7 @@ function getOwnedServers(ns: NS, priorityTarget?: string) {
 
 function hasEnoughRam(ns: NS, targetHost: string, ramNeeded: number) {
     if (availableRam(ns, targetHost) < ramNeeded) {
-        ns.print('WARN', ' ', `[${targetHost}] RAM insuffisante `, ns.formatRam(availableRam(ns, targetHost)), ' >>> ', ns.formatRam(ramNeeded));
+        //ns.print('WARN', ' ', `[${targetHost}] RAM insuffisante `, ns.formatRam(availableRam(ns, targetHost)), ' >>> ', ns.formatRam(ramNeeded));
         return false;
     }
 

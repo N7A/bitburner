@@ -1,12 +1,11 @@
-export type Order = {
-    type: OrderType;
+export type ProcessRequest = {
+    type: ProcessRequestType;
     target?: string;
     weight?: number;
     pid?: number[];
-    /*args: ScriptArg[];*/
 }
 
-export enum OrderType {
+export enum ProcessRequestType {
     SHARE_RAM,
     HACK,
     SETUP_HACK

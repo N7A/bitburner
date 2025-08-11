@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import {Order} from 'workspace/domain/executions/model/Order'
+import {ProcessRequest} from 'workspace/domain/executions/model/ProcessRequest'
 
 const REPOSITORY = Referentiel.EXECUTION_ORDERS_REPOSITORY;
 
@@ -8,7 +8,7 @@ const REPOSITORY = Referentiel.EXECUTION_ORDERS_REPOSITORY;
  * 
  * @param ns Bitburner API
  */
-export function getAll(ns: NS): Order[] {
+export function getAll(ns: NS): ProcessRequest[] {
     if (!ns.fileExists(REPOSITORY)) {
         return [];
     }
@@ -21,9 +21,9 @@ export function getAll(ns: NS): Order[] {
  * @param ns Bitburner API
  * @param execution nouvelle execution
  */
-export function add(ns: NS, execution: Order) {
+export function add(ns: NS, execution: ProcessRequest) {
     // get last version of executions
-    let executions: Order[] = getAll(ns);
+    let executions: ProcessRequest[] = getAll(ns);
 
     // add execution
     executions.push(execution);
@@ -38,9 +38,9 @@ export function add(ns: NS, execution: Order) {
  * @param ns Bitburner API
  * @param execution execution à mettre à jour
  */
-export function save(ns: NS, execution: Order) {
+export function save(ns: NS, execution: ProcessRequest) {
     // get last version of executions
-    let executions: Order[] = getAll(ns);
+    let executions: ProcessRequest[] = getAll(ns);
 
     // remove execution
     executions = executions.filter(execution => {
@@ -58,9 +58,9 @@ export function save(ns: NS, execution: Order) {
  * @param ns Bitburner API
  * @param executionToRemove execution à supprimer
  */
-export function remove(ns: NS, executionToRemove: Order) {
+export function remove(ns: NS, executionToRemove: ProcessRequest) {
     // get last version of executions
-    let executions: Order[] = getAll(ns);
+    let executions: ProcessRequest[] = getAll(ns);
 
     // remove execution
     executions = executions.filter(execution => {
@@ -77,7 +77,7 @@ export function remove(ns: NS, executionToRemove: Order) {
  * @param ns Bitburner API
  */
 export function reset(ns: NS) {
-    let executions: Order[] = [];
+    let executions: ProcessRequest[] = [];
 
     // save data
     resetWith(ns, executions);
@@ -90,6 +90,6 @@ export function reset(ns: NS) {
  * @param hostname serveur qui porte l'execution
  * @param executions executions à sauvegarder
  */
-export function resetWith(ns: NS, executions: Order[]) {
+export function resetWith(ns: NS, executions: ProcessRequest[]) {
     ns.write(REPOSITORY, JSON.stringify(executions, null, 4), "w");
 }
