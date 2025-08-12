@@ -31,6 +31,8 @@ export class PiggyBankRepository {
      * @param bank
      */
     static save(ns: NS, bank: Bank) {
+        bank.ramBank.rateToKeep = Object.fromEntries(bank.ramBank.rateToKeep as Map<string, number>)
+        bank.ramBank.toReserve = Object.fromEntries(bank.ramBank.toReserve as Map<string, number>)
         ns.write(REPOSITORY, JSON.stringify(bank, null, 4), "w");
     }
 
