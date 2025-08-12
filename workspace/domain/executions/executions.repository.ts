@@ -43,8 +43,8 @@ export function save(ns: NS, execution: ProcessRequest) {
     let executions: ProcessRequest[] = getAll(ns);
 
     // remove execution
-    executions = executions.filter(execution => {
-        return execution.type !== execution.type && execution.target !== execution.target
+    executions = executions.filter(x => {
+        return !(x.type === execution.type && x.target === execution.target)
     });
     executions.push(execution);
 
@@ -64,7 +64,7 @@ export function remove(ns: NS, executionToRemove: ProcessRequest) {
 
     // remove execution
     executions = executions.filter(execution => {
-        return execution.type !== executionToRemove.type && execution.target !== executionToRemove.target
+        return (execution.type === executionToRemove.type && execution.target === executionToRemove.target)
     });
 
     // save data

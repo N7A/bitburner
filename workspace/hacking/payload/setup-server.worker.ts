@@ -52,7 +52,7 @@ function setupDashboard(ns: NS, targetHost: string) {
 	ns.disableLog("ALL");
     ns.clearLog();
 	
-	ns.ui.openTail();
+	//ns.ui.openTail();
 	ns.ui.setTailTitle(`Setup payload > ${targetHost} <`);
 	ns.ui.moveTail(1200, 50);
 	ns.print(Log.INFO('Start time', Log.date(ns, new Date())));

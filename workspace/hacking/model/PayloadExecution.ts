@@ -31,7 +31,7 @@ export class PayloadExecution implements RamResourceExecution {
         scripts.push({scriptsFilepath: WEAKEN_SCRIPT, args: [this.targetHost]});
     
         if (hackData.moneyMax === 0) {
-            ns.print('WARN', ' ', '[', this.targetHost, '] ', 'No money in there');
+            //ns.print('WARN', ' ', '[', this.targetHost, '] ', 'No money in there');
         } else {
             scripts.push({scriptsFilepath: GROW_SCRIPT, args: [this.targetHost]});
             scripts.push({scriptsFilepath: WEAKEN_SCRIPT, args: [this.targetHost]});
