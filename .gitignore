@@ -1,3 +1,4 @@
 node_module/**/*
+package-lock.json
 src/repositories/executions/**/*.json
 src/repositories/servers/**/*.json
