@@ -31,6 +31,8 @@
 /workspace/coding-contract/resolve-contracts.scheduler.ts
 /workspace/coding-contract/sanitize-parentheses-in-expression.resolve.ts
 /workspace/coding-contract/total-ways-to-sum.ts
+/workspace/common/application-properties.ts
+/workspace/common/Logger.ts
 /workspace/domain/executions/executions.repository.ts
 /workspace/domain/executions/model/ProcessRequest.ts
 /workspace/domain/executions/payload.disable.ts
@@ -104,9 +106,8 @@
 /workspace/referentiel.ts
 /workspace/servers/servers.service.ts
 /workspace/stock-market/analyze.ts
-/workspace/synchronize/change-extension.ts
-/workspace/synchronize/GitConnector.ts
-/workspace/synchronize/preview.ts
+/workspace/synchronize/application-properties.ts
+/workspace/synchronize/git-connector.service.ts
+/workspace/synchronize/init-pull.ts
 /workspace/synchronize/pull.launcher.ts
-/workspace/synchronize/removeJs.ts
 /workspace/synchronize/synchronize-workspace.ts
