@@ -109,7 +109,7 @@ function setupDashboard(ns: NS) {
  */
 function resetRunningProcess(ns: NS, request: ProcessRequest) {
     // kill all process
-    request.pid.filter(x => x !== undefined).forEach(x => ns.kill(x));
+    request.pid?.filter(x => x !== undefined).forEach(x => ns.kill(x));
     // reset all repository pid
     request.pid = [];
     ExecutionsRepository.save(ns, request)
