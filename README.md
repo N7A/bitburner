@@ -28,8 +28,8 @@ Ce dépôt contient les scripts que j'utilise pour jouer dans Bitburner.
 1. cloner le repository
 2. Générer le fichier manifest
 ```bash
-run npm install
-run npm run build
+npm install
+npm run build
 ```
 3. Push le fichier manifest généré
 4. Aller dans le terminal du jeu
