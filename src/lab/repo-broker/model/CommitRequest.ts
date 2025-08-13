@@ -1,4 +1,4 @@
-import { CommitType } from "lab/model/CommitType";
+import { CommitType } from "lab/repo-broker/model/CommitType";
 
 export type CommitRequest = {
     data: any;

@@ -1,11 +1,12 @@
 {
-  "include": ["NetscriptDefinitions.d.ts", "./**/*"],
+  "include": ["lib/NetscriptDefinitions.d.ts", "./**/*"],
   "compilerOptions": {
     "lib": ["es2019"],
-    "baseUrl": "./",
+    "baseUrl": "./src",
     "paths": {
       "/*": ["*"],
-      "@ns": ["NetscriptDefinitions.d.ts"]
-    }
+      "@ns": ["lib/NetscriptDefinitions.d.ts"]
+    },
+    "outDir": "build/"
   }
 }

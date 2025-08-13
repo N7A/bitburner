@@ -1,1 +1,3 @@
-repositories/servers/**/*.json
+node_module/**/*
+src/repositories/executions/**/*.json
+src/repositories/servers/**/*.json

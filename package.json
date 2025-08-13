@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "build": "npm run clean & npm run buildManifest",
+    "clean": "rm -rf build/*",
+    "buildManifest": "bash ./bin/generateManifest.bash"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.2"
+  }
+}
