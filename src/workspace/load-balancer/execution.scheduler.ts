@@ -29,7 +29,7 @@ export async function main(ns: NS) {
 
         ns.print('Waiting request modification...');
         // wait until orders change
-        const currentOrders = await waitContextChange(ns);
+        const currentOrders = await waitContextChange(ns, orders);
 
         // kill all old for recalcul repartition
         orders.map(x => x.request).forEach(x => resetRunningProcess(ns, x));
@@ -120,19 +120,18 @@ function resetRunningProcess(ns: NS, request: ProcessRequest) {
  * @param ns 
  * @returns new process orders
  */
-async function waitContextChange(ns: NS): Promise<RamResourceExecution[]> {
-    const requests: RamResourceExecution[] = ExecutionsRepository.getAll(ns)
-        .map(order => {
-            if (order.type === ProcessRequestType.SHARE_RAM) {
-                return new ShareRamExecution(order);
-            } else if (order.type === ProcessRequestType.HACK) {
-                return new PayloadExecution(ns, order);
-            } else if (order.type === ProcessRequestType.SETUP_HACK) {
-                return new SetupExecution(order);
-            }
-        })
-        .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
-    let newRequest: RamResourceExecution[] = Array.from(requests);
+async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Promise<RamResourceExecution[]> {
+    let newRequest: RamResourceExecution[] = ExecutionsRepository.getAll(ns)   
+            .map(order => {
+                if (order.type === ProcessRequestType.SHARE_RAM) {
+                    return new ShareRamExecution(order);
+                } else if (order.type === ProcessRequestType.HACK) {
+                    return new PayloadExecution(ns, order);
+                } else if (order.type === ProcessRequestType.SETUP_HACK) {
+                    return new SetupExecution(order);
+                }
+            })
+            .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
     
     const ramDisponible = getTargetServers(ns)
             .map(x => availableRam(ns, x))

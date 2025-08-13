@@ -11,4 +11,6 @@ export async function main(ns: NS) {
     const git = new GitConnector(ns, repoParams);
 
     await git.pullAll();
+
+    ns.tprint('SUCCESS', ' ', 'Pull from manifest');
 }
