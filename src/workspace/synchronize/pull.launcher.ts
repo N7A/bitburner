@@ -10,5 +10,5 @@ export const repoParams: GitRepository = {
 export async function main(ns: NS) {
     const git = new GitConnector(ns, repoParams);
 
-    git.pullAll();
+    await git.pullAll();
 }
