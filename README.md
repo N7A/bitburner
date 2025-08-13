@@ -51,5 +51,5 @@ run /workspace/synchronize/pull.launcher.ts
 # ▶️ Run
 
 ```bash
-run /Orchestrator/Boot.js
+run /workspace/new-start/main.ts
 ```
