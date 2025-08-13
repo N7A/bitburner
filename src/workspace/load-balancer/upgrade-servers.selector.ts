@@ -10,8 +10,9 @@ export async function selectUpgrade(ns: NS, maxMoneyToSpend?: number): Promise<U
 
     const serverToUp = upgradableServers.shift();
     if (serverToUp) {
+        // TODO : verifier si le serveur est upgraadable avant
         return await getProfitUpgrade(ns, serverToUp, maxMoneyToSpend);
-    } else {
+    } else if (upgradableServers.length < ns.getPurchasedServerLimit()) {
         return await getProfitBuy(ns, maxMoneyToSpend);
     }
     
@@ -24,7 +25,11 @@ async function getProfitUpgrade(ns: NS, server: ServerData, maxMoneyToSpend?: nu
         // found max upgrade possible
         ns.print('Recherche de la RAM maximum');
         let nextCost = ns.getPurchasedServerUpgradeCost(server.name, getNewRam(server.hackData.maxRam, pow+1));
-        while (nextCost < maxMoneyToSpend && getNewRam(server.hackData.maxRam, pow+1) <= ns.getPurchasedServerMaxRam()) {
+        while (
+            !Number.isFinite(nextCost)
+            && nextCost < maxMoneyToSpend 
+            && getNewRam(server.hackData.maxRam, pow+1) <= ns.getPurchasedServerMaxRam()
+        ) {
             pow++;
             await ns.sleep(500);
             nextCost = ns.getPurchasedServerUpgradeCost(server.name, getNewRam(server.hackData.maxRam, pow+1));
