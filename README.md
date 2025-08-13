@@ -39,7 +39,7 @@ wget https://raw.githubusercontent.com/N7A/bitburner/refs/heads/main/src/workspa
 ```
 6. Executer le script
 ```bash
-run /workspace/synchronize/init.pull.ts
+run /workspace/synchronize/init-pull.ts
 ```
 
 ## 🔄 Refresh pull
