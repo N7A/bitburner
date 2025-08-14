@@ -4,13 +4,13 @@
 - Reorg
 - more log
 - RAM minimum dans application.properties (pour les run a la main et les alias)
-- gestion serveurs acheté
-- ajout repository serveur acheté pour ne pas essayer de hack
 - see https://github.com/alainbryden/bitburner-scripts
 - next objectif
 - permettre call by cmd & by run (cf payload.launcher)
 - Alias "GOTO" ou "deep-connect" : find path to {server} and connect
+- script get best hack target pour lvl up : temps min + chance de reussite max
+- core on home help to grow and weaken, check if same on external servers; if yes repartition en fonction
 
 # Réflexions
 
-comment savoir les host déjà hack -> rootacces ?
+comment savoir les host déjà en cours de hack

@@ -141,10 +141,11 @@ async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Prom
             .reduce((a,b) => a+b);
     let newRamDisponible = ramDisponible
 
+    const getId = (request: RamResourceExecution) => request.request.type + (request.request.target ?? '')
     while (
         // requetes inchangées
-        Array.from(new Set([...requests.map(x => x.request.type + x.request.target), ...newRequest.map(x => x.request.type + x.request.target)]))
-            .every(x => newRequest.map(x => x.request.type + x.request.target).includes(x) && requests.map(x => x.request.type + x.request.target).includes(x))
+        Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
+            .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))
         // RAM inchangée
         && newRamDisponible === ramDisponible
     ) {
