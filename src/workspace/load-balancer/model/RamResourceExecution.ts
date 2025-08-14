@@ -8,4 +8,5 @@ export interface RamResourceExecution {
     getExecutionRequest(): ExecutionRequest;
     isExecutionUsless(ns: NS): boolean;
     getActionLog(): string;
+    setupDashboard(ns: NS, pid: number, targetHost: string);
 }
