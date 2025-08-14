@@ -130,7 +130,10 @@ async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Prom
                 } else if (order.type === ProcessRequestType.SETUP_HACK) {
                     return new SetupExecution(order);
                 }
+                return null;
             })
+            .filter(x => x !== null)
+            .map(x => x as RamResourceExecution)
             .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
     
     const ramDisponible = getTargetServers(ns)
@@ -180,7 +183,10 @@ async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Prom
                 } else if (order.type === ProcessRequestType.SETUP_HACK) {
                     return new SetupExecution(order);
                 }
+                return null;
             })
+            .filter(x => x !== null)
+            .map(x => x as RamResourceExecution)
             .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
     }
 

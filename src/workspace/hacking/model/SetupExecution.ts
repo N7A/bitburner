@@ -16,7 +16,8 @@ export class SetupExecution implements RamResourceExecution {
     request: ProcessRequest;
 
     constructor(request: ProcessRequest) {
-        this.targetHost = request.target
+        this.targetHost = request.target;
+        this.request = request;
     
         this.executionRequest = {
             wantedThreadNumber: 1,
