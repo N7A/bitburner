@@ -60,4 +60,8 @@ export class PayloadExecution implements RamResourceExecution {
     isExecutionUsless(ns: NS): boolean {
         return ExecutionsRepository.getAll(ns).some(x => x.target === this.targetHost && x.type === ProcessRequestType.SETUP_HACK);
     }
+    
+    setupDashboard(ns: NS, pid: number, targetHost: string) {        
+        Log.initTailTitle(ns, 'Hack', 'looper', targetHost, pid);
+    }
 }

@@ -40,4 +40,8 @@ export class SetupExecution implements RamResourceExecution {
         return ns.getServer(this.targetHost).hackDifficulty <= hackData.minDifficulty
             && ns.getServer(this.targetHost).moneyAvailable >= hackData.moneyMax
     }
+    
+    setupDashboard(ns: NS, pid: number, targetHost: string) {        
+        Log.initTailTitle(ns, 'Setup', 'looper', targetHost, pid);
+    }
 }
