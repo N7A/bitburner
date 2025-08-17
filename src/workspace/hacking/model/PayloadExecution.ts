@@ -8,9 +8,9 @@ import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
 
 //#region Constants
-export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.looper.ts';
-export const WEAKEN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/weaken.looper.ts';
-export const GROW_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/grow.looper.ts';
+export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.daemon.ts';
+export const WEAKEN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/weaken.daemon.ts';
+export const GROW_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/grow.daemon.ts';
 //#endregion Constants
 
 export class PayloadExecution implements RamResourceExecution {
@@ -48,8 +48,8 @@ export class PayloadExecution implements RamResourceExecution {
 
     getExecutionRequest(): ExecutionRequest {
         // TODO : check if payload already running
-        //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.looper.ts', targetHost)
-        //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.looper.ts', 'home', targetHost)
+        //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.daemon.ts', targetHost)
+        //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.daemon.ts', 'home', targetHost)
         
         // TODO : split nb thread (plutot que nb RAM) <- pour que le grow et weaken aient la force pour soutenir le hack
         // TODO : dynamique répartition : hack then weaken then grow then weaken then repeate

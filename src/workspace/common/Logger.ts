@@ -1,17 +1,19 @@
 import { logLevel } from "workspace/common/application-properties"
+import * as Log from "workspace/frameworks/logging";
 
 export class Logger {
-    debug(ns: NS, message: string) {
+    private ns: NS;
+
+    constructor(ns: NS) {
+        this.ns = ns;
+    }
+
+    debug(message: string) {
         if (logLevel !== LogLevel.DEBUG) {
             return;
         }
-            
-        const now: Date = new Date(Date.now())
-        const hour: number = now.getHours()
-        const minute: number = now.getMinutes()
-        const second: number = now.getSeconds()
-        const timestamp: string = hour + ":" + minute + ":" + second
-        ns.print(`${timestamp} - ${message}`)
+        
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${message}`)
     }
     
     /*info(msg: string, ...args: string[]) {
@@ -29,6 +31,7 @@ export class Logger {
     log(msg: string, ...args: string[]) {
         this.ns.tprintf(`${TermLogger.TRACE_LITERAL} ${msg}`, ...args);
     }*/
+
 }
 
 export enum LogLevel {

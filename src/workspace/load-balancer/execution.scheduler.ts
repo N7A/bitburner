@@ -31,6 +31,7 @@ export async function main(ns: NS) {
         // wait until orders change
         const currentOrders = await waitContextChange(ns, orders);
 
+        // TODO : dont kill hack and setup
         // kill all old for recalcul repartition
         orders.map(x => x.request).forEach(x => resetRunningProcess(ns, x));
         // maj orders
@@ -137,21 +138,24 @@ async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Prom
             .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
     
     const ramDisponible = getTargetServers(ns)
-            .map(x => availableRam(ns, x))
+            .map(x => ns.getServerMaxRam(x))
+            //.map(x => availableRam(ns, x))
             .reduce((a,b) => a+b);
     let newRamDisponible = ramDisponible
 
+    const getId = (request: RamResourceExecution) => request.request.type + (request.request.target ?? '')
     while (
         // requetes inchangées
-        Array.from(new Set([...requests.map(x => x.request.type + x.request.target), ...newRequest.map(x => x.request.type + x.request.target)]))
-            .every(x => newRequest.map(x => x.request.type + x.request.target).includes(x) && requests.map(x => x.request.type + x.request.target).includes(x))
+        Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
+            .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))
         // RAM inchangée
         && newRamDisponible === ramDisponible
     ) {
         await ns.sleep(500);
         
         newRamDisponible = getTargetServers(ns)
-            .map(x => availableRam(ns, x))
+            .map(x => ns.getServerMaxRam(x))
+            //.map(x => availableRam(ns, x))
             .reduce((a,b) => a+b);
 
         // remove from orders manual killed or script KO 

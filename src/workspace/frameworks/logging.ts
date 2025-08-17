@@ -120,6 +120,13 @@ export function date(ns: NS, date: Date): string {
     return date.toLocaleTimeString();
 }
 
+export function time(date: Date) {
+    const hour: number = date.getHours()
+    const minute: number = date.getMinutes()
+    const second: number = date.getSeconds()
+    return hour + ":" + minute + ":" + second
+}
+
 /**
  * @param fieldName nom du champ
  * @param value valeur du champ
@@ -174,4 +181,38 @@ export function script(value: string): string {
  */
 export function action(value: string): string {
     return color(value, Color.WHITE);
+}
+
+/**
+ * @param value cible
+ * 
+ * Ram cost : 0
+ */
+export function title(value: string): string {
+    return color(value, Color.CYAN);
+}
+
+/**
+ * @param value cible
+ * 
+ * Ram cost : 0
+ */
+export function threshold(ns: NS, currentValue: number, threshold: number): string {
+    const separateur = threshold > currentValue ? ' / ' : ' >>> '
+    const difference = Math.abs(threshold - currentValue);
+
+    if (threshold === currentValue) {
+        return `SUCCESS Threshold OK (' + ${ns.formatNumber(currentValue)} + ')`
+    }
+
+    return ns.formatNumber(currentValue) + separateur + ns.formatNumber(threshold) + ' (' + ns.formatNumber(difference) + ')';
+}
+
+export function object(object: any) {
+    const keys = Object.keys(object);
+    let messages: string[] = [];
+    for (const key of keys) {
+        messages.push(INFO(key, object[key]));
+    }
+    return messages.join('\n');
 }

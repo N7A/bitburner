@@ -11,7 +11,7 @@ export class ShareRamExecution implements RamResourceExecution {
     constructor(request: ProcessRequest) {
         this.request = request;
         this.executionRequest = {
-            scripts: [{scriptsFilepath: Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.worker.ts'}]
+            scripts: [{scriptsFilepath: Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.daemon.ts'}]
         }
     }
 
