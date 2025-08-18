@@ -11,8 +11,9 @@ export async function main(ns: NS) {
 
     for(const contract of contracts) {
         ns.print(Log.INFO('Contrat', `${contract.hostname} > ${contract.filepath}`));
+        const codingContract: CodingContractObject = ns.codingcontract.getContract(contract.filepath, contract.hostname)
         // mise en forme des données d'entrée
-        const data: string = ns.codingcontract.getData(contract.filepath, contract.hostname);
+        const data: string = codingContract.data as string;
         ns.print('Données : ' + data);
     
         // recherche de la solution
@@ -20,13 +21,13 @@ export async function main(ns: NS) {
         ns.print(Log.INFO('Solution', solution));
 
         // proposition la solution
-        let reward = ns.codingcontract.attempt(solution, contract.filepath, contract.hostname);
+        const reward = codingContract.submit(solution);
         if (reward) {
             ns.tprint('SUCCESS', ' ', `Contract ${contract.hostname} > ${contract.filepath} [solved]`);
             ns.tprint('INFO', ' ', Log.INFO('Reward', reward));
         } else {
             ns.tprint('ERROR', ' ', `Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
-            ns.tprint(Log.INFO('Essais restant', ns.codingcontract.getNumTriesRemaining(contract.filepath, contract.hostname)));
+            ns.tprint(Log.INFO('Essais restant', codingContract.numTriesRemaining));
         }
     };
 }

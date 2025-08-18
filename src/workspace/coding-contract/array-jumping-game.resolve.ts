@@ -16,22 +16,22 @@ export async function main(ns: NS) {
         const codingContract: CodingContractObject = ns.codingcontract.getContract(contract.filepath, contract.hostname)
 
         if (codingContract.type === ns.enums.CodingContractName.ArrayJumpingGame) {
-            solution = getSolution(ns, contract);
+            solution = getSolution(ns, codingContract);
         } else if (codingContract.type === ns.enums.CodingContractName.ArrayJumpingGameII) {
-            solution = getSolutionII(ns , contract);
+            solution = getSolutionII(ns , codingContract);
         } else {
             ns.print('ERROR', ' ', `Type (${codingContract}) non pris en charge`)
             continue;
         }
 
         ns.print(Log.INFO('Solution', solution));
-        let reward = ns.codingcontract.attempt(solution, contract.filepath, contract.hostname);
+        const reward = codingContract.submit(solution);
         if (reward) {
             ns.tprint('SUCCESS', ' ', `Contract ${contract.hostname} > ${contract.filepath} [solved]`);
             ns.tprint('INFO', ' ', Log.INFO('Reward', reward));
         } else {
             ns.tprint('ERROR', ' ', `Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
-            ns.tprint(Log.INFO('Essais restant', ns.codingcontract.getNumTriesRemaining(contract.filepath, contract.hostname)));
+            ns.tprint(Log.INFO('Essais restant', codingContract.numTriesRemaining));
         }
     };
 }
@@ -45,14 +45,14 @@ export async function main(ns: NS) {
  * 
  * Your answer should be submitted as 1 or 0, representing true and false respectively.
  */
-function getSolution(ns: NS, contract: Contract): number {
+function getSolution(ns: NS, contract: CodingContractObject): number {
     let solution: number = getSolutionII(ns , contract);
         
     return solution > 0 ? 1 : 0;
 }
 
-function getSolutionII(ns: NS, contract: Contract): number {
-    const data: number[] = ns.codingcontract.getData(contract.filepath, contract.hostname);
+function getSolutionII(ns: NS, contract: CodingContractObject): number {
+    const data: number[] = contract.data as number[];
     ns.print('Données : ' + data);
     
     let position: number = 0;

@@ -13,16 +13,18 @@ export async function main(ns: NS) {
         ns.print(Log.INFO('Contrat', `${contract.hostname} > ${contract.filepath}`));
         let solution: string[];
 
-        solution = getSolution(ns, contract);
+        const codingContract: CodingContractObject = ns.codingcontract.getContract(contract.filepath, contract.hostname)
+
+        solution = getSolution(ns, codingContract);
 
         ns.print(Log.INFO('Solution', solution));
-        let reward = ns.codingcontract.attempt(solution, contract.filepath, contract.hostname);
+        const reward = codingContract.submit(solution);
         if (reward) {
             ns.tprint('SUCCESS', ' ', `Contract ${contract.hostname} > ${contract.filepath} [solved]`);
             ns.tprint('INFO', ' ', Log.INFO('Reward', reward));
         } else {
             ns.tprint('ERROR', ' ', `Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
-            ns.tprint(Log.INFO('Essais restant', ns.codingcontract.getNumTriesRemaining(contract.filepath, contract.hostname)));
+            ns.tprint(Log.INFO('Essais restant', codingContract.numTriesRemaining));
         }
     }
 }
@@ -40,8 +42,8 @@ enum Operation {
     SUBSTRACT = '-',
     MULTIPLY = '*'
 }
-function getSolution(ns: NS, contract: Contract): string[] {
-    const data: string|number[] = ns.codingcontract.getData(contract.filepath, contract.hostname);
+function getSolution(ns: NS, contract: CodingContractObject): string[] {
+    const data: string|number[] = contract.data as string|number[];
     ns.print('Données : ' + data);
 
     const digits: string = data[0] as string

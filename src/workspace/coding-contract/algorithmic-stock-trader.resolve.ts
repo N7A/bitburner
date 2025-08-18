@@ -17,22 +17,22 @@ export async function main(ns: NS) {
         const codingContract: CodingContractObject = ns.codingcontract.getContract(contract.filepath, contract.hostname)
 
         if (codingContract.type === ns.enums.CodingContractName.AlgorithmicStockTraderI) {
-            solution = getSolutionI(ns, contract);
+            solution = getSolutionI(ns, codingContract);
         } else if (codingContract.type === ns.enums.CodingContractName.AlgorithmicStockTraderIII) {
-            solution = getSolutionIII(ns , contract);
+            solution = getSolutionIII(ns , codingContract);
         } else {
             ns.print('ERROR', ' ', `Type (${codingContract}) non pris en charge`)
             continue;
         }
 
         ns.print(Log.INFO('Solution', solution));
-        let reward = ns.codingcontract.attempt(solution, contract.filepath, contract.hostname);
+        const reward = codingContract.submit(solution);
         if (reward) {
             ns.tprint('SUCCESS', ' ', `Contract ${contract.hostname} > ${contract.filepath} [solved]`);
             ns.tprint('INFO', ' ', Log.INFO('Reward', reward));
         } else {
             ns.tprint('ERROR', ' ', `Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
-            ns.tprint(Log.INFO('Essais restant', ns.codingcontract.getNumTriesRemaining(contract.filepath, contract.hostname)));
+            ns.tprint(Log.INFO('Essais restant', codingContract.numTriesRemaining));
         }
     };
 }
@@ -42,11 +42,8 @@ export async function main(ns: NS) {
  *
  * Determine the maximum possible profit you can earn using at most one transaction (i.e. you can only buy and sell the stock once). If no profit can be made then the answer should be 0. Note that you have to buy the stock before you can sell it.
  */
-function getSolutionI(ns: NS, contract: Contract): number {
-    // load input arguments
-    const input: InputArg = getInput(ns, contract);
-
-    const data: number[] = ns.codingcontract.getData(input.filepath, input.hostname);
+function getSolutionI(ns: NS, contract: CodingContractObject): number {
+    const data: number[] = contract.data as number[];
     ns.print('Données : ' + data);
     
     let bestProfit: number = 0;
@@ -69,11 +66,8 @@ function getSolutionI(ns: NS, contract: Contract): number {
  *
  * If no profit can be made, then the answer should be 0.
  */
-function getSolutionIII(ns: NS, contract: Contract): number {
-    // load input arguments
-    const input: InputArg = getInput(ns, contract);
-
-    const data: number[] = ns.codingcontract.getData(input.filepath, input.hostname);
+function getSolutionIII(ns: NS, contract: CodingContractObject): number {
+    const data: number[] = contract.data as number[];
     ns.print('Données : ' + data);
     
     // TODO gerer cas ou 1 transaction est meilleur que 2 (une des transactions est négative)
