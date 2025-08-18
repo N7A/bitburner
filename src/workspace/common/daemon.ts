@@ -14,7 +14,7 @@ export class Daemon {
      * 
      * @param ns Bitburner API
      * @param work execution to loop
-     * @param durationLimit maximum duration wanted (in ms)
+     * @param durationLimit maximum duration wanted (in ms); endless if undefined
      */
     constructor(ns: NS, work: () => Promise<any>, durationLimit?: number) {
         this.ns = ns;

@@ -54,7 +54,7 @@ export async function main(ns: NS) {
             // sleep to prevent crash because of infinite loop
             await ns.sleep(interval);
         }
-	} while (input.runHasLoop)
+	} while (input.runHasLoop || getAutoRepayTime(ns) > 1000 * 60 * 60 * 9)
 }
 
 //#region Input arguments
@@ -112,6 +112,12 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
         ns.print('\n');
         ns.print('Next refresh on ', Log.date(ns,new Date(new Date().getTime() + interval * 1000)));
     }
+
+    const currentGain = ns.getMoneySources().sinceInstall.hacknet + ns.getMoneySources().sinceInstall.hacknet_expenses;
+    const totalProduction: number = nodes.map(x => x.production).reduce((a,b) => a + b);
+    if (currentGain < 0) {
+        ns.print(Log.INFO(`Auto-repay time`, `${Log.time(new Date(-currentGain/totalProduction * 1000))}`));
+    }
     if (nextUpgrade) {
         ns.print(Log.INFO('Next upgrade type', nextUpgrade.upgradeType));
         ns.print(Log.INFO('Next upgrade ratio', ns.formatNumber(nextUpgrade.ratio)));
@@ -120,4 +126,12 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
     ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
     ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(ns, currentMoney))}`));
     ns.ui.resizeTail(650, Math.min(nodes.length * 25 + 300, 600))
+}
+
+function getAutoRepayTime(ns: NS) {
+    const currentGain = ns.getMoneySources().sinceInstall.hacknet + ns.getMoneySources().sinceInstall.hacknet_expenses;
+    const totalProduction: number = Array(ns.hacknet.numNodes()).fill(0)
+        .map((value, index) => ns.hacknet.getNodeStats(index).production)
+        .reduce((a,b) => a + b);
+    return -currentGain/totalProduction * 1000
 }
