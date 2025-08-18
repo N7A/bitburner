@@ -27,7 +27,7 @@ export async function main(ns: NS) {
             ns.tprint('INFO', ' ', Log.INFO('Reward', reward));
         } else {
             ns.tprint('ERROR', ' ', `Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
-            ns.tprint(Log.INFO('Essais restant', codingContract.numTriesRemaining));
+            ns.tprint(Log.INFO('Essais restant', codingContract.numTriesRemaining()));
         }
     };
 }
