@@ -1,23 +1,42 @@
 import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {
-    //#region input parameters
-    var targetHost: string = ns.args.length >= 1 ? ns.args[0] as string : ns.getHostname();
-    //#endregion input parameters
-    
-    setupDashboard(ns, targetHost);
-    
-    ns.print(Log.getStartLog());
-    ns.print(Log.date(ns, new Date()));
+    // load input arguments
+    const input: InputArg = getInput(ns);
 
-    await ns.weaken(targetHost);
-    
-    ns.print(Log.getEndLog());
+    setupDashboard(ns, input);
+
+    await ns.weaken(input.targetHost);
 }
 
-/** @param {import(".").NS } ns */
-function setupDashboard(ns: NS, targetHost: string) {
+//#region Input arguments
+type InputArg = {
+    targetHost: string;
+}
+
+/**
+ * Load input arguments
+ * @param ns Bitburner API
+ * @returns 
+ */
+function getInput(ns: NS): InputArg {
+    if (ns.args[0] === undefined) {
+        ns.tprint('ERROR', ' ', 'Merci de renseigner un hostname');
+        ns.exit();
+    }
+
+	return {
+		targetHost: (ns.args[0] as string)
+	};
+}
+//#endregion Input arguments
+
+//#region Dashboard
+function setupDashboard(ns: NS, input: InputArg) {
+    ns.disableLog("ALL");
+    ns.enableLog('weaken');
     ns.clearLog();
-	
-	ns.ui.setTailTitle(`[${ns.getHostname()}] Weaken -> ${targetHost}`);
+    
+    Log.initTailTitle(ns, `Weaken ${Log.targetColorLess(input.targetHost)}`, 'Worker');
 }
+//#endregion Dashboard

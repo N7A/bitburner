@@ -29,7 +29,7 @@ export async function main(ns: NS) {
 
     //#region Setup
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Weaken', Log.Color.CYAN)}`);
-    await runScriptUntilEnoughThread(ns, targetHost, hackData, Referentiel.HACKING_DIRECTORY + '/payload/weaken.worker.ts', getWeakenNeededThreads)
+    await runScriptUntilEnoughThread(ns, targetHost, hackData, Referentiel.HACKING_DIRECTORY + '/payload/weaken.daemon.ts', getWeakenNeededThreads)
     
     ns.print(`${Log.date(ns, new Date())} - `, 'SUCCESS', ' ', 'Weaken done');
 
@@ -65,7 +65,7 @@ function refreshGrowDashBoard(ns: NS, neededGrowThread: number, possibleGrowThre
 }
 
 async function growToMax(ns: NS, targetHost: string, hackData: HackData) {
-    const scriptFilepath = Referentiel.HACKING_DIRECTORY + '/payload/grow.worker.ts';
+    const scriptFilepath = Referentiel.HACKING_DIRECTORY + '/payload/grow.daemon.ts';
     const ramCost = ns.getScriptRam(scriptFilepath);
 
     let neededThread = Math.ceil(getGrowthNeededThreads(ns, targetHost, hackData));
@@ -78,7 +78,7 @@ async function growToMax(ns: NS, targetHost: string, hackData: HackData) {
         if (threadToLaunch > 0) {
             ns.print('----------')
             // execute grow with max threads possible
-            let pidExecution = ns.exec(scriptFilepath, availableServer.sourceHostname, threadToLaunch, targetHost);
+            let pidExecution = ns.exec(scriptFilepath, availableServer.sourceHostname, threadToLaunch, targetHost, false);
             // on attend la fin du grow
             ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${scriptFilepath.substring(scriptFilepath.lastIndexOf('/'), scriptFilepath.lastIndexOf('.ts'))} on {${availableServer.sourceHostname}}...`);
             while (pidExecution != 0 && ns.isRunning(pidExecution)) {
@@ -88,7 +88,7 @@ async function growToMax(ns: NS, targetHost: string, hackData: HackData) {
             neededThread = Math.floor(getGrowthNeededThreads(ns, targetHost, hackData));
             
             // TODO : run weaken in same time
-            await runScriptUntilEnoughThread(ns, targetHost, hackData, Referentiel.HACKING_DIRECTORY + '/payload/weaken.worker.ts', getWeakenNeededThreads);
+            await runScriptUntilEnoughThread(ns, targetHost, hackData, Referentiel.HACKING_DIRECTORY + '/payload/weaken.daemon.ts', getWeakenNeededThreads);
         } else {
             await ns.asleep(500)
         }
@@ -114,7 +114,7 @@ async function runScriptUntilEnoughThread(
         if (threadToLaunch > 0) {
             ns.print('----------')
             // execute grow with max threads possible
-            let pidExecution = ns.exec(scriptFilepath, availableServer.sourceHostname, threadToLaunch, targetHost);
+            let pidExecution = ns.exec(scriptFilepath, availableServer.sourceHostname, threadToLaunch, targetHost, false);
             // on attend la fin du grow
             ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${scriptFilepath.substring(scriptFilepath.lastIndexOf('/'), scriptFilepath.lastIndexOf('.ts'))} on {${availableServer.sourceHostname}}...`)
             while (pidExecution != 0 && ns.isRunning(pidExecution)) {

@@ -1,5 +1,3 @@
-//import {TargetHost, HackData} from 'workspace/hacking/model/TargetHost'
-//import {get as ServersRepositoryGet } from 'workspace/domain/servers/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
 import { Daemon } from 'workspace/common/daemon';
 
