@@ -51,9 +51,9 @@ export class Daemon {
     //#region Dashboard    
     private refreshDashBoard(threadStartTime: Date, workStartTime: Date, workEndTime: Date) {
         const shareDuration = new Date(workEndTime.getTime() - workStartTime.getTime())
-        this.ns.print(Log.INFO("Thread start time : ", Log.time(threadStartTime)));
-        this.ns.print(Log.INFO("Last work time : ",  Log.time(workEndTime)));
-        this.ns.print(Log.INFO("Last work duration : ",  Log.time(shareDuration)));
+        this.ns.print(Log.INFO("Thread start time", Log.time(threadStartTime)));
+        this.ns.print(Log.INFO("Last work time",  Log.time(workEndTime)));
+        this.ns.print(Log.INFO("Last work duration",  Log.time(shareDuration)));
     }
     //#endregion Dashboard
 }
