@@ -30,7 +30,7 @@ export async function main(ns: NS) {
         daemon.killAfterLoop();
     }
     
-    daemon.run();
+    await daemon.run();
 
     ns.ui.closeTail();
 }

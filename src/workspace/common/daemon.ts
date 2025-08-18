@@ -7,7 +7,7 @@ export class Daemon {
     private ns: NS;
     private work: () => Promise<any>;
     // TODO : nb loop usefull ?
-    private runHasLoop: boolean;
+    private runHasLoop: boolean = true;
     private durationLimit?: number;
 
     /**

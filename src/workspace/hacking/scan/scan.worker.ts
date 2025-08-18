@@ -9,7 +9,9 @@ export async function main(ns: NS, scanTarget: string) {
     // load input arguments
     const input: InputArg = getInput(ns, scanTarget);
 
-    setupDashboard(ns, input);
+    if (scanTarget === undefined) {
+        setupDashboard(ns, input);
+    }
     
     ns.print(Log.getStartLog());
     ns.print(Log.action('Scan'), ' ', Log.target(input.targetHost));

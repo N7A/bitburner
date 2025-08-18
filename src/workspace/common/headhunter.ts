@@ -8,9 +8,9 @@ export class Headhunter<T> {
     private getTargets: () => Promise<T[]>;
     private work: (ns: NS, targets: T[]) => Promise<any>;
     private waitNewTargets: boolean;
-    private runHasLoop: boolean;
+    private runHasLoop: boolean = true;
     private durationLimit?: number;
-    private isKillConditionReached: () => boolean
+    private isKillConditionReached?: () => boolean
 
     /**
      * 
@@ -71,7 +71,7 @@ export class Headhunter<T> {
     }
 
     private isTargetOut(targets: T[]): boolean {
-        return !(this.waitNewTargets || !this.waitNewTargets && targets.length <= 0)
+        return !this.waitNewTargets && targets.length <= 0
     }
 
     killAfterLoop() {
@@ -79,10 +79,14 @@ export class Headhunter<T> {
     }
 
     needLoop(threadStartTime: Date, targets: T[]): boolean {
+        this.ns.tprint(this.runHasLoop)
+        this.ns.tprint(this.isTimeOut(threadStartTime))
+        this.ns.tprint(this.isTargetOut(targets))
+        this.ns.tprint(this.isKillConditionReached)
         return this.runHasLoop 
             && !this.isTimeOut(threadStartTime) 
             && !this.isTargetOut(targets)
-            && !this.isKillConditionReached();
+            && (this.isKillConditionReached === undefined || !this.isKillConditionReached());
     }
 
     //#region Dashboard    
