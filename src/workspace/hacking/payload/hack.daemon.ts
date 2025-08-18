@@ -9,13 +9,12 @@ export async function main(ns: NS) {
     
     setupDashboard(ns, input);
 
+    daemon = new Daemon(ns, () => work(ns, input));
+
     if (!input.runHasLoop) {
-        await work(ns, input);
-        return;
+        daemon.killAfterLoop();
     }
 
-    daemon = new Daemon(ns, () => work(ns, input));
-    
     await daemon.run();
 }
 

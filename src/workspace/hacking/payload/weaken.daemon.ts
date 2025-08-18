@@ -13,12 +13,11 @@ export async function main(ns: NS) {
     // INFO : getServerMinSecurityLevel aussi cher que get depuis la bdd
     const securityThresh = ns.getServerMinSecurityLevel(input.targetHost);
 
-    if (!input.runHasLoop) {
-        await work(ns, input, securityThresh);
-        return;
-    }
-
     daemon = new Daemon(ns, () => work(ns, input, securityThresh));
+    
+    if (!input.runHasLoop) {
+        daemon.killAfterLoop();
+    }
     
     await daemon.run();
 }

@@ -13,12 +13,12 @@ const UNLOCK_WORKER_SCRIPT = Referentiel.HACKING_DIRECTORY + '/unlock/unlock.wor
  */
 export async function main(ns: NS) {
     // load target files
-    let targetsHostname: string[] = getUnlockTarget(ns);
-
-    let unlockLaunched: number[] = [];
+    const targets: string[] = getUnlockTarget(ns);
     
+    let unlockLaunched: number[] = [];
+
     //#region accès root
-    for (const targetHostname of targetsHostname) {
+    for (const targetHostname of targets) {
         ns.print(Log.getStartLog())
         ns.print(`START ${Log.action('Unlock')} ${Log.target(targetHostname)}`);
 

@@ -5,46 +5,45 @@ import * as Log from 'workspace/frameworks/logging';
 /**
  * Scan les cibles données par le unlock.
  */
-export async function main(ns: NS, scanTargets: string[]) {
+export async function main(ns: NS, scanTarget: string) {
     // load input arguments
-    const input: InputArg = getInput(ns, scanTargets);
+    const input: InputArg = getInput(ns, scanTarget);
 
-    //setupDashboard(ns);
+    setupDashboard(ns, input);
     
-    for (const target of input.hostnamesTarget) {
-        ns.print(Log.getStartLog());
-        ns.print(Log.action('Scan'), ' ', Log.target(target));
+    ns.print(Log.getStartLog());
+    ns.print(Log.action('Scan'), ' ', Log.target(input.targetHost));
 
-        // update targets repository
-        ServersRepository.setScanned(ns, target);
+    // update targets repository
+    ServersRepository.setScanned(ns, input.targetHost);
 
-        // listing des voisins
-        const neighbors = getNeighbors(ns, target);
+    // listing des voisins
+    const neighbors = getNeighbors(ns, input.targetHost);
 
-        ns.tprint('SUCCESS', ' ', `${target} [scanned]`);
+    ns.tprint('SUCCESS', ' ', `${input.targetHost} [scanned]`);
 
-        // load targets
-        const newTargets = neighbors
-            .filter(x => !ServersRepository.getAll(ns).includes(x));
+    // load targets
+    const newTargets = neighbors
+        .filter(x => !ServersRepository.getAll(ns).includes(x));
 
-        handleNewTargets(ns, newTargets, target);
-        
-        ns.print(Log.getEndLog());
-    }
+    handleNewTargets(ns, newTargets, input.targetHost);
+    
+    ns.print(Log.getEndLog());
 
 }
 
-function setupDashboard(ns: NS) {
+function setupDashboard(ns: NS, input: InputArg) {
     ns.disableLog("ALL");
+    ns.enableLog('scan');
     ns.clearLog();
-    
-    ns.ui.setTailTitle('Scan #Worker');
+        
+    Log.initTailTitle(ns, `Scan ${Log.targetColorLess(input.targetHost)}`, 'Worker');
 }
 
 //#region Input arguments
 type InputArg = {
     /** Serveur cible */
-    hostnamesTarget: string[];
+    targetHost: string;
 }
 
 /**
@@ -52,12 +51,16 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS, hostnamesTarget: string[]): InputArg {
-    if (!hostnamesTarget && ns.args[0]) {
-        hostnamesTarget = [ns.args[0] as string]
+function getInput(ns: NS, targetHost: string): InputArg {
+    if (!targetHost) {
+        if (ns.args[0] === undefined) {
+            ns.tprint('ERROR', ' ', 'Merci de renseigner un hostname');
+            ns.exit();
+        }
+        targetHost = ns.args[0] as string
     }
     let result: InputArg = {
-        hostnamesTarget: (hostnamesTarget ?? [ns.getHostname()]) as string[]
+        targetHost: (targetHost ?? ns.getHostname()) as string
     };
 
     return result;

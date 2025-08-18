@@ -1,13 +1,25 @@
 import * as Log from 'workspace/frameworks/logging';
 
+/**
+ * Execute en boucle une séquence ayant pour ressource le nombre de thread.
+ */
 export class Daemon {
     private ns: NS;
     private work: () => Promise<any>;
+    // TODO : nb loop usefull ?
     private runHasLoop: boolean;
+    private durationLimit?: number;
 
-    constructor(ns: NS, work: () => Promise<any>) {
+    /**
+     * 
+     * @param ns Bitburner API
+     * @param work execution to loop
+     * @param durationLimit maximum duration wanted (in ms)
+     */
+    constructor(ns: NS, work: () => Promise<any>, durationLimit?: number) {
         this.ns = ns;
         this.work = work;
+        this.durationLimit = durationLimit;
     }
     
     async run() {
@@ -24,9 +36,14 @@ export class Daemon {
             this.refreshDashBoard(threadStartTime, workStartTime, workEndTime);
 
             this.ns.print(Log.getEndLog());
-        } while (this.runHasLoop)
+        } while (this.runHasLoop && !this.isTimeOut(threadStartTime))
     }
     
+    private isTimeOut(threadStartTime: Date): boolean {
+        return this.durationLimit !== undefined 
+            && (new Date().getTime() - threadStartTime.getTime() > this.durationLimit)
+    }
+
     killAfterLoop() {
         this.runHasLoop = false;
     }

@@ -7,7 +7,7 @@ import { ProcessRequest } from 'workspace/domain/executions/model/ProcessRequest
 import * as Log from 'workspace/frameworks/logging';
 
 //#region Constants
-export const SETUP_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/setup-server.worker.ts';
+export const SETUP_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/setup-server.sequencer.ts';
 //#endregion Constants
 
 export class SetupExecution implements RamResourceExecution {

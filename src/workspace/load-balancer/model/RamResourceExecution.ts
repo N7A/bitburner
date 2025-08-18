@@ -9,4 +9,5 @@ export interface RamResourceExecution {
     isExecutionUsless(ns: NS): boolean;
     getActionLog(): string;
     setupDashboard(ns: NS, pid: number, targetHost: string): void;
+    // TODO : getRamByThread
 }

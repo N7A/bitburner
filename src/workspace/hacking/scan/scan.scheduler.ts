@@ -1,13 +1,16 @@
 import { getScanTarget } from 'workspace/hacking/scan/scan.target-selector'
 import { main as doScan } from 'workspace/hacking/scan/scan.worker'
 import * as Log from 'workspace/frameworks/logging';
+import { Headhunter } from 'workspace/common/headhunter';
 
 //#region Constantes
-const selectTarget = getScanTarget
-const work = doScan
-const isKillConditionReached = (scanTargets: string[]): boolean => {
-    // tant qu'on a de nouvelles cibles
-    return scanTargets.length === 0
+const getTargets = async (ns: NS) => getScanTarget(ns)
+const work = async (ns: NS, targets: string[]) => {
+    for (const target of targets) {
+        ns.print('Wait scan end...');
+        await doScan(ns, target);
+        // TODO : when new unlock target, si infection not running -> execute infection
+    }
 }
 //#endregion Constantes
 
@@ -20,20 +23,14 @@ export async function main(ns: NS) {
 
     setupDashboard(ns);
 
-    // load targets
-    let targets: string[] = selectTarget(ns);
-    do {
-        ns.print(Log.getStartLog());
-        ns.print(Log.INFO('Selected targets', targets));
-
-        ns.print('Wait scan end...');
-        await work(ns, targets);
-
-        targets = selectTarget(ns);
-
-        // TODO : when new unlock target, si infection not running -> execute infection
-        ns.print(Log.getEndLog());
-	} while (input.runHasLoop && !isKillConditionReached(targets))
+    // waitNewTargets = false : targets fix and auto discovered
+    const daemon = new Headhunter<string>(ns, () => getTargets(ns), work, false);
+    
+    if (!input.runHasLoop) {
+        daemon.killAfterLoop();
+    }
+    
+    daemon.run();
 
     ns.ui.closeTail();
 }

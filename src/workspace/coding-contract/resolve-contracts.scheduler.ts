@@ -1,19 +1,18 @@
-import * as Log from 'workspace/frameworks/logging';
+import { Headhunter } from 'workspace/common/headhunter';
+import {main as getContracts} from 'workspace/coding-contract/contract.selector';
+import { Contract } from 'workspace/coding-contract/model/Contract';
 
 //#region Constantes
-const selectTarget = (ns: NS) => {
-    return ns.ls('home', 'workspace/coding-contract').filter(x => {
+const getTargets = async (ns: NS) => {
+    return await getContracts(ns);
+}
+const work = async (ns: NS, targets: Contract[]) => {
+    const resolvers = ns.ls('home', 'workspace/coding-contract').filter(x => {
             return x.startsWith('workspace/coding-contract/') && x.endsWith('.resolve.ts');
         });
-}
-const work = async (ns: NS, targets: string[]) => {
-    for(const resolver of targets) {
+    for(const resolver of resolvers) {
         ns.run(resolver);
     }
-}
-const isKillConditionReached = (): boolean => {
-    // contracts appear over the time
-    return false
 }
 //#endregion Constantes
 
@@ -21,20 +20,14 @@ export async function main(ns: NS) {
     // load input arguments
 	const input: InputArg = getInput(ns);
     
-    do {
-        ns.print(Log.getStartLog());
-        const resolvers = selectTarget(ns);
-
-        await work(ns, resolvers);
-
-        ns.print(Log.getEndLog());
-
-        if (input.runHasLoop) {
-            // TODO : adapt waiting time
-            // sleep to prevent crash because of infinite loop
-            await ns.sleep(1000 * 60 * 1);
-        }
-	} while (input.runHasLoop && !isKillConditionReached())
+    // waitNewTargets = true : contracts appear over the time
+    const daemon = new Headhunter<Contract>(ns, () => getTargets(ns), work, true);
+    
+    if (!input.runHasLoop) {
+        daemon.killAfterLoop();
+    }
+    
+    daemon.run();
 }
 
 //#region Input arguments
