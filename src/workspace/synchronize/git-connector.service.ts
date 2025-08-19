@@ -51,7 +51,7 @@ export class GitHubConnector {
             this.logger.err(`${sourceFile} -> ${file} download failed`);
             this.ns.exit();
         }
-        this.logger.info(`SUCCESS ${sourceFile} -> ${file} [downloaded]`);
+        this.logger.success(`${sourceFile} -> ${file} [downloaded]`);
     }
     
     /**

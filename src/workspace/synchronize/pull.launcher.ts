@@ -15,5 +15,5 @@ export async function main(ns: NS) {
 
     await git.pullAll();
 
-    logger.info('SUCCESS', ' ', 'Pull from manifest');
+    logger.success('Pull from manifest');
 }
