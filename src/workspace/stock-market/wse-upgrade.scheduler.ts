@@ -3,6 +3,7 @@ import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
 import { selectUpgrade } from 'workspace/stock-market/wse-upgrade.selector'
 import { WseUpgrade } from 'workspace/stock-market/model/WseUpgrade';
 
+// TODO : generic upgrade scheduler
 export async function main(ns: NS) {
     // load input arguments
 	const input: InputArg = getInput(ns);

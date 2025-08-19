@@ -18,6 +18,10 @@ export async function waitBuyTime(ns: NS, stockSymbol: string) {
     await waitStopDecrease(ns, stockSymbol);
 }
 
+export function getMaxShares(ns: NS, stockSymbol: string, maxMoneyToSpend: number) {
+    return (maxMoneyToSpend - ns.stock.getConstants().StockMarketCommission) / ns.stock.getBidPrice(stockSymbol);
+}
+
 export async function waitRepayTime(ns: NS, stockSymbol: string, moneySpent: number) {
     while(
         ns.stock.getAskPrice(stockSymbol) - ns.stock.getConstants().StockMarketCommission 

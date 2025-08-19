@@ -4,11 +4,6 @@
  *  - Trade Information eXchange (TIX) API
  */
 export async function main(ns: NS) {
-    ns.print('Stock market commission : ', ns.formatNumber(ns.stock.getConstants().StockMarketCommission));
-    ns.print('Ticks Per Cycle : ', ns.stock.getConstants().TicksPerCycle);
-    ns.print('msPerStockUpdate : ', ns.stock.getConstants().msPerStockUpdate);
-    ns.print('msPerStockUpdateMin : ', ns.stock.getConstants().msPerStockUpdateMin);
-
     const symbols = ns.stock.getSymbols();
     for(const stockSymbol of symbols) {
         ns.print('Symbol : ', stockSymbol);
