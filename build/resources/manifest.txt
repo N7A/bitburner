@@ -35,6 +35,7 @@
 /workspace/common/daemon.ts
 /workspace/common/headhunter.ts
 /workspace/common/Logger.ts
+/workspace/common/TerminalLogger.ts
 /workspace/domain/executions/executions.repository.ts
 /workspace/domain/executions/model/ProcessRequest.ts
 /workspace/domain/executions/payload.disable.ts
@@ -111,5 +112,6 @@
 /workspace/synchronize/application-properties.ts
 /workspace/synchronize/git-connector.service.ts
 /workspace/synchronize/init-pull.ts
+/workspace/synchronize/model/GitRepository.ts
 /workspace/synchronize/pull.launcher.ts
 /workspace/synchronize/synchronize-workspace.ts
