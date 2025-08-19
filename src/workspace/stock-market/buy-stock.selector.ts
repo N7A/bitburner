@@ -4,6 +4,13 @@ export function selectBestBuyQuick(ns: NS) {
         .pop();
 }
 
+/**
+ * 
+ * Needs : 
+ *  - 4S Market Data TIX API
+ * @param ns 
+ * @returns 
+ */
 export function selectBestBuyLong(ns: NS) {
     return ns.stock.getSymbols()
         .sort((a: string, b: string) => ns.stock.getVolatility(a) - ns.stock.getVolatility(b))
