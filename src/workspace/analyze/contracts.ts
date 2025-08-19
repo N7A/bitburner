@@ -1,5 +1,5 @@
 import * as Log from 'workspace/frameworks/logging';
-import { ServersRepository } from 'workspace/domain/servers/servers.repository';
+import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 
 export async function main(ns: NS) {
     setupDashboard(ns);

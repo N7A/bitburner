@@ -1,4 +1,4 @@
-import { ServersRepository } from "workspace/domain/servers/servers.repository";
+import { ServersRepository } from "workspace/servers/domain/servers.repository";
 
 export async function main(ns: NS) {
     //ns.print(ns.hacknet.maxNumNodes())

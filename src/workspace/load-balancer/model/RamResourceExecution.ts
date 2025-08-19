@@ -1,5 +1,5 @@
 import { ExecutionRequest } from "workspace/load-balancer/model/ExecutionServer";
-import { ProcessRequest } from "workspace/domain/executions/model/ProcessRequest";
+import { ProcessRequest } from "workspace/load-balancer/domain/model/ProcessRequest";
 
 // TODO : rename daemon execution ?
 export interface RamResourceExecution {

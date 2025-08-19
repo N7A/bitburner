@@ -1,0 +1,7 @@
+import {MoneyBank} from 'workspace/piggy-bank/domain/model/MoneyBank'
+import {RamBank} from 'workspace/piggy-bank/domain/model/RamBank'
+
+export type Bank = {
+    moneyBank: MoneyBank;
+    ramBank: RamBank;
+}

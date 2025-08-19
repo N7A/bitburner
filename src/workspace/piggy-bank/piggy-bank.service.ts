@@ -1,4 +1,4 @@
-import { PiggyBankRepository } from "workspace/domain/piggy-bank/piggy-bank.repository";
+import { PiggyBankRepository } from "workspace/piggy-bank/domain/piggy-bank.repository";
 
 export enum MoneyNeeder {
     HACKNET,

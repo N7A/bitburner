@@ -1,15 +1,15 @@
-import {ProcessRequest, ProcessRequestType} from 'workspace/domain/executions/model/ProcessRequest'
-import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
+import {ProcessRequest, ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
 import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
 import { weights } from 'workspace/load-balancer/application-properties'
-import { ShareRamExecution } from 'workspace/faction/model/ShareRamExecution'
-import { PayloadExecution } from 'workspace/hacking/model/PayloadExecution'
+import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'
+import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
-import { SetupExecution } from 'workspace/hacking/model/SetupExecution';
+import { SetupExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 
 export async function main(ns: NS) {
     // load input arguments

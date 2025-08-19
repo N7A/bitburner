@@ -1,5 +1,5 @@
-import { ServersRepository } from 'workspace/domain/servers/servers.repository';
-import {ServerData} from 'workspace/domain/servers/model/ServerData'
+import { ServersRepository } from 'workspace/servers/domain/servers.repository';
+import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {

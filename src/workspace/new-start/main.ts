@@ -1,8 +1,8 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
+import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
-import { ServersRepository } from 'workspace/domain/servers/servers.repository'
+import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 //#region Constants
 export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';

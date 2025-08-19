@@ -1,5 +1,5 @@
-import { ServersRepository } from 'workspace/domain/servers/servers.repository'
-import {ServerData, ServerType} from 'workspace/domain/servers/model/ServerData'
+import { ServersRepository } from 'workspace/servers/domain/servers.repository'
+import {ServerData, ServerType} from 'workspace/servers/domain/model/ServerData'
 
 export class ServersService {
     

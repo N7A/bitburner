@@ -1,0 +1,137 @@
+import { executeUpgrade } from 'workspace/resource-generator/hacknet/upgrade-hacknet.worker'
+import { getBestProfits } from 'workspace/resource-generator/hacknet/upgrade-hacknet.target-selector'
+import * as Log from 'workspace/frameworks/logging';
+import * as Properties from 'workspace/resource-generator/hacknet/application-properties'
+import { UpgradeExecution } from 'workspace/resource-generator/hacknet/model/UpgradeExecution'
+import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
+
+/**
+ * Runner qui gère l'achat des nodes Hacknet.
+ * 
+ * @param argument1 loop frequency time
+ * 
+ * @remarks Running RAM cost : 6,35GB
+*/
+export async function main(ns: NS) {
+    // load input arguments
+	const input: InputArg = getInput(ns);
+
+    setupDashboard(ns);
+
+    //#region input parameters
+    /** loop frequency time */
+    const interval: number = Properties.defaultInterval;
+    //#endregion input parameters
+
+    //#region Utils
+	const getMoney = () => ns.getPlayer().money;
+    //#endregion
+    
+    // select next upgrade
+    let nextUpgrade: UpgradeExecution | undefined = getBestProfits(ns);
+    do {
+        if (!nextUpgrade) {
+            continue;
+        }
+
+        // wait purchase to be possible
+        while(MoneyPiggyBank.getDisponibleMoney(ns, getMoney()) < nextUpgrade.cost) {
+            refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
+            // sleep to prevent crash because of infinite loop
+            await ns.sleep(500);
+        }
+
+        // get best purchase with max amount disponible
+        const selectedUpgrade = getBestProfits(ns, MoneyPiggyBank.getDisponibleMoney(ns, getMoney()));
+        // do purchase
+        executeUpgrade(ns, selectedUpgrade);
+        
+        if (input.runHasLoop) {
+            nextUpgrade = getBestProfits(ns);
+            
+            refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
+        
+            // sleep to prevent crash because of infinite loop
+            await ns.sleep(interval);
+        }
+	} while (input.runHasLoop || getAutoRepayTime(ns) > 1000 * 60 * 60 * 9)
+}
+
+//#region Input arguments
+type InputArg = {
+	/** Serveur cible */
+	runHasLoop: boolean;
+}
+
+/**
+ * Load input arguments
+ * @param ns Bitburner API
+ * @returns 
+ */
+function getInput(ns: NS): InputArg {
+	return {
+		runHasLoop: ns.args[0] ? (ns.args[0] as boolean) : false
+	};
+}
+//#endregion Input arguments
+
+function setupDashboard(ns: NS) {
+    ns.disableLog("ALL");
+    ns.clearLog();
+    
+    ns.ui.openTail();
+    Log.initTailTitle(ns, 'Hacknet', 'manager');
+    ns.ui.moveTail(1000, 50);
+    
+    ns.print('Waiting to purchase next upgrade...');
+}
+
+function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null, nextUpgrade?: UpgradeExecution | undefined) {
+    ns.clearLog();
+    let nodes: NodeStats[] = Array(ns.hacknet.numNodes()).fill(0)
+        .map((value, index) => ns.hacknet.getNodeStats(index))
+        .filter(x => x.cores < 16 || x.level < 200 || x.ram < 64);
+    
+    ns.print(`Nodes: ${ns.hacknet.numNodes()}`);
+
+    if (nodes.length > 0) {
+        ns.print(Log.buildTable(
+                ["Node", "Produced", "Uptime", "Production", "Level", "RAM", "Cores"],
+                nodes.map((v, i) => `${i}`),
+                nodes.map((v, i) => `\$${ns.formatNumber(v.totalProduction)}`),
+                nodes.map((v, i) => `${new Date(v.timeOnline * 1000).toLocaleTimeString()}`),
+                nodes.map((v, i) => `\$${ns.formatNumber(v.production)} /s`),
+                //nodes.map((v, i) => `\$${ns.formatRam(v.ramUsed ?? 0)}`),
+                nodes.map((v, i) => `${v.level}`),
+                nodes.map((v, i) => `${v.ram}`),
+                nodes.map((v, i) => `${v.cores}`),
+            ));
+    }
+    
+    if (interval !== null) {
+        ns.print('\n');
+        ns.print('Next refresh on ', Log.date(ns,new Date(new Date().getTime() + interval * 1000)));
+    }
+
+    const currentGain = ns.getMoneySources().sinceInstall.hacknet + ns.getMoneySources().sinceInstall.hacknet_expenses;
+    const totalProduction: number = nodes.map(x => x.production).reduce((a,b) => a + b);
+    if (currentGain < 0) {
+        ns.print(Log.INFO(`Auto-repay time`, `${Log.time(new Date(-currentGain/totalProduction * 1000))}`));
+    }
+    if (nextUpgrade) {
+        ns.print(Log.INFO('Next upgrade type', nextUpgrade.upgradeType));
+        ns.print(Log.INFO('Next upgrade ratio', ns.formatNumber(nextUpgrade.ratio)));
+        ns.print(Log.INFO('Next upgrade cost', Log.money(ns, nextUpgrade.cost)));
+    }
+    ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
+    ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(ns, currentMoney))}`));
+    ns.ui.resizeTail(650, Math.min(nodes.length * 25 + 300, 600))
+}
+
+function getAutoRepayTime(ns: NS) {
+    const currentGain = ns.getMoneySources().sinceInstall.hacknet + ns.getMoneySources().sinceInstall.hacknet_expenses;
+    const totalProduction: number = Array(ns.hacknet.numNodes()).fill(0)
+        .map((value, index) => ns.hacknet.getNodeStats(index).production)
+        .reduce((a,b) => a + b);
+    return -currentGain/totalProduction * 1000
+}

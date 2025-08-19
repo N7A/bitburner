@@ -1,6 +1,6 @@
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'
 import { UpgradeType } from 'workspace/load-balancer/model/UpgradeType'
-import { ServerData } from 'workspace/domain/servers/model/ServerData';
+import { ServerData } from 'workspace/servers/domain/model/ServerData';
 import { ServersService } from 'workspace/servers/servers.service';
 
 export async function selectUpgrade(ns: NS, maxMoneyToSpend?: number): Promise<UpgradeExecution> {

@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as ExecutionsRepository from 'workspace/domain/executions/executions.repository'
+import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 
 //#region Constants

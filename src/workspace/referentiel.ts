@@ -1,9 +1,8 @@
 //#region Workspace
 export const WORKSPACE_DIRECTORY: string = 'workspace';
-export const HACKING_DIRECTORY: string = WORKSPACE_DIRECTORY + '/hacking';
-export const HACKNET_DIRECTORY: string = WORKSPACE_DIRECTORY + '/hacknet';
-export const FACTION_DIRECTORY: string = WORKSPACE_DIRECTORY + '/faction';
-export const DOMAIN_DIRECTORY: string = WORKSPACE_DIRECTORY + '/domain';
+export const HACKING_DIRECTORY: string = WORKSPACE_DIRECTORY + '/resource-generator/hacking';
+export const HACKNET_DIRECTORY: string = WORKSPACE_DIRECTORY + '/resource-generator/hacknet';
+export const FACTION_DIRECTORY: string = WORKSPACE_DIRECTORY + '/resource-generator/faction';
 //#endregion Workspace
 //#region Repositories
 export const REPOSITORIES_DIRECTORY: string = 'repositories';

@@ -1,4 +1,4 @@
-import {ProcessRequestType} from 'workspace/domain/executions/model/ProcessRequest'
+import {ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
 
 /** temps maximum pour une execution */
 export const timeExecutionMax: number = 60 * 60 * 1000;

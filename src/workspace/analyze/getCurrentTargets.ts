@@ -1,9 +1,9 @@
-import {ServerData} from 'workspace/domain/servers/model/ServerData'
+import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import * as Log from 'workspace/frameworks/logging';
-import { getNextTarget } from 'workspace/hacking/unlock/unlock.selector'
-import {getPortPrograms} from 'workspace/hacking/model/PortProgram'
+import { getNextTarget } from 'workspace/resource-generator/hacking/unlock/unlock.selector'
+import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortProgram'
 import { ServersService } from 'workspace/servers/servers.service';
-import { ServersRepository } from 'workspace/domain/servers/servers.repository';
+import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 
 export async function main(ns: NS) {
     ns.ui.setTailTitle('Unlock targets');
