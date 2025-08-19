@@ -1,5 +1,7 @@
 import { gitRepositoryBaseUrl, manifestFilepath, sourceDirectoryPath } from "workspace/synchronize/application-properties";
-import { GitConnector, GitRepository } from "workspace/synchronize/git-connector.service";
+import { GitHubConnector } from "workspace/synchronize/git-connector.service";
+import { GitRepository } from "workspace/synchronize/model/GitRepository";
+import { TerminalLogger } from "workspace/common/TerminalLogger";
 
 export const repoParams: GitRepository = {
     baseUrl: gitRepositoryBaseUrl,
@@ -8,9 +10,10 @@ export const repoParams: GitRepository = {
 };
 
 export async function main(ns: NS) {
-    const git = new GitConnector(ns, repoParams);
+    const logger = new TerminalLogger(ns);
+    const git = new GitHubConnector(ns, repoParams);
 
     await git.pullAll();
 
-    ns.tprint('SUCCESS', ' ', 'Pull from manifest');
+    logger.info('SUCCESS', ' ', 'Pull from manifest');
 }
