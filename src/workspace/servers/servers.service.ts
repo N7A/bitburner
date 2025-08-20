@@ -3,6 +3,12 @@ import {ServerData, ServerType} from 'workspace/servers/domain/model/ServerData'
 
 export class ServersService {
     
+    /**
+     * Retrouve le chemin de serveur pour atteindre un serveur.
+     * @param ns Bitburner API
+     * @param hostname serveur cible
+     * @returns 
+     */
     private static getHostPath(ns: NS, hostname: string): string[] {
         const data: ServerData|null = ServersRepository.get(ns, hostname);
         if (!data?.parent) {
@@ -21,6 +27,12 @@ export class ServersService {
         }).reduce((a, b) => a + b);
     }
 
+    /**
+     * Construit la commande à executer dans le terminal pour se connecter au serveur cible.
+     * @param ns Bitburner API
+     * @param hostname serveur cible
+     * @returns 
+     */
     static getConnectCommand(ns: NS, hostname: string): string {
         return ServersService.getHostPath(ns, hostname).map(x => {
             return `connect ${x};`

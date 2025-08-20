@@ -51,5 +51,5 @@ run /workspace/synchronize/pull.launcher.ts
 # ▶️ Run
 
 ```bash
-run /workspace/new-start/main.ts
+run /workspace/new-start/new-start.launcher.ts
 ```
