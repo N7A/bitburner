@@ -26,8 +26,9 @@ export async function main(ns: NS) {
     ns.print('Wait repay time...');
     await waitRepayTime(ns, stockSymbol, spent);
 
-    const sellPrice = ns.stock.sellStock(stockSymbol, shares);
-    const gain = sellPrice * shares;
-    ns.print(`Sell ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(sellPrice * shares)}`);
+    const sharesLong = ns.stock.getPosition(stockSymbol)[0];
+    const sellPrice = ns.stock.sellStock(stockSymbol, sharesLong);
+    const gain = sellPrice * sharesLong;
+    ns.print(`Sell ${ns.formatNumber(sharesLong)} ${stockSymbol} for \$${ns.formatNumber(sellPrice)}`);
     ns.print(`Profit : \$${ns.formatNumber(gain - spent)}`);
 }
