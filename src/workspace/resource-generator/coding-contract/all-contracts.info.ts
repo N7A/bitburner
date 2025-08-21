@@ -11,13 +11,13 @@ export async function main(ns: NS) {
             ns.enums.CodingContractName.EncryptionIIVigenereCipher.toString()
         ].includes(ns.codingcontract.getContractType(contract.filepath, contract.hostname)));
     for (const contract of contracts) {
-        ns.print('----------')
-        ns.print(Log.INFO('Server', contract.hostname));
+        ns.print(Log.INFO('Serveur', contract.hostname));
         ns.print(Log.INFO('Fichier', contract.filepath));
         ns.print(Log.INFO('Type', ns.codingcontract.getContractType(contract.filepath, contract.hostname)));
         ns.print('----------')
     }
     ns.print(Log.getEndLog());
+    ns.print(Log.INFO('Nombre de contrat', contracts.length));
 }
 
 //#region Dashboard
