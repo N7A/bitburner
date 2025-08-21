@@ -1,4 +1,4 @@
-import { LogLevel } from "workspace/common/Logger";
+import { LogLevel } from "workspace/common/model/LogLevel";
 import { logLevel } from "workspace/common/application-properties";
 
 export class TerminalLogger {
@@ -7,7 +7,7 @@ export class TerminalLogger {
     static ERR_LITERAL = "ERROR  >";
     static TRACE_LITERAL = "TRACE  >";
     static SUCCESS_LITERAL = "SUCCESS  >";
-    ns: NS;
+    private ns: NS;
 
     constructor(ns: NS) {
         this.ns = ns;

@@ -1,5 +1,6 @@
 import { logLevel } from "workspace/common/application-properties"
 import * as Log from "workspace/frameworks/logging";
+import { LogLevel } from "workspace/common/model/LogLevel";
 
 export class Logger {
     private ns: NS;
@@ -32,12 +33,4 @@ export class Logger {
         this.ns.tprintf(`${TermLogger.TRACE_LITERAL} ${msg}`, ...args);
     }*/
 
-}
-
-export enum LogLevel {
-    ERROR,
-    WARN,
-    INFO,
-    DEBUG,
-    TRACE
 }
