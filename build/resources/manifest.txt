@@ -6,7 +6,6 @@
 /lab/repo-broker/service.ts
 /lab/test.ts
 /workspace/analyze/analyze.ts
-/workspace/analyze/contracts.ts
 /workspace/analyze/findServer.ts
 /workspace/analyze/getCurrentTargets.ts
 /workspace/analyze/getDeeperServerKnown.ts
@@ -40,7 +39,7 @@
 /workspace/load-balancer/upgrade-servers.selector.ts
 /workspace/load-balancer/upgrade-servers.worker.ts
 /workspace/new-start/friday-mep.ts
-/workspace/new-start/main.ts
+/workspace/new-start/new-start.launcher.ts
 /workspace/notification/money-amount.worker.ts
 /workspace/notification/server-unlocked.ts
 /workspace/piggy-bank/domain/model/Bank.ts
@@ -50,12 +49,13 @@
 /workspace/piggy-bank/piggy-bank.service.ts
 /workspace/referentiel.ts
 /workspace/resource-generator/coding-contract/algorithmic-stock-trader.resolve.ts
+/workspace/resource-generator/coding-contract/all-contracts.info.ts
 /workspace/resource-generator/coding-contract/array-jumping-game.resolve.ts
+/workspace/resource-generator/coding-contract/contract.info.ts
 /workspace/resource-generator/coding-contract/contract.selector.ts
 /workspace/resource-generator/coding-contract/encryption-caesar-cipher.resolve.ts
 /workspace/resource-generator/coding-contract/encryption-II-vigenere-cipher.ts
 /workspace/resource-generator/coding-contract/find-all-valid-math-expressions.resolve.ts
-/workspace/resource-generator/coding-contract/info.ts
 /workspace/resource-generator/coding-contract/merge-overlapping-intervals.resolve.ts
 /workspace/resource-generator/coding-contract/model/Contract.ts
 /workspace/resource-generator/coding-contract/model/GraphData.ts
