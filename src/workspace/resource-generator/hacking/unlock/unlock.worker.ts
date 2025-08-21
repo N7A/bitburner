@@ -1,6 +1,7 @@
 import { main as openPorts } from 'workspace/resource-generator/hacking/unlock/open-ports.worker'
 import * as Log from 'workspace/frameworks/logging';
-import { ServerData, UnlockRequirements } from 'workspace/servers/domain/model/ServerData'
+import { ServerData } from 'workspace/servers/domain/model/ServerData'
+import { UnlockRequirements } from 'workspace/servers/domain/model/UnlockRequirements'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { main as copyToolkit } from 'workspace/resource-generator/hacking/spreading/copy-toolkit.launcher'
 

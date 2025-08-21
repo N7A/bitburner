@@ -1,6 +1,6 @@
 import {getBestPayloadTarget} from 'workspace/resource-generator/hacking/payload/payload.selector'
 import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository';
-import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequest';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 
 export async function main(ns: NS) {
     const targetHost: string | undefined = getBestPayloadTarget(ns);

@@ -1,5 +1,6 @@
 import * as ExecusionsRepository from 'workspace/load-balancer/domain/executions.repository'
-import {ProcessRequest, ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
 
 export async function main(ns: NS) {
     // si déjà actif

@@ -1,10 +1,11 @@
-import {ProcessRequest, ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import {ProcessRequest} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ProcessRequestType } from "workspace/load-balancer/domain/model/ProcessRequestType";
 import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
-import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
+import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service'
 import { weights } from 'workspace/load-balancer/application-properties'
 import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
@@ -326,7 +327,7 @@ async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]):
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return Ram.getDisponibleRam(ns, getCurrentRam(ns, targetHost), targetHost);
+    return new RamPiggyBankService(ns).getDisponibleRam(targetHost);
 }
 
 function getNbPossibleThreads(availableRam: number, ramNeededByThread: number) {

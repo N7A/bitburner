@@ -1,5 +1,5 @@
 import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
-import {ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);

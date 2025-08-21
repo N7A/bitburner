@@ -4,3 +4,16 @@ export type MoneyBank = {
     /** montant à ne pas utiliser */
     toReserve: number;
 }
+
+/** repartition du disponible */
+// TODO
+/*
+export enum MoneyNeeder {
+    HACKNET,
+    SERVERS
+}
+
+static readonly weight: Map<MoneyNeeder, number> = new Map([
+    [MoneyNeeder.HACKNET, 1], 
+    [MoneyNeeder.SERVERS, 1]
+]);*/

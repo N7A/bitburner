@@ -4,4 +4,5 @@ import {RamBank} from 'workspace/piggy-bank/domain/model/RamBank'
 export type Bank = {
     moneyBank: MoneyBank;
     ramBank: RamBank;
+    // TODO : add timebank ?
 }

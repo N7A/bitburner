@@ -11,7 +11,7 @@ export function initTailTitle(ns: NS, service: string, role?: string, hostSource
  * @param {string[]} headers Column Headers
  * @param  {...string[]} columns Column data
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function buildTable(headers: string[], ...columns: string[][]) {
     const maxReducer = (a: number, b: number) => a > b ? a : b;
@@ -56,7 +56,7 @@ export function buildTable(headers: string[], ...columns: string[][]) {
 const DEFAULT_BLOCK_LOG_WIDTH: number = 40
 
 /**
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function getStartLog() {
     const width: number = DEFAULT_BLOCK_LOG_WIDTH
@@ -64,7 +64,7 @@ export function getStartLog() {
 }
 
 /**
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function getEndLog() {
     const width: number = DEFAULT_BLOCK_LOG_WIDTH
@@ -94,7 +94,7 @@ export enum BackgrounColor {
 }
 
 /**
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function color(message: string, color: Color) {
     return `${color}${message}${colorReset}`
@@ -104,7 +104,7 @@ export function color(message: string, color: Color) {
  * @param {NS} ns
  * @param {number} montant
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function money(ns: NS, montant: number): string {
     return '$' + ns.formatNumber(montant);
@@ -114,7 +114,7 @@ export function money(ns: NS, montant: number): string {
  * @param {NS} ns
  * @param {number} date
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function date(ns: NS, date: Date): string {
     return date.toLocaleTimeString();
@@ -132,7 +132,7 @@ export function time(date: Date) {
  * @param value valeur du champ
  * @param unit unité du champ
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function INFO(fieldName: string, value: any, unit?: string): string {
     return color(`${fieldName} : `, Color.MAGENTA) + `${value}${unit ? ' ' + unit : ''}`;
@@ -141,7 +141,7 @@ export function INFO(fieldName: string, value: any, unit?: string): string {
 /**
  * @param hostname cible
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function target(hostname: string): string {
     return '> ' + color(hostname, Color.CYAN) + ' <';
@@ -150,7 +150,7 @@ export function target(hostname: string): string {
 /**
  * @param hostname cible
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function targetColorLess(hostname: string): string {
     return '> ' + hostname + ' <';
@@ -159,7 +159,7 @@ export function targetColorLess(hostname: string): string {
 /**
  * @param hostname source
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function source(hostname: string): string {
     return '<' + color(hostname, Color.YELLOW) + '>';
@@ -168,7 +168,7 @@ export function source(hostname: string): string {
 /**
  * @param value cible
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function script(value: string): string {
     return color(value, Color.YELLOW);
@@ -177,7 +177,7 @@ export function script(value: string): string {
 /**
  * @param value cible
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function action(value: string): string {
     return color(value, Color.WHITE);
@@ -186,7 +186,7 @@ export function action(value: string): string {
 /**
  * @param value cible
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function title(value: string): string {
     return color(value, Color.CYAN);
@@ -195,7 +195,7 @@ export function title(value: string): string {
 /**
  * @param value cible
  * 
- * Ram cost : 0
+ * @remarks Ram cost : 0
  */
 export function threshold(ns: NS, currentValue: number, threshold: number): string {
     const separateur = threshold > currentValue ? ' / ' : ' >>> '

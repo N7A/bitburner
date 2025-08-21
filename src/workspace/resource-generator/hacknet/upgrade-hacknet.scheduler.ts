@@ -3,7 +3,7 @@ import { getBestProfits } from 'workspace/resource-generator/hacknet/upgrade-hac
 import * as Log from 'workspace/frameworks/logging';
 import * as Properties from 'workspace/resource-generator/hacknet/application-properties'
 import { UpgradeExecution } from 'workspace/resource-generator/hacknet/model/UpgradeExecution'
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
+import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
 
 /**
  * Runner qui gère l'achat des nodes Hacknet.
@@ -27,6 +27,8 @@ export async function main(ns: NS) {
 	const getMoney = () => ns.getPlayer().money;
     //#endregion
     
+    const moneyPiggyBankService = new MoneyPiggyBankService(ns);
+    
     // select next upgrade
     let nextUpgrade: UpgradeExecution | undefined = getBestProfits(ns);
     do {
@@ -35,14 +37,14 @@ export async function main(ns: NS) {
         }
 
         // wait purchase to be possible
-        while(MoneyPiggyBank.getDisponibleMoney(ns, getMoney()) < nextUpgrade.cost) {
+        while(moneyPiggyBankService.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
             refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
             // sleep to prevent crash because of infinite loop
             await ns.sleep(500);
         }
 
         // get best purchase with max amount disponible
-        const selectedUpgrade = getBestProfits(ns, MoneyPiggyBank.getDisponibleMoney(ns, getMoney()));
+        const selectedUpgrade = getBestProfits(ns, moneyPiggyBankService.getDisponibleMoney(getMoney()));
         // do purchase
         executeUpgrade(ns, selectedUpgrade);
         
@@ -124,7 +126,7 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
         ns.print(Log.INFO('Next upgrade cost', Log.money(ns, nextUpgrade.cost)));
     }
     ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
-    ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(MoneyPiggyBank.getDisponibleMoney(ns, currentMoney))}`));
+    ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(new MoneyPiggyBankService(ns).getDisponibleMoney(currentMoney))}`));
     ns.ui.resizeTail(650, Math.min(nodes.length * 25 + 300, 600))
 }
 

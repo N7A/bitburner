@@ -7,6 +7,8 @@ const REPOSITORY = Referentiel.EXECUTION_ORDERS_REPOSITORY;
  * Récupère les executions enregistrées en base de données.
  * 
  * @param ns Bitburner API
+ * 
+ * @remarks Ram cost : 0.1 GB
  */
 export function getAll(ns: NS): ProcessRequest[] {
     if (!ns.fileExists(REPOSITORY)) {
@@ -20,6 +22,8 @@ export function getAll(ns: NS): ProcessRequest[] {
  * 
  * @param ns Bitburner API
  * @param execution nouvelle execution
+ * 
+ * @remarks Ram cost : 0.1 GB
  */
 export function add(ns: NS, execution: ProcessRequest) {
     // get last version of executions
@@ -37,6 +41,8 @@ export function add(ns: NS, execution: ProcessRequest) {
  * 
  * @param ns Bitburner API
  * @param execution execution à mettre à jour
+ * 
+ * @remarks Ram cost : 0.1 GB
  */
 export function save(ns: NS, execution: ProcessRequest) {
     // get last version of executions
@@ -57,6 +63,8 @@ export function save(ns: NS, execution: ProcessRequest) {
  * 
  * @param ns Bitburner API
  * @param executionToRemove execution à supprimer
+ * 
+ * @remarks Ram cost : 0.1 GB
  */
 export function remove(ns: NS, executionToRemove: ProcessRequest) {
     // get last version of executions
@@ -75,6 +83,8 @@ export function remove(ns: NS, executionToRemove: ProcessRequest) {
  * Remise à zéro de la base de données.
  * 
  * @param ns Bitburner API
+ * 
+ * @remarks Ram cost : 0 GB
  */
 export function reset(ns: NS) {
     let executions: ProcessRequest[] = [];
@@ -89,6 +99,8 @@ export function reset(ns: NS) {
  * @param ns Bitburner API
  * @param hostname serveur qui porte l'execution
  * @param executions executions à sauvegarder
+ * 
+ * @remarks Ram cost : 0 GB
  */
 export function resetWith(ns: NS, executions: ProcessRequest[]) {
     ns.write(REPOSITORY, JSON.stringify(executions, null, 4), "w");

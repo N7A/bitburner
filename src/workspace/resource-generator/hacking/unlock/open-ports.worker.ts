@@ -1,4 +1,5 @@
-import {ServerData, UnlockRequirements} from 'workspace/servers/domain/model/ServerData'
+import { ServerData } from 'workspace/servers/domain/model/ServerData'
+import { UnlockRequirements } from 'workspace/servers/domain/model/UnlockRequirements'
 import {PortProgram, getPortPrograms} from 'workspace/resource-generator/hacking/model/PortProgram'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 

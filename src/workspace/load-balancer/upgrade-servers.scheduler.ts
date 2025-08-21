@@ -1,8 +1,8 @@
 import * as Log from 'workspace/frameworks/logging';
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
 import {selectUpgrade} from 'workspace/load-balancer/upgrade-servers.selector'
 import {executeUpgrade} from 'workspace/load-balancer/upgrade-servers.worker'
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'
+import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -14,6 +14,8 @@ export async function main(ns: NS) {
 	const getMoney = () => ns.getPlayer().money;
     //#endregion
     
+    const moneyPiggyBankService = new MoneyPiggyBankService(ns);
+
     do {
         ns.print(Log.getStartLog());
         // select next upgrade
@@ -26,13 +28,13 @@ export async function main(ns: NS) {
 
         ns.print('Waiting to have enough money...');
         // wait purchase to be possible
-        while(MoneyPiggyBank.getDisponibleMoney(ns, getMoney()) < nextUpgrade.cost) {
+        while(moneyPiggyBankService.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
             // sleep to prevent crash because of infinite loop
             await ns.sleep(500);
         }
 
         // get best purchase with max amount disponible
-        const selectedUpgrade = await selectUpgrade(ns, MoneyPiggyBank.getDisponibleMoney(ns, getMoney()));
+        const selectedUpgrade = await selectUpgrade(ns, moneyPiggyBankService.getDisponibleMoney(getMoney()));
         
         ns.print('Buy upgrade');
         // do purchase

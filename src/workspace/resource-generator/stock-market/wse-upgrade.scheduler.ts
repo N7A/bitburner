@@ -1,5 +1,5 @@
 import * as Log from 'workspace/frameworks/logging';
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
+import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import { selectUpgrade } from 'workspace/resource-generator/stock-market/wse-upgrade.selector'
 import { WseUpgrade } from 'workspace/resource-generator/stock-market/model/WseUpgrade';
 
@@ -14,6 +14,8 @@ export async function main(ns: NS) {
 	const getMoney = () => ns.getPlayer().money;
     //#endregion
     
+    const moneyPiggyBankService = new MoneyPiggyBankService(ns);
+
     do {
         ns.print(Log.getStartLog());
         // select next upgrade
@@ -26,7 +28,7 @@ export async function main(ns: NS) {
 
         ns.print('Waiting to have enough money...');
         // wait purchase to be possible
-        while(MoneyPiggyBank.getDisponibleMoney(ns, getMoney()) < nextUpgrade.cost) {
+        while(moneyPiggyBankService.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
             // sleep to prevent crash because of infinite loop
             await ns.sleep(500);
         }
