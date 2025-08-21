@@ -1,5 +1,6 @@
 import * as Log from 'workspace/frameworks/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);
@@ -33,8 +34,9 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
-    if (!ns.args[0]) {
-        ns.tprint('ERROR', ' ', 'Merci de renseigner un contrat');
+    const logger = new TerminalLogger(ns);
+    if (ns.args[0] === undefined) {
+        logger.err('Merci de renseigner un contrat');
         ns.exit();
     }
     

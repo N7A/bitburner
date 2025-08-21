@@ -1,5 +1,6 @@
 import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);
@@ -25,8 +26,9 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
+    const logger = new TerminalLogger(ns);
     if (ns.args[0] === undefined) {
-        ns.tprint('ERROR', ' ', 'Merci de renseigner un hostname');
+        logger.err('Merci de renseigner un hostname');
         ns.exit();
     }
 

@@ -1,5 +1,6 @@
 import { Daemon } from 'workspace/common/daemon';
 import * as Log from 'workspace/frameworks/logging';
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 let daemon: Daemon;
 
@@ -35,8 +36,9 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
+    const logger = new TerminalLogger(ns);
     if (ns.args[0] === undefined) {
-        ns.tprint('ERROR', ' ', 'Merci de renseigner un hostname');
+        logger.err('Merci de renseigner un hostname');
         ns.exit();
     }
 

@@ -1,6 +1,7 @@
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import * as Log from 'workspace/frameworks/logging';
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 /**
  * Scan les cibles données par le unlock.
@@ -8,6 +9,7 @@ import * as Log from 'workspace/frameworks/logging';
 export async function main(ns: NS, scanTarget: string) {
     // load input arguments
     const input: InputArg = getInput(ns, scanTarget);
+    const logger = new TerminalLogger(ns);
 
     if (scanTarget === undefined) {
         setupDashboard(ns, input);
@@ -22,7 +24,7 @@ export async function main(ns: NS, scanTarget: string) {
     // listing des voisins
     const neighbors = getNeighbors(ns, input.targetHost);
 
-    ns.tprint('SUCCESS', ' ', `${input.targetHost} [scanned]`);
+    logger.success(`${input.targetHost} [scanned]`);
 
     // load targets
     const newTargets = neighbors
@@ -54,9 +56,10 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS, targetHost: string): InputArg {
+    const logger = new TerminalLogger(ns);
     if (!targetHost) {
         if (ns.args[0] === undefined) {
-            ns.tprint('ERROR', ' ', 'Merci de renseigner un hostname');
+            logger.err('Merci de renseigner un hostname');
             ns.exit();
         }
         targetHost = ns.args[0] as string
