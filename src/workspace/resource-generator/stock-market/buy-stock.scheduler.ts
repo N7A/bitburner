@@ -3,6 +3,8 @@ import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.ser
 
 export async function main(ns: NS) {
     ns.ui.openTail();
+    ns.disableLog('sleep');
+
     const moneyPiggyBankService = new MoneyPiggyBankService(ns);
 
     const stockSymbol = selectBestBuyQuick(ns);
@@ -16,13 +18,16 @@ export async function main(ns: NS) {
 
     const availableMoney = moneyPiggyBankService.getDisponibleMoney(ns.getPlayer().money);
     const shares = getMaxShares(ns, stockSymbol, availableMoney);
-    ns.print(`Buy ${shares} ${stockSymbol}`);
     const buyPrice = ns.stock.buyStock(stockSymbol, shares);
+    const spent = buyPrice * shares;
+    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(spent)}`);
 
     // TODO : split script buy / sell -> multi buy possible avant sell
     ns.print('Wait repay time...');
-    await waitRepayTime(ns, stockSymbol, buyPrice * shares);
+    await waitRepayTime(ns, stockSymbol, spent);
 
-    ns.print(`Sell ${shares} ${stockSymbol}`);
     const sellPrice = ns.stock.sellStock(stockSymbol, shares);
+    const gain = sellPrice * shares;
+    ns.print(`Sell ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(sellPrice * shares)}`);
+    ns.print(`Profit : \$${ns.formatNumber(gain - spent)}`);
 }
