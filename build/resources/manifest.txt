@@ -15,6 +15,7 @@
 /workspace/common/daemon.ts
 /workspace/common/headhunter.ts
 /workspace/common/Logger.ts
+/workspace/common/model/LogLevel.ts
 /workspace/common/TerminalLogger.ts
 /workspace/frameworks/execution.ts
 /workspace/frameworks/file.ts
