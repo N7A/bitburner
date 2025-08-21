@@ -22,11 +22,12 @@ export async function main(ns: NS) {
     const spent = buyPrice * shares;
     ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(spent)}`);
 
+    const sharesLong = ns.stock.getPosition(stockSymbol)[0];
+    const askPriceWaiting = (spent + 2*ns.stock.getConstants().StockMarketCommission) / ns.stock.getPosition(stockSymbol)[1]
     // TODO : split script buy / sell -> multi buy possible avant sell
-    ns.print('Wait repay time...');
+    ns.print(`Wait repay time (${askPriceWaiting})...`);
     await waitRepayTime(ns, stockSymbol, spent);
 
-    const sharesLong = ns.stock.getPosition(stockSymbol)[0];
     const sellPrice = ns.stock.sellStock(stockSymbol, sharesLong);
     const gain = sellPrice * sharesLong;
     ns.print(`Sell ${ns.formatNumber(sharesLong)} ${stockSymbol} for \$${ns.formatNumber(sellPrice)}`);
