@@ -29,14 +29,6 @@ export async function main(ns: NS) {
     }
 }
 
-function getCurrentContracts(ns: NS, hostnames: string[]): Contract[] {
-    return hostnames.flatMap(
-        hostname => ns.ls(hostname)
-        .filter(x => x.endsWith('.cct'))
-        .map(x => {return {hostname: hostname, filepath: x} as Contract})
-    );
-}
-
 enum Operation {
     ADD = '+', 
     SUBSTRACT = '-',

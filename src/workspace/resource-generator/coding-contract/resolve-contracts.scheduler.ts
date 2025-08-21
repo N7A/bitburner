@@ -1,15 +1,15 @@
 import { Headhunter } from 'workspace/common/headhunter';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
 import { Contract } from 'workspace/resource-generator/coding-contract/model/Contract';
+import { getFilepaths } from 'workspace/frameworks/file';
 
 //#region Constantes
 const getTargets = async (ns: NS) => {
     return await getContracts(ns);
 }
 const work = async (ns: NS, targets: Contract[]) => {
-    const resolvers = ns.ls('home', 'workspace/coding-contract').filter(x => {
-            return x.startsWith('workspace/resource-generator/coding-contract/') && x.endsWith('.resolve.ts');
-        });
+    const resolvers = getFilepaths(ns, 'home', 'workspace/resource-generator/coding-contract')
+        .filter(x => x.endsWith('.resolve.ts'));
     for(const resolver of resolvers) {
         ns.run(resolver);
     }

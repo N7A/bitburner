@@ -4,6 +4,8 @@
  * @param ns Bitburner API
  * @param hostname serveur cible
  * @param directory dossier cible
+ * 
+ * @remarks RAM cost: 0.2 GB
  */
 export function getFilepaths(ns: NS, hostname: string, directory: string) {
 	// get filepaths that contain the workspace directory

@@ -1,5 +1,6 @@
 import * as Referentiel from 'workspace/referentiel'
 import {ServerData, UnlockRequirements, HackData, ServerType} from 'workspace/servers/domain/model/ServerData'
+import { getFilepaths } from 'workspace/frameworks/file';
 
 const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
 
@@ -10,8 +11,7 @@ export class ServersRepository {
      * @param ns Bitburner API
      */
     static getAll(ns: NS): string[] {
-        return ns.ls('home', REPOSITORY)
-            .filter(x => x.startsWith(REPOSITORY))
+        return getFilepaths(ns, 'home', REPOSITORY)
             .filter(x => !x.startsWith(REPOSITORY + '/archive/'))
             .map(x => x.substring(x.lastIndexOf('/')+1, x.lastIndexOf('.json')));
     }

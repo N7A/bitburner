@@ -3,7 +3,8 @@
  * 
  * @param ns Bitburner API
  * @param pidExecution id de l'execution ciblé
- * RAM : 0.1 GB
+ * 
+ * @remarks RAM cost: 0.1 GB
  */
 export async function waitEndExecution(ns: NS, pidExecution: number): Promise<boolean> {
     // execution KO
