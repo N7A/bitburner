@@ -8,22 +8,25 @@ export async function main(ns: NS) {
 
     const moneyPiggyBankService = new MoneyPiggyBankService(ns);
 
-    const stockSymbol = selectBestBuyQuick(ns);
-    if (!stockSymbol) {
-        return;
-    }
-    ns.print(`Best to buy : ${stockSymbol}`);
+    let shares: number = 0;
+    let stockSymbol: string;
+    do {
+        stockSymbol = selectBestBuyQuick(ns);
+        if (!stockSymbol) {
+            return;
+        }
+        ns.print(`Best to buy : ${stockSymbol}`);
 
-    ns.print('Wait buy time...');
-    await waitBuyTime(ns, stockSymbol);
+        ns.print('Wait buy time...');
+        await waitBuyTime(ns, stockSymbol);
 
-    const availableMoney = moneyPiggyBankService.getDisponibleMoney(ns.getPlayer().money);
-    const shares = getMaxShares(ns, stockSymbol, availableMoney);
+        const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(ns.getPlayer().money));
+        shares = getMaxShares(ns, stockSymbol, availableMoney);
+    } while(shares === 0)
+    
     const buyPrice = ns.stock.buyStock(stockSymbol, shares);
     const spent = buyPrice * shares;
-    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} 
-        for \$${ns.formatNumber(spent)} 
-        (\$${ns.formatNumber(buyPrice)})`);
+    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(spent)} (\$${ns.formatNumber(buyPrice)})`);
 
     const sharesLong = ns.stock.getPosition(stockSymbol)[0];
     const buyPriceLong = ns.stock.getPosition(stockSymbol)[1]

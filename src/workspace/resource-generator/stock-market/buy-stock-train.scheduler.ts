@@ -8,20 +8,23 @@ export async function main(ns: NS) {
 
     const moneyPiggyBankService = new MoneyPiggyBankService(ns);
 
-    const stockSymbol = selectBestTrainEnMarche(ns);
+    let shares: number = 0;
+    let stockSymbol: string;
+    do {
+        const stockSymbol = selectBestTrainEnMarche(ns);
 
-    if (!stockSymbol) {
-        return;
-    }
-    ns.print(`Best to buy : ${stockSymbol}`);
+        if (!stockSymbol) {
+            return;
+        }
+        ns.print(`Best to buy : ${stockSymbol}`);
 
-    const availableMoney = moneyPiggyBankService.getDisponibleMoney(ns.getPlayer().money);
-    const shares = getMaxShares(ns, stockSymbol, availableMoney);
+        const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(ns.getPlayer().money));
+        shares = getMaxShares(ns, stockSymbol, availableMoney);
+    } while(shares === 0)
+    
     const buyPrice = ns.stock.buyStock(stockSymbol, shares);
     const spent = buyPrice * shares;
-    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} 
-        for \$${ns.formatNumber(spent)} 
-        (\$${ns.formatNumber(buyPrice)})`);
+    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(spent)} (\$${ns.formatNumber(buyPrice)})`);
 
     const sharesLong = ns.stock.getPosition(stockSymbol)[0];
     const buyPriceLong = ns.stock.getPosition(stockSymbol)[1]
