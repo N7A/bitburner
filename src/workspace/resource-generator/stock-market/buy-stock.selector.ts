@@ -1,5 +1,6 @@
 export function selectBestBuyQuick(ns: NS) {
     return ns.stock.getSymbols()
+        // la plus haute augmentation de prix en dernier
         .sort((a: string, b: string) => ns.stock.getVolatility(a) - ns.stock.getVolatility(b))
         .pop();
 }
@@ -11,10 +12,16 @@ export function selectBestBuyQuick(ns: NS) {
  * @param ns 
  * @returns 
  */
-export function selectBestBuyLong(ns: NS) {
+export function selectBestTrainEnMarche(ns: NS) {
     return ns.stock.getSymbols()
+        .filter(x => ns.stock.getForecast(x) > 50)
+        // la plus haute chance d'augmenter en premier
+        .sort((a: string, b: string) => ns.stock.getForecast(b) - ns.stock.getForecast(a))
+        // top 5
+        .slice(0, 4)
+        // la plus haute augmentation de prix en dernier
         .sort((a: string, b: string) => ns.stock.getVolatility(a) - ns.stock.getVolatility(b))
-        .shift();
+        .pop();
 }
 
 export async function waitBuyTime(ns: NS, stockSymbol: string) {
