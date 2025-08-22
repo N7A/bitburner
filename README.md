@@ -25,7 +25,7 @@ Ce dépôt contient les scripts que j'utilise pour jouer dans Bitburner.
 
 # 🚀 Déployement
 
-1. cloner le repository
+1. Cloner le repository
 2. Générer le fichier manifest
 ```bash
 npm install

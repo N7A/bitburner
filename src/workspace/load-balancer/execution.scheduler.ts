@@ -1,5 +1,4 @@
 import {ProcessRequest, ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
@@ -10,12 +9,15 @@ import { ShareRamExecution } from 'workspace/resource-generator/faction/model/Sh
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import { SetupExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
 
     setupDashboard(ns);
+
+    const executionsRepository = new ExecutionsRepository(ns);
 
     let orders: RamResourceExecution[] = [];
 
@@ -63,7 +65,7 @@ export async function main(ns: NS) {
                 // maj pid processes
                 process.request.pid = [...(process.request.pid ?? []), ...pids];
             }
-            ExecutionsRepository.save(ns, process.request)
+            executionsRepository.save(process.request)
         }
 
         ns.print(Log.getEndLog());
@@ -109,11 +111,13 @@ function setupDashboard(ns: NS) {
  * @param request process request to reset
  */
 function resetRunningProcess(ns: NS, request: ProcessRequest) {
+    const executionsRepository = new ExecutionsRepository(ns);
+
     // kill all process
     request.pid?.filter(x => x !== undefined).forEach(x => ns.kill(x));
     // reset all repository pid
     request.pid = [];
-    ExecutionsRepository.save(ns, request)
+    executionsRepository.save(request)
 }
 
 /**
@@ -122,7 +126,9 @@ function resetRunningProcess(ns: NS, request: ProcessRequest) {
  * @returns new process orders
  */
 async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Promise<RamResourceExecution[]> {
-    let newRequest: RamResourceExecution[] = ExecutionsRepository.getAll(ns)   
+    const executionsRepository = new ExecutionsRepository(ns);
+
+    let newRequest: RamResourceExecution[] = executionsRepository.getAll()   
             .map(order => {
                 if (order.type === ProcessRequestType.SHARE_RAM) {
                     return new ShareRamExecution(order);
@@ -178,7 +184,7 @@ async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Prom
             break;
         }*/
         
-        newRequest = ExecutionsRepository.getAll(ns)   
+        newRequest = executionsRepository.getAll()   
             .map(order => {
                 if (order.type === ProcessRequestType.SHARE_RAM) {
                     return new ShareRamExecution(order);

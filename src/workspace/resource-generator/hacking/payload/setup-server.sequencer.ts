@@ -4,9 +4,9 @@ import{getAvailableServer} from 'workspace/load-balancer/main'
 import {ExecutionOrder} from 'workspace/load-balancer/model/ExecutionServer'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { waitEndExecution } from 'workspace/frameworks/execution';
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 //#region Constants
 const ENABLE_PAYLOAD_SCRIPT = "workspace/load-balancer/domain/payload.enable.ts";
@@ -26,6 +26,8 @@ export async function main(ns: NS) {
 
     setupDashboard(ns, targetHost);
 
+    const executionsRepository = new ExecutionsRepository(ns);
+
     // load host data
     const data: ServerData|null = ServersRepository.get(ns, targetHost);
     const hackData: HackData = data!.hackData
@@ -44,7 +46,7 @@ export async function main(ns: NS) {
     }
     //#endregion Setup
 
-    ExecutionsRepository.remove(ns, {type: ProcessRequestType.SETUP_HACK, target: targetHost});
+    executionsRepository.remove({type: ProcessRequestType.SETUP_HACK, target: targetHost});
 
     ns.run(ENABLE_PAYLOAD_SCRIPT, 1, targetHost);
 

@@ -1,13 +1,15 @@
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { getPayloadTargets } from 'workspace/resource-generator/hacking/payload/payload.selector';
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 /**
  * Hack les cibles données par le unlock.
  */
 export async function main(ns: NS) {
+    const executionsRepository = new ExecutionsRepository(ns);
+
     // load targets
-    const currentExecutions: string[] = ExecutionsRepository.getAll(ns)
+    const currentExecutions: string[] = executionsRepository.getAll()
         .filter(x => x.type === ProcessRequestType.HACK)
         .map(x => x.target)
         .filter(x => x !== undefined) as string[];
@@ -15,7 +17,7 @@ export async function main(ns: NS) {
         .filter(x => !currentExecutions.includes(x));
     
     for (const target of targets) {
-        ExecutionsRepository.add(ns, {type: ProcessRequestType.HACK, target: target, weight: 1});
+        executionsRepository.add({type: ProcessRequestType.HACK, target: target, weight: 1});
     }
 
     // TODO : run execution.scheduler if not running

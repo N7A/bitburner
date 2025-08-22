@@ -1,10 +1,12 @@
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import {ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);
 
-    ExecutionsRepository.remove(ns, {type: ProcessRequestType.HACK, target: input.hostnameTarget});
+    const executionsRepository = new ExecutionsRepository(ns);
+
+    executionsRepository.remove({type: ProcessRequestType.HACK, target: input.hostnameTarget});
 }
 
 //#region Input parameters

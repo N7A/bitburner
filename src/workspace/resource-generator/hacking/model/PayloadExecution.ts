@@ -2,10 +2,10 @@ import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import {ServerData, HackData} from 'workspace/servers/domain/model/ServerData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ProcessRequest, ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
 import * as Log from 'workspace/frameworks/logging';
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 //#region Constants
 export const HACK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/hack.daemon.ts';
@@ -58,7 +58,9 @@ export class PayloadExecution implements RamResourceExecution {
     }
 
     isExecutionUsless(ns: NS): boolean {
-        return ExecutionsRepository.getAll(ns).some(x => x.target === this.targetHost && x.type === ProcessRequestType.SETUP_HACK);
+        const executionsRepository = new ExecutionsRepository(ns);
+
+        return executionsRepository.getAll().some(x => x.target === this.targetHost && x.type === ProcessRequestType.SETUP_HACK);
     }
     
     setupDashboard(ns: NS, pid: number, targetHost: string) {        

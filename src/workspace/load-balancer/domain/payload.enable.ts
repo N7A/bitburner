@@ -1,16 +1,18 @@
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import {ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);
 
+    const executionsRepository = new ExecutionsRepository(ns);
+
     // si déjà actif
-    if (ExecutionsRepository.getAll(ns).some(x => x.type === ProcessRequestType.HACK && x.target === input.hostnameTarget)) {
+    if (executionsRepository.getAll().some(x => x.type === ProcessRequestType.HACK && x.target === input.hostnameTarget)) {
         // on ne fait rien
         return;
     }
 
-    ExecutionsRepository.add(ns, {type: ProcessRequestType.HACK, target: input.hostnameTarget, weight: 1});
+    executionsRepository.add({type: ProcessRequestType.HACK, target: input.hostnameTarget, weight: 1});
 }
 
 //#region Input parameters

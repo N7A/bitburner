@@ -1,9 +1,11 @@
-import * as ExecusionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import {ProcessRequest, ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export async function main(ns: NS) {
+    const executionsRepository = new ExecutionsRepository(ns);
+
     // si déjà actif
-    if (ExecusionsRepository.getAll(ns).some(x => x.type === ProcessRequestType.SHARE_RAM)) {
+    if (executionsRepository.getAll().some(x => x.type === ProcessRequestType.SHARE_RAM)) {
         // on ne fait rien
         return;
     }
@@ -11,5 +13,5 @@ export async function main(ns: NS) {
     const shareRamOrder: ProcessRequest = {
         type: ProcessRequestType.SHARE_RAM
     }
-    ExecusionsRepository.add(ns, shareRamOrder);
+    executionsRepository.add(shareRamOrder);
 }

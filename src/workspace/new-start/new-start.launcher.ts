@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
 import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
@@ -13,6 +13,8 @@ export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
+    const executionsRepository = new ExecutionsRepository(ns);
+
     // reset reserve money
     MoneyPiggyBank.setReserveMoney(ns, 0);
     
@@ -23,7 +25,7 @@ export async function main(ns: NS) {
 
     // reset des bases de données
     ServersRepository.reset(ns);
-    ExecutionsRepository.reset(ns);
+    executionsRepository.reset();
 
     // lancement du hacking automatisé
     ns.run(INFECTION_SCRIPT);
