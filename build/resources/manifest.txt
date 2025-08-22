@@ -14,6 +14,7 @@
 /workspace/common/application-properties.ts
 /workspace/common/daemon.ts
 /workspace/common/headhunter.ts
+/workspace/common/JsonRepository.ts
 /workspace/common/Logger.ts
 /workspace/common/model/LogLevel.ts
 /workspace/common/TerminalLogger.ts
@@ -24,6 +25,7 @@
 /workspace/load-balancer/application-properties.ts
 /workspace/load-balancer/domain/executions.repository.ts
 /workspace/load-balancer/domain/model/ProcessRequest.ts
+/workspace/load-balancer/domain/model/ProcessRequestType.ts
 /workspace/load-balancer/domain/payload.disable.ts
 /workspace/load-balancer/domain/payload.enable.ts
 /workspace/load-balancer/domain/setup.disable.ts
@@ -47,7 +49,8 @@
 /workspace/piggy-bank/domain/model/MoneyBank.ts
 /workspace/piggy-bank/domain/model/RamBank.ts
 /workspace/piggy-bank/domain/piggy-bank.repository.ts
-/workspace/piggy-bank/piggy-bank.service.ts
+/workspace/piggy-bank/money-piggy-bank.service.ts
+/workspace/piggy-bank/ram-piggy-bank.service.ts
 /workspace/referentiel.ts
 /workspace/resource-generator/coding-contract/algorithmic-stock-trader.resolve.ts
 /workspace/resource-generator/coding-contract/all-contracts.info.ts
@@ -105,6 +108,7 @@
 /workspace/resource-generator/hacknet/upgrade-hacknet.worker.ts
 /workspace/resource-generator/stock-market/buy-stock.scheduler.ts
 /workspace/resource-generator/stock-market/buy-stock.selector.ts
+/workspace/resource-generator/stock-market/buy-stock-train.scheduler.ts
 /workspace/resource-generator/stock-market/model/WseUpgrade.ts
 /workspace/resource-generator/stock-market/purchase-4s-market-data.worker.ts
 /workspace/resource-generator/stock-market/purchase-4s-market-data-tix-api.worker.ts
@@ -112,7 +116,12 @@
 /workspace/resource-generator/stock-market/purchase-wse-account.worker.ts
 /workspace/resource-generator/stock-market/wse-upgrade.scheduler.ts
 /workspace/resource-generator/stock-market/wse-upgrade.selector.ts
+/workspace/servers/domain/model/HackData.ts
 /workspace/servers/domain/model/ServerData.ts
+/workspace/servers/domain/model/ServerState.ts
+/workspace/servers/domain/model/ServerType.ts
+/workspace/servers/domain/model/UnlockRequirements.ts
+/workspace/servers/domain/refresh-owned-servers.worker.ts
 /workspace/servers/domain/refresh-servers.worker.ts
 /workspace/servers/domain/servers.repository.ts
 /workspace/servers/servers.service.ts
