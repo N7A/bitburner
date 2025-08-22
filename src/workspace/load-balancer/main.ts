@@ -1,5 +1,5 @@
 import {ExecutionOrder, ExecutionType} from 'workspace/load-balancer/model/ExecutionServer'
-import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
+import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service'
 import { ServersService } from 'workspace/servers/servers.service';
 
 /**
@@ -86,5 +86,5 @@ function hasEnoughRam(ns: NS, targetHost: string, ramNeeded: number) {
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return Ram.getDisponibleRam(ns, getCurrentRam(ns, targetHost), targetHost);
+    return new RamPiggyBankService(ns).getDisponibleRam(targetHost);
 }

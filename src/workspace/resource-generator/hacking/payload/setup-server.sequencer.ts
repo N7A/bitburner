@@ -1,10 +1,11 @@
 import * as Referentiel from 'workspace/referentiel'
-import {ServerData, HackData} from 'workspace/servers/domain/model/ServerData'
+import { ServerData } from 'workspace/servers/domain/model/ServerData'
+import { HackData } from 'workspace/servers/domain/model/HackData'
 import{getAvailableServer} from 'workspace/load-balancer/main'
 import {ExecutionOrder} from 'workspace/load-balancer/model/ExecutionServer'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
-import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequest';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { waitEndExecution } from 'workspace/frameworks/execution';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 

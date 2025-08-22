@@ -1,14 +1,17 @@
-import {ProcessRequest, ProcessRequestType} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import {ProcessRequest} from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ProcessRequestType } from "workspace/load-balancer/domain/model/ProcessRequestType";
+import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/frameworks/logging';
-import { Ram, getCurrentRam } from 'workspace/piggy-bank/piggy-bank.service'
+import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service'
 import { weights } from 'workspace/load-balancer/application-properties'
 import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import { SetupExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export async function main(ns: NS) {
@@ -311,10 +314,11 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
 }
 
 async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]): Promise<number|undefined> {
+    const logger = new TerminalLogger(ns);
     let result: number = 0;
     for (const script of scripts) {
         if (!ns.fileExists(script.scriptsFilepath, hostname)) {
-            ns.tprint('WARN', ' ', `Script ${script.scriptsFilepath} inexistant sur ${hostname}`);
+            logger.warn(`Script ${script.scriptsFilepath} inexistant sur ${hostname}`);
             const copyPid = ns.run(Referentiel.HACKING_DIRECTORY + '/spreading/copy-toolkit.worker.ts', 1, hostname);
             while(copyPid != 0 && ns.isRunning(copyPid)) {
                 await ns.asleep(500);
@@ -323,7 +327,7 @@ async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]):
 
         let ramNeededByThread = ns.getScriptRam(script.scriptsFilepath, hostname);
         if (ramNeededByThread <= 0) {
-            ns.tprint('ERROR', ' ', `Script ${script.scriptsFilepath} inexistant sur ${hostname}`);
+            logger.err(`Script ${script.scriptsFilepath} inexistant sur ${hostname}`);
             return undefined
         }
         result += ramNeededByThread;
@@ -332,7 +336,7 @@ async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]):
 }
 
 function availableRam(ns: NS, targetHost: string) {
-    return Ram.getDisponibleRam(ns, getCurrentRam(ns, targetHost), targetHost);
+    return new RamPiggyBankService(ns).getDisponibleRam(targetHost);
 }
 
 function getNbPossibleThreads(availableRam: number, ramNeededByThread: number) {
@@ -342,6 +346,7 @@ function getNbPossibleThreads(availableRam: number, ramNeededByThread: number) {
 
 //#region Execution
 async function execute(ns: NS, executionOrder: ExecutionOrder): Promise<number[]> {
+    const logger = new TerminalLogger(ns);
     let pids: number[] = []
     if (executionOrder.nbThread === 0) {
         return pids;
@@ -350,7 +355,7 @@ async function execute(ns: NS, executionOrder: ExecutionOrder): Promise<number[]
     for (const script of executionOrder.request.scripts) {
         // setup
         if (!ns.fileExists(script.scriptsFilepath, executionOrder.sourceHostname)) {
-            ns.tprint('WARN', ' ', `Script ${script.scriptsFilepath} inexistant sur ${executionOrder.sourceHostname}`);
+            logger.warn(`Script ${script.scriptsFilepath} inexistant sur ${executionOrder.sourceHostname}`);
             const copyPid = ns.run(Referentiel.HACKING_DIRECTORY + '/spreading/copy-toolkit.worker.ts', 1, executionOrder.sourceHostname);
             while(copyPid != 0 && ns.isRunning(copyPid)) {
                 await ns.asleep(500);

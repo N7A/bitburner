@@ -1,4 +1,4 @@
-import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequest';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { getPayloadTargets } from 'workspace/resource-generator/hacking/payload/payload.selector';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 

@@ -2,8 +2,11 @@ import {Contract} from 'workspace/resource-generator/coding-contract/model/Contr
 import {Transaction} from 'workspace/resource-generator/coding-contract/model/Transaction';
 import * as Log from 'workspace/frameworks/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 export async function main(ns: NS) {
+    const logger = new TerminalLogger(ns);
+    
     const contracts = (await getContracts(ns))
         .filter(x => [
             ns.enums.CodingContractName.AlgorithmicStockTraderI,
@@ -28,11 +31,11 @@ export async function main(ns: NS) {
         ns.print(Log.INFO('Solution', solution));
         const reward = codingContract.submit(solution);
         if (reward) {
-            ns.tprint('SUCCESS', ' ', `Contract ${contract.hostname} > ${contract.filepath} [solved]`);
-            ns.tprint('INFO', ' ', Log.INFO('Reward', reward));
+            logger.success(`Contract ${contract.hostname} > ${contract.filepath} [solved]`);
+            logger.info(Log.INFO('Reward', reward));
         } else {
-            ns.tprint('ERROR', ' ', `Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
-            ns.tprint(Log.INFO('Essais restant', codingContract.numTriesRemaining()));
+            logger.err(`Contract ${contract.hostname} > ${contract.filepath} failed to solve`);
+            logger.info(Log.INFO('Essais restant', codingContract.numTriesRemaining()));
         }
     };
 }

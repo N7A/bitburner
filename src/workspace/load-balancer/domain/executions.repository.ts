@@ -15,6 +15,8 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
      * 
      * @param ns Bitburner API
      * @param execution execution à mettre à jour
+     * 
+     * @remarks Ram cost : 0.1 GB
      */
     save(execution: ProcessRequest) {
         // get last version of executions
@@ -35,6 +37,8 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
      * 
      * @param ns Bitburner API
      * @param executionToRemove execution à supprimer
+     * 
+     * @remarks Ram cost : 0.1 GB
      */
     remove(executionToRemove: ProcessRequest) {
         // get last version of executions

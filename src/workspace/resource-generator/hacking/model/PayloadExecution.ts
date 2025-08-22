@@ -1,8 +1,10 @@
 import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
-import {ServerData, HackData} from 'workspace/servers/domain/model/ServerData'
+import { ServerData } from 'workspace/servers/domain/model/ServerData'
+import { HackData } from 'workspace/servers/domain/model/HackData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
-import { ProcessRequest, ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequest';
+import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
 import * as Log from 'workspace/frameworks/logging';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
@@ -60,7 +62,8 @@ export class PayloadExecution implements RamResourceExecution {
     isExecutionUsless(ns: NS): boolean {
         const executionsRepository = new ExecutionsRepository(ns);
 
-        return executionsRepository.getAll().some(x => x.target === this.targetHost && x.type === ProcessRequestType.SETUP_HACK);
+        return executionsRepository.getAll().some(x => x.target === this.targetHost && x.type === ProcessRequestType.SETUP_HACK) 
+        /*|| (ns.getServer(this.targetHost).moneyAvailable ?? 0) <= (ns.getServer(this.targetHost).moneyMax ?? 0) * 0.5*/;
     }
     
     setupDashboard(ns: NS, pid: number, targetHost: string) {        

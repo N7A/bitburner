@@ -1,4 +1,5 @@
 import * as Log from 'workspace/frameworks/logging';
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 /**
  * Alerte quand le joueur atteint un certain monant.
@@ -36,8 +37,9 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
-    if (!ns.args[0]) {
-        ns.tprint('ERROR', ' ', 'Merci de renseigner un montant à notifier');
+    const logger = new TerminalLogger(ns);
+    if (ns.args[0] === undefined) {
+        logger.err('Merci de renseigner un montant à notifier');
         ns.exit();
     }
     

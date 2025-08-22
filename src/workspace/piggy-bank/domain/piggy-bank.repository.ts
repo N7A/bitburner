@@ -5,17 +5,31 @@ import { MoneyBank } from 'workspace/piggy-bank/domain/model/MoneyBank';
 
 const REPOSITORY = Referentiel.REPOSITORIES_DIRECTORY + '/piggy-bank.json';
 
+/**
+ * Persiste les seuils de dépense (en argent et RAM).
+ * 
+ * @remarks Ram cost : 0.1 GB
+ */
 export class PiggyBankRepository {
+
+    private ns: NS;
+
+    constructor(ns: NS) {
+        this.ns = ns
+    }
+
     /**
      * Récupère les données enregistrées en base de données.
      * 
      * @param ns Bitburner API
+     * 
+     * @remarks Ram cost : 0.1 GB
      */
-    static get(ns: NS): Bank {
-        if (!ns.fileExists(REPOSITORY)) {
-            return {moneyBank: undefined, ramBank: undefined};
+    get(): Bank {
+        if (!this.ns.fileExists(REPOSITORY)) {
+            return {moneyBank: {rateToKeep:0, toReserve: 0}, ramBank: {rateToKeep: new Map(), toReserve: new Map()}};
         }
-        let bank: Bank = JSON.parse(ns.read(REPOSITORY));
+        let bank: Bank = JSON.parse(this.ns.read(REPOSITORY));
         bank.ramBank = {
             rateToKeep: new Map(Object.entries(bank.ramBank.rateToKeep)),
             toReserve: new Map(Object.entries(bank.ramBank.toReserve))
@@ -28,24 +42,32 @@ export class PiggyBankRepository {
      * Remet à zéro la base de données avec les données fournis en entrée.
      * 
      * @param ns Bitburner API
-     * @param bank
+     * @param bank data to save
+     * 
+     * @remarks Ram cost : 0 GB
      */
-    static save(ns: NS, bank: Bank) {
-        bank.ramBank.rateToKeep = Object.fromEntries(bank.ramBank.rateToKeep as Map<string, number>)
-        bank.ramBank.toReserve = Object.fromEntries(bank.ramBank.toReserve as Map<string, number>)
-        ns.write(REPOSITORY, JSON.stringify(bank, null, 4), "w");
+    save(bank: Bank): void {
+        // convertion des maps en objet (nécessaire pour l'enregistrement au format JSON)
+        bank.ramBank.rateToKeep = Object.fromEntries(bank.ramBank.rateToKeep as Map<string, number>);
+        bank.ramBank.toReserve = Object.fromEntries(bank.ramBank.toReserve as Map<string, number>);
+        // save data
+        this.ns.write(REPOSITORY, JSON.stringify(bank, null, 4), "w");
     }
 
     /**
      * Remise à zéro de la base de données.
      * 
      * @param ns Bitburner API
+     * 
+     * @remarks Ram cost : 0 GB
      */
-    static reset(ns: NS) {
+    reset(): void {
+        // initial money thresholds
         const moneyBank: MoneyBank = {
             rateToKeep: 30/100,
             toReserve: 0 * 1000 * 1000
-        }
+        };
+        // initial RAM thresholds
         const ramBank: RamBank = {
             rateToKeep: new Map([
                 ['home', 10/100], 
@@ -55,11 +77,12 @@ export class PiggyBankRepository {
                 ['home', 20], 
                 ['f1rst', 0]
             ])
-        }
+        };
 
         const bank: Bank = {moneyBank: moneyBank, ramBank: ramBank};
 
         // save data
-        PiggyBankRepository.save(ns, bank);
+        this.save(bank);
     }
+    
 }

@@ -2,11 +2,11 @@ import { LogLevel } from "workspace/common/model/LogLevel";
 import { logLevel } from "workspace/common/application-properties";
 
 export class TerminalLogger {
-    static INFO_LITERAL = "INFO   >";
-    static WARN_LITERAL = "WARN   >";
-    static ERR_LITERAL = "ERROR  >";
-    static TRACE_LITERAL = "TRACE  >";
-    static SUCCESS_LITERAL = "SUCCESS  >";
+    static INFO_LITERAL    = "INFO    >";
+    static WARN_LITERAL    = "WARN    >";
+    static ERR_LITERAL     = "ERROR   >";
+    static TRACE_LITERAL   = "TRACE   >";
+    static SUCCESS_LITERAL = "SUCCESS >";
     private ns: NS;
 
     constructor(ns: NS) {

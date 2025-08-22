@@ -1,3 +1,7 @@
+/**
+ * 
+ * @remarks RAM cost : 0.1 GB
+ */
 export class JsonRepository<T> {
     protected REPOSITORY: string;
     private ns: NS;
@@ -8,6 +12,8 @@ export class JsonRepository<T> {
 
     /**
      * Récupère les données enregistrées en base de données.
+     * 
+     * @remarks RAM cost : 0.1 GB
      */
     getAll(): T[] {
         if (!this.ns.fileExists(this.REPOSITORY)) {
@@ -21,6 +27,8 @@ export class JsonRepository<T> {
      * Enregistre en base une nouvelle donnée.
      * 
      * @param data nouvelle donnée
+     * 
+     * @remarks RAM cost : 0.1 GB
      */
     add(data: T) {
         // get last version of executions
@@ -35,6 +43,8 @@ export class JsonRepository<T> {
 
     /**
      * Remise à zéro de la base de données.
+     * 
+     * @remarks RAM cost : 0 GB
      */
     reset(): void {
         // save data
@@ -45,6 +55,8 @@ export class JsonRepository<T> {
      * Remet à zéro la base de données avec les données fournis en entrée.
      * 
      * @param data données à sauvegarder
+     * 
+     * @remarks RAM cost : 0 GB
      */
     protected resetWith(data: T[]) {
         this.ns.write(this.REPOSITORY, JSON.stringify(data, null, 4), "w");

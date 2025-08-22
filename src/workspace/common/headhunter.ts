@@ -79,10 +79,6 @@ export class Headhunter<T> {
     }
 
     needLoop(threadStartTime: Date, targets: T[]): boolean {
-        this.ns.tprint(this.runHasLoop)
-        this.ns.tprint(this.isTimeOut(threadStartTime))
-        this.ns.tprint(this.isTargetOut(targets))
-        this.ns.tprint(this.isKillConditionReached)
         return this.runHasLoop 
             && !this.isTimeOut(threadStartTime) 
             && !this.isTargetOut(targets)

@@ -1,19 +1,22 @@
 import { main as openPorts } from 'workspace/resource-generator/hacking/unlock/open-ports.worker'
 import * as Log from 'workspace/frameworks/logging';
-import { ServerData, UnlockRequirements } from 'workspace/servers/domain/model/ServerData'
+import { ServerData } from 'workspace/servers/domain/model/ServerData'
+import { UnlockRequirements } from 'workspace/servers/domain/model/UnlockRequirements'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { main as copyToolkit } from 'workspace/resource-generator/hacking/spreading/copy-toolkit.launcher'
+import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 export async function main(ns: NS, targetHost: string) {
     // load input arguments
     const input: InputArg = getInput(ns, targetHost);
+    const logger = new TerminalLogger(ns);
 
     var nuked: boolean = false
     let resultMessage: string;
 
     ns.atExit(async() => {
         if (nuked) {
-            ns.tprint('SUCCESS', ' ', `${input.hostnameTarget} [nuked]`, resultMessage ? ` : ${resultMessage}` : '');
+            logger.success(`${input.hostnameTarget} [nuked]`, resultMessage ? ` : ${resultMessage}` : '');
             await handleUnlock(ns, input.hostnameTarget);
         } else {
             ns.print('WARN', ' ', `${input.hostnameTarget} nuke ${Log.color('KO', Log.Color.RED)}`, resultMessage ? ` : ${resultMessage}` : '');
@@ -49,7 +52,7 @@ export async function main(ns: NS, targetHost: string) {
         resultMessage = `Open ports impossible pour le moment`;
         ns.exit();
     }
-    ns.tprint('SUCCESS', ' ', `${input.hostnameTarget} [ports opened]`);
+    logger.success(`${input.hostnameTarget} [ports opened]`);
 
     // ouvrir l'accès au root
     nuked = ns.nuke(input.hostnameTarget);
