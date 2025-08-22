@@ -2,8 +2,9 @@ import { getMaxShares, selectBestTrainEnMarche, waitRepayTime } from "workspace/
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 
 export async function main(ns: NS) {
-    ns.ui.openTail();
     ns.disableLog('sleep');
+    ns.clearLog();
+    ns.ui.openTail();
 
     const moneyPiggyBankService = new MoneyPiggyBankService(ns);
 
