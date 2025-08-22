@@ -20,12 +20,15 @@ export async function main(ns: NS) {
     const shares = getMaxShares(ns, stockSymbol, availableMoney);
     const buyPrice = ns.stock.buyStock(stockSymbol, shares);
     const spent = buyPrice * shares;
-    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(spent)}`);
+    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} 
+        for \$${ns.formatNumber(spent)} 
+        (\$${ns.formatNumber(buyPrice)})`);
 
     const sharesLong = ns.stock.getPosition(stockSymbol)[0];
-    const askPriceWaiting = (spent + 2*ns.stock.getConstants().StockMarketCommission) / ns.stock.getPosition(stockSymbol)[1]
+    const buyPriceLong = ns.stock.getPosition(stockSymbol)[1]
+    const askPriceWaiting = (buyPriceLong*sharesLong + 2*ns.stock.getConstants().StockMarketCommission) / sharesLong;
     // TODO : split script buy / sell -> multi buy possible avant sell
-    ns.print(`Wait repay time (${askPriceWaiting})...`);
+    ns.print(`Wait repay time (\$${ns.formatNumber(askPriceWaiting)})...`);
     await waitRepayTime(ns, stockSymbol, spent);
 
     const sellPrice = ns.stock.sellStock(stockSymbol, sharesLong);
