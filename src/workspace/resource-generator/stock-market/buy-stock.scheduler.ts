@@ -1,7 +1,8 @@
-import { getMaxShares, selectBestBuyQuick, waitBuyTime, waitRepayTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
+import { getMaxShares, selectBestBuyQuick, waitBuyTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import * as Log from 'workspace/frameworks/logging';
 import { Logger } from 'workspace/common/Logger';
+import { SellStockWorker } from "workspace/resource-generator/stock-market/sell-stock.worker";
 
 export async function main(ns: NS) {
     const main: Main = new Main(ns);
@@ -23,8 +24,10 @@ class Main {
     async run() {
         this.logger.log(`Start`);
         const workStartTime = new Date();
+        // TODO : multi buy possible avant sell
         await this.buy();
-        const profit = await this.sell();
+        const sellWorker: SellStockWorker = new SellStockWorker(this.ns, {stockSymbol: this.stockSymbol});
+        const profit = await sellWorker.sell();
         const workEndTime = new Date();
         const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime());
         this.logger.log(Log.INFO("Time to profit",  Log.time(workDuration)));
@@ -39,7 +42,9 @@ class Main {
         do {
             this.stockSymbol = selectBestBuyQuick(this.ns);
             if (!this.stockSymbol) {
-                return;
+                this.logger.warn('Aucune cible trouvée')
+                await this.ns.asleep(500);
+                continue;
             }
             this.logger.log(`Best to buy : ${Log.target(this.stockSymbol)}`);
 
@@ -58,23 +63,6 @@ class Main {
         return this.stockSymbol;
     }
 
-    async sell(): Promise<number> {
-        const sharesLong = this.ns.stock.getPosition(this.stockSymbol)[0];
-        const buyPriceLong = this.ns.stock.getPosition(this.stockSymbol)[1]
-        const spent = buyPriceLong*sharesLong + 2*this.ns.stock.getConstants().StockMarketCommission;
-        const askPriceWaiting = spent / sharesLong;
-        // TODO : split script buy / sell -> multi buy possible avant sell
-        this.logger.log(`repay time (Ask Price: ${Log.money(this.ns, askPriceWaiting)})...`);
-        await waitRepayTime(this.ns, this.stockSymbol, buyPriceLong*sharesLong, sharesLong);
-        this.logger.stopWaiting();
-
-        const sellPrice = this.ns.stock.sellStock(this.stockSymbol, sharesLong);
-        const gain = sellPrice * sharesLong;
-        this.logger.log(`Sell ${this.ns.formatNumber(sharesLong)} ${this.stockSymbol} for ${Log.money(this.ns, sellPrice)}`);
-        this.logger.log(`Profit : ${Log.money(this.ns, gain - spent)}`);
-        return gain - spent
-    }
-    
     //#region Dashboard
     private setupDashboard() {
         this.ns.disableLog('sleep');
