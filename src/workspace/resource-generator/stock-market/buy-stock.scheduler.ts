@@ -43,8 +43,9 @@ class Main {
             }
             this.logger.log(`Best to buy : ${Log.target(this.stockSymbol)}`);
 
-            this.logger.log('Wait buy time...');
+            this.logger.waiting('buy time');
             await waitBuyTime(this.ns, this.stockSymbol);
+            this.logger.stopWaiting();
 
             const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money));
             shares = getMaxShares(this.ns, this.stockSymbol, availableMoney);
@@ -63,8 +64,9 @@ class Main {
         const spent = buyPriceLong*sharesLong + 2*this.ns.stock.getConstants().StockMarketCommission;
         const askPriceWaiting = spent / sharesLong;
         // TODO : split script buy / sell -> multi buy possible avant sell
-        this.logger.log(`Wait repay time (Ask Price: ${Log.money(this.ns, askPriceWaiting)})...`);
+        this.logger.log(`repay time (Ask Price: ${Log.money(this.ns, askPriceWaiting)})...`);
         await waitRepayTime(this.ns, this.stockSymbol, buyPriceLong*sharesLong, sharesLong);
+        this.logger.stopWaiting();
 
         const sellPrice = this.ns.stock.sellStock(this.stockSymbol, sharesLong);
         const gain = sellPrice * sharesLong;

@@ -60,8 +60,9 @@ class Main {
         const spent = buyPriceLong*sharesLong + 2*this.ns.stock.getConstants().StockMarketCommission;
         const askPriceWaiting = spent / sharesLong;
         // TODO : split script buy / sell -> multi buy possible avant sell
-        this.logger.log(`Wait repay time (Ask Price: ${Log.money(this.ns, askPriceWaiting)})...`);
+        this.logger.waiting(`repay time (Ask Price: ${Log.money(this.ns, askPriceWaiting)})`);
         await waitRepayTime(this.ns, this.stockSymbol, buyPriceLong*sharesLong, sharesLong);
+        this.logger.stopWaiting();
 
         const sellPrice = this.ns.stock.sellStock(this.stockSymbol, sharesLong);
         const gain = sellPrice * sharesLong;
