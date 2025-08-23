@@ -1,4 +1,4 @@
-import { Headhunter } from 'workspace/common/headhunter copy';
+import { Headhunter } from 'workspace/common/headhunter2';
 import { getMaxShares, selectBestTrainEnMarche } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import * as Log from 'workspace/frameworks/logging';

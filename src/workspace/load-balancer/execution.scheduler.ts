@@ -278,6 +278,7 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
         if (ramNeededByThread === undefined) {
             continue;
         }
+        // TODO : ramNeededByThread too high lock all executions
         const maxThreadWanted = getNbPossibleThreads(ramToUse, ramNeededByThread)
         // plus de thread possible avec la ram restante
         if (maxThreadWanted <= 0) {
