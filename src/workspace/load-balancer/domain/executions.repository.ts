@@ -44,10 +44,14 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
         // get last version of executions
         let executions: ProcessRequest[] = this.getAll();
 
+        const countLine = executions.filter(execution => {
+            return (execution.type === executionToRemove.type && execution.target === executionToRemove.target)
+        }).length
         // remove execution
         executions = executions.filter(execution => {
-            return (execution.type === executionToRemove.type && execution.target === executionToRemove.target)
+            return !(execution.type === executionToRemove.type && execution.target === executionToRemove.target)
         });
+        this.ns.print(`Removed lines ${countLine}`)
 
         // save data
         this.resetWith(executions);

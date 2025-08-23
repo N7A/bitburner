@@ -4,7 +4,7 @@
  */
 export class JsonRepository<T> {
     protected REPOSITORY: string;
-    private ns: NS;
+    protected ns: NS;
 
     constructor(ns: NS) {
         this.ns = ns;
