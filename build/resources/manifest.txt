@@ -17,6 +17,7 @@
 /workspace/common/JsonRepository.ts
 /workspace/common/Logger.ts
 /workspace/common/model/LogLevel.ts
+/workspace/common/model/LogLevelLitteral.ts
 /workspace/common/TerminalLogger.ts
 /workspace/frameworks/execution.ts
 /workspace/frameworks/file.ts
