@@ -45,7 +45,6 @@ export class SellStockWorker {
         this.ns = ns;
         this.logger = new Logger(ns);
         this.stockSymbol = input.stockSymbol;
-        this.setupDashboard();
     }
 
     async run() {
