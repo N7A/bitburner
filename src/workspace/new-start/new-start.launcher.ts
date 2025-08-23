@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import * as Log from 'workspace/frameworks/logging';
-import {Money as MoneyPiggyBank} from 'workspace/piggy-bank/piggy-bank.service'
+import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 //#region Constants
@@ -13,10 +13,11 @@ export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
-    const executionsRepository = new ExecutionsRepository(ns);
+    const executionsRepository: ExecutionsRepository = new ExecutionsRepository(ns);
+    const moneyPiggyBankService: MoneyPiggyBankService = new MoneyPiggyBankService(ns);
 
     // reset reserve money
-    MoneyPiggyBank.setReserveMoney(ns, 0);
+    moneyPiggyBankService.setReserveMoney(0);
     
     // TODO : objectif dépend de la vitesse de gain
     /*if (!ns.hasTorRouter()) {

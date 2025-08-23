@@ -48,7 +48,7 @@ export async function main(ns: NS) {
         // define servers repartion
         const executions: Map<RamResourceExecution, ExecutionOrder[]> = await getRepartitions(ns, orders, targetServers);
 
-        ns.print(Log.action('Executions'));
+        ns.print(Log.action('Executions'), ` (${executions.size})`);
         // lancement des scripts
         for (const process of executions.keys()) {
             let currentExecutionOrders = executions.get(process)
