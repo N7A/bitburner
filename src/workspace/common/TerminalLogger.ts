@@ -1,12 +1,8 @@
 import { LogLevel } from "workspace/common/model/LogLevel";
 import { logLevel } from "workspace/common/application-properties";
+import { LogLevelLitteral } from "workspace/common/model/LogLevelLitteral";
 
 export class TerminalLogger {
-    static INFO_LITERAL    = "INFO    >";
-    static WARN_LITERAL    = "WARN    >";
-    static ERR_LITERAL     = "ERROR   >";
-    static TRACE_LITERAL   = "TRACE   >";
-    static SUCCESS_LITERAL = "SUCCESS >";
     private ns: NS;
 
     constructor(ns: NS) {
@@ -14,19 +10,19 @@ export class TerminalLogger {
     }
 
     success(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TerminalLogger.SUCCESS_LITERAL} ${msg}`, ...args);
+        this.ns.tprintf(`${LogLevelLitteral.SUCCESS} ${msg}`, ...args);
     }
 
     info(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TerminalLogger.INFO_LITERAL} ${msg}`, ...args);
+        this.ns.tprintf(`${LogLevelLitteral.INFO} ${msg}`, ...args);
     }
 
     warn(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TerminalLogger.WARN_LITERAL} ${msg}`, ...args);
+        this.ns.tprintf(`${LogLevelLitteral.WARN} ${msg}`, ...args);
     }
 
     err(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TerminalLogger.ERR_LITERAL} ${msg}`, ...args);
+        this.ns.tprintf(`${LogLevelLitteral.ERROR} ${msg}`, ...args);
     }
 
     trace(msg: string, ...args: string[]) {
@@ -34,6 +30,6 @@ export class TerminalLogger {
             return;
         }
 
-        this.ns.tprintf(`${TerminalLogger.TRACE_LITERAL} ${msg}`, ...args);
+        this.ns.tprintf(`${LogLevelLitteral.TRACE} ${msg}`, ...args);
     }
 }

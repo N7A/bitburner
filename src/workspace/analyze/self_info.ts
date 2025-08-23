@@ -1,47 +1,87 @@
 import * as Log from 'workspace/frameworks/logging';
+import { Logger } from 'workspace/common/Logger';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-	let player = ns.getPlayer();
-	let totalSharePower = ns.getSharePower();
-	let hackingLevel = ns.getHackingLevel();
-	ns.tprint(Log.getStartLog())
+	const main: Main = new Main(ns);
+
+	ns.print(Log.getStartLog())
 	
-	ns.tprint(Log.INFO("Hacking Level", hackingLevel));
-	ns.tprint(Log.INFO("Share Power", totalSharePower));
-	ns.tprint(Log.INFO("Factions", `${player.factions}`), ` (${Log.color(player.factions.length.toString(), Log.Color.CYAN)})`);
-	ns.tprint(Log.INFO("Entropy", player.entropy));
-	ns.tprint(Log.INFO("People Killed", player.numPeopleKilled));
-	ns.tprint(Log.INFO("Karma", ns.heart.break().toFixed(2)));
-	ns.tprint('\n')
-    ns.tprint(Log.color("Reset info", Log.Color.CYAN));
-	ns.tprint(Log.INFO('Current node', ns.getResetInfo().currentNode));
-	ns.tprint(Log.INFO('Augmentations', ns.getResetInfo().ownedAugs.size));
-	ns.tprint(Log.INFO("Time since last augmentation", `${Log.date(ns, new Date(ns.getResetInfo().lastAugReset))}`));
-	ns.tprint('\n')
-    ns.tprint(Log.color("Production", Log.Color.CYAN));
-	ns.tprint(Log.INFO("Current script production", Log.money(ns, ns.getTotalScriptIncome()[0]), '/s'));
-	// get current node number
-    const numNodes = ns.hacknet.numNodes();
-	let hacknetProduction: number = 0;
-    for (let i = 0; i < numNodes; i++) {
-		hacknetProduction += ns.hacknet.getNodeStats(i).production;
-	}
-	ns.tprint(Log.INFO("Current Hacknet production", Log.money(ns, hacknetProduction), '/s'));
-	ns.tprint(Log.INFO("Script production augmentation since augmentation", Log.money(ns, ns.getTotalScriptIncome()[1]), '/s'));
-	ns.tprint('\n')
+	main.showPlayeurStats();
+	ns.print('\n')
+    main.showResetInfo();
+	ns.print('\n')
+    main.showProductionInfo();
+	ns.print('\n')
+	main.showServeurs();
 
-	// TODO : detail pour chaque serveurs
-    ns.tprint(Log.color("Server", Log.Color.CYAN));
-    ns.tprint(Log.color("Home", Log.Color.MAGENTA));
-    ns.tprint(Log.INFO("Used RAM", ns.formatNumber(ns.getServer().ramUsed) + '/' + ns.formatNumber(ns.getServer().maxRam)));
-	ns.tprint('\n')
-	ns.tprint(Log.color("Servers owned", Log.Color.CYAN), ` (${Log.color(ns.getPurchasedServers().length.toString(), Log.Color.CYAN)})`);
-	for (const owned of ns.getPurchasedServers()) {
-    	ns.tprint(Log.color(owned, Log.Color.YELLOW));
-    	ns.tprint(Log.INFO("Used RAM", ns.formatNumber(ns.getServer(owned).ramUsed) + 
-		'/' + ns.formatNumber(ns.getServer(owned).maxRam)));
+	ns.print(Log.getEndLog())
+}
+
+class Main {
+	private ns: NS;
+	private logger: Logger
+
+	constructor(ns: NS) {
+		this.ns = ns;
+		this.logger = new Logger(ns);
+		this.setupDashboard();
 	}
 
-	ns.tprint(Log.getEndLog())
+	showPlayeurStats() {
+		let player = this.ns.getPlayer();
+		let totalSharePower = this.ns.getSharePower();
+		let hackingLevel = this.ns.getHackingLevel();
+		this.ns.print(Log.INFO("Hacking Level", hackingLevel));
+		this.ns.print(Log.INFO("Share Power", totalSharePower));
+		this.ns.print(Log.INFO("Factions", `${player.factions}`), ` (${Log.color(player.factions.length.toString(), Log.Color.CYAN)})`);
+		this.ns.print(Log.INFO("Entropy", player.entropy));
+		this.ns.print(Log.INFO("People Killed", player.numPeopleKilled));
+		this.ns.print(Log.INFO("Karma", this.ns.heart.break().toFixed(2)));
+	}
+
+	showResetInfo() {
+		this.ns.print(Log.color("Reset info", Log.Color.CYAN));
+		this.ns.print(Log.INFO('Current node', this.ns.getResetInfo().currentNode));
+		this.ns.print(Log.INFO('Augmentations', this.ns.getResetInfo().ownedAugs.size));
+		this.ns.print(Log.INFO("Time since last augmentation", `${Log.date(this.ns, new Date(this.ns.getResetInfo().lastAugReset))}`));
+	}
+
+	showProductionInfo() {
+		this.ns.print(Log.color("Production", Log.Color.CYAN));
+		this.ns.print(Log.INFO("Current script production", Log.money(this.ns, this.ns.getTotalScriptIncome()[0]), '/s'));
+		// get current node number
+		const numNodes = this.ns.hacknet.numNodes();
+		let hacknetProduction: number = 0;
+		for (let i = 0; i < numNodes; i++) {
+			hacknetProduction += this.ns.hacknet.getNodeStats(i).production;
+		}
+		this.ns.print(Log.INFO("Current Hacknet production", Log.money(this.ns, hacknetProduction), '/s'));
+		this.ns.print(Log.INFO("Script production augmentation since augmentation", Log.money(this.ns, this.ns.getTotalScriptIncome()[1]), '/s'));
+	}
+
+	showServeurs() {
+		// TODO : detail pour chaque serveurs
+		this.ns.print(Log.color("Server", Log.Color.CYAN));
+		this.ns.print(Log.color("Home", Log.Color.MAGENTA));
+		this.ns.print(Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer().ramUsed) + '/' + this.ns.formatNumber(this.ns.getServer().maxRam)));
+		this.ns.print('\n')
+		this.ns.print(Log.color("Servers owned", Log.Color.CYAN), ` (${Log.color(this.ns.getPurchasedServers().length.toString(), Log.Color.CYAN)})`);
+		for (const owned of this.ns.getPurchasedServers()) {
+			this.ns.print(Log.color(owned, Log.Color.YELLOW));
+			this.ns.print(Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer(owned).ramUsed) + 
+			'/' + this.ns.formatNumber(this.ns.getServer(owned).maxRam)));
+		}
+	}
+
+	//#region Dashboard
+	private setupDashboard() {
+		this.ns.disableLog("ALL");
+		this.ns.clearLog();
+		
+		Log.initTailTitle(this.ns, 'Self', 'info');
+		
+		this.ns.ui.openTail();
+	}
+	//#endregion Dashboard
 }

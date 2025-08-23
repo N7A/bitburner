@@ -1,12 +1,29 @@
 import { logLevel } from "workspace/common/application-properties"
 import * as Log from "workspace/frameworks/logging";
 import { LogLevel } from "workspace/common/model/LogLevel";
+import { LogLevelLitteral } from "workspace/common/model/LogLevelLitteral";
 
 export class Logger {
     private ns: NS;
 
     constructor(ns: NS) {
         this.ns = ns;
+    }
+
+    log(msg: string, ...args: string[]) {
+        this.ns.print(`${msg}`, ...args);
+    }
+
+    err(msg: string, ...args: string[]) {
+        this.ns.print(`${LogLevelLitteral.ERROR} ${msg}`, ...args);
+    }
+
+    warn(msg: string, ...args: string[]) {
+        this.ns.print(`${LogLevelLitteral.WARN} ${msg}`, ...args);
+    }
+
+    info(msg: string, ...args: string[]) {
+        this.ns.print(`${LogLevelLitteral.INFO} ${msg}`, ...args);
     }
 
     debug(message: string) {
@@ -17,20 +34,4 @@ export class Logger {
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${message}`)
     }
     
-    /*info(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TermLogger.INFO_LITERAL} ${msg}`, ...args);
-    }
-
-    warn(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TermLogger.WARN_LITERAL} ${msg}`, ...args);
-    }
-
-    err(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TermLogger.ERR_LITERAL} ${msg}`, ...args);
-    }
-
-    log(msg: string, ...args: string[]) {
-        this.ns.tprintf(`${TermLogger.TRACE_LITERAL} ${msg}`, ...args);
-    }*/
-
 }

@@ -1,10 +1,13 @@
 import { getMaxShares, selectBestTrainEnMarche, waitRepayTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
+import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {
     ns.disableLog('sleep');
     ns.clearLog();
     ns.ui.openTail();
+
+    const workStartTime = new Date();
 
     const moneyPiggyBankService = new MoneyPiggyBankService(ns);
 
@@ -37,4 +40,8 @@ export async function main(ns: NS) {
     const gain = sellPrice * sharesLong;
     ns.print(`Sell ${ns.formatNumber(sharesLong)} ${stockSymbol} for \$${ns.formatNumber(sellPrice)}`);
     ns.print(`Profit : \$${ns.formatNumber(gain - spent)}`);
+    const workEndTime = new Date();
+    const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime());
+    this.ns.print(Log.INFO("Time to profit",  Log.time(workDuration)));
+    this.ns.print(Log.INFO("Production", `\$${ns.formatNumber((gain - spent) / workDuration.getTime()*1000)} / s`));
 }

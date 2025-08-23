@@ -50,21 +50,21 @@ export async function waitRepayTime(ns: NS, stockSymbol: string, moneySpent: num
 
 async function waitSellTime(ns: NS, stockSymbol: string) {
     // wait stop decrease
-    ns.print(`Wait stop decrease...`);
     await waitStopDecrease(ns, stockSymbol);
 
     // wait stop increase
-    ns.print(`Wait stop increase...`);
     await waitStopIncrease(ns, stockSymbol);
 }
 
 async function waitStopDecrease(ns: NS, stockSymbol: string) {
+    ns.print(`Wait stop decrease...`);
     while(ns.stock.getForecast(stockSymbol) < 0.5) {
         await ns.sleep(ns.stock.getConstants().msPerStockUpdate)
     }
 }
 
 async function waitStopIncrease(ns: NS, stockSymbol: string) {
+    ns.print(`Wait stop increase...`);
     while(ns.stock.getForecast(stockSymbol) > 0.5) {
         await ns.sleep(ns.stock.getConstants().msPerStockUpdate)
     }
