@@ -21,8 +21,8 @@ export async function main(ns: NS) {
     }
     await pullFile(ns, repoParams.pullLauncherScript);
 
-    ns.tprintf(`INFO   > SUCCESS Pulled initial files !`);
-    ns.tprintf(`INFO   > Running download script...`);
+    ns.tprintf(`INFO    > SUCCESS Pulled initial files !`);
+    ns.tprintf(`INFO    > Running download script...`);
 
     await ns.sleep(250);
     
@@ -42,14 +42,14 @@ async function pullFile(
     // definition du chemin de telechargement
     const sourceFile = `${repoParams.baseUrl}${file}`;
     ns.tprintf(
-        `INFO   > Downloading ${sourceFile} -> ${file}`
+        `INFO    > Downloading ${sourceFile} -> ${file}`
     );
     // suppression du fichier si déjà existant
     if (ns.fileExists(file)) ns.rm(file)
 
     // telechargement du fichier
     if (!(await ns.wget(sourceFile, file, "home"))) {
-        ns.tprintf(`ERROR  > ${sourceFile} -> ${file} failed.`);
+        ns.tprintf(`ERROR   > ${sourceFile} -> ${file} failed.`);
         ns.exit();
     }
 }

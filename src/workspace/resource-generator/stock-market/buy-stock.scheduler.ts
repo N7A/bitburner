@@ -8,6 +8,7 @@ export async function main(ns: NS) {
     ns.ui.openTail();
 
     const workStartTime = new Date();
+    ns.print(`${Log.time(new Date(Date.now()))} - Start`);
 
     const moneyPiggyBankService = new MoneyPiggyBankService(ns);
 
