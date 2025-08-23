@@ -9,7 +9,7 @@ export function initTailTitle(ns: NS, service: string, role?: string, hostSource
  * Create a Table display of the provided data
  * 
  * @param {string[]} headers Column Headers
- * @param  {...string[]} columns Column data
+ * @param  {...string[]} columns Column data (/!\ ansi color break width calcul)
  * 
  * @remarks Ram cost : 0
  */
