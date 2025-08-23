@@ -8,6 +8,7 @@ export async function main(ns: NS) {
     ns.ui.openTail();
 
     const workStartTime = new Date();
+    this.ns.print(`${Log.time(new Date(Date.now()))} - Start`)
 
     const moneyPiggyBankService = new MoneyPiggyBankService(ns);
 
@@ -27,21 +28,22 @@ export async function main(ns: NS) {
     
     const buyPrice = ns.stock.buyStock(stockSymbol, shares);
     const spent = buyPrice * shares;
-    ns.print(`Buy ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(spent)} (\$${ns.formatNumber(buyPrice)})`);
+    ns.print(`${Log.time(new Date(Date.now()))} - Buy ${ns.formatNumber(shares)} ${stockSymbol} for \$${ns.formatNumber(spent)} (\$${ns.formatNumber(buyPrice)})`);
 
     const sharesLong = ns.stock.getPosition(stockSymbol)[0];
     const buyPriceLong = ns.stock.getPosition(stockSymbol)[1]
     const askPriceWaiting = (buyPriceLong*sharesLong + 2*ns.stock.getConstants().StockMarketCommission) / sharesLong;
     // TODO : split script buy / sell -> multi buy possible avant sell
-    ns.print(`Wait repay time (Ask Price: \$${ns.formatNumber(askPriceWaiting)})...`);
+    ns.print(`${Log.time(new Date(Date.now()))} - Wait repay time (Ask Price: \$${ns.formatNumber(askPriceWaiting)})...`);
     await waitRepayTime(ns, stockSymbol, buyPriceLong*sharesLong, sharesLong);
 
     const sellPrice = ns.stock.sellStock(stockSymbol, sharesLong);
     const gain = sellPrice * sharesLong;
-    ns.print(`Sell ${ns.formatNumber(sharesLong)} ${stockSymbol} for \$${ns.formatNumber(sellPrice)}`);
+    ns.print(`${Log.time(new Date(Date.now()))} - Sell ${ns.formatNumber(sharesLong)} ${stockSymbol} for \$${ns.formatNumber(sellPrice)}`);
     ns.print(`Profit : \$${ns.formatNumber(gain - spent)}`);
     const workEndTime = new Date();
     const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime());
-    this.ns.print(Log.INFO("Time to profit",  Log.time(workDuration)));
-    this.ns.print(Log.INFO("Production", `\$${ns.formatNumber((gain - spent) / workDuration.getTime()*1000)} / s`));
+    ns.print(Log.INFO("Time to profit",  Log.time(workDuration)));
+    ns.print(Log.INFO("Production", `\$${ns.formatNumber((gain - spent) / workDuration.getTime()*1000)} / s`));
+    ns.print(`${Log.time(new Date(Date.now()))} - End`);
 }

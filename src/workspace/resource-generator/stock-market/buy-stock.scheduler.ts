@@ -44,6 +44,6 @@ export async function main(ns: NS) {
     ns.print(`Profit : \$${ns.formatNumber(gain - spent)}`);
     const workEndTime = new Date();
     const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime());
-    this.ns.print(Log.INFO("Time to profit",  Log.time(workDuration)));
-    this.ns.print(Log.INFO("Production", `\$${ns.formatNumber((gain - spent) / workDuration.getTime()*1000)} / s`));
+    ns.print(Log.INFO("Time to profit",  Log.time(workDuration)));
+    ns.print(Log.INFO("Production", `\$${ns.formatNumber((gain - spent) / workDuration.getTime()*1000)} / s`));
 }

@@ -11,19 +11,19 @@ export class Logger {
     }
 
     log(msg: string, ...args: string[]) {
-        this.ns.print(`${msg}`, ...args);
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${msg}`, ...args);
     }
 
     err(msg: string, ...args: string[]) {
-        this.ns.print(`${LogLevelLitteral.ERROR} ${msg}`, ...args);
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.ERROR} ${msg}`, ...args);
     }
 
     warn(msg: string, ...args: string[]) {
-        this.ns.print(`${LogLevelLitteral.WARN} ${msg}`, ...args);
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.WARN} ${msg}`, ...args);
     }
 
     info(msg: string, ...args: string[]) {
-        this.ns.print(`${LogLevelLitteral.INFO} ${msg}`, ...args);
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.INFO} ${msg}`, ...args);
     }
 
     debug(message: string) {
@@ -31,7 +31,7 @@ export class Logger {
             return;
         }
         
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${message}`)
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.DEBUG} ${message}`);
     }
     
 }
