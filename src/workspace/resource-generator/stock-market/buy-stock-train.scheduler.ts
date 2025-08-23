@@ -31,7 +31,7 @@ export async function main(ns: NS) {
     const askPriceWaiting = (buyPriceLong*sharesLong + 2*ns.stock.getConstants().StockMarketCommission) / sharesLong;
     // TODO : split script buy / sell -> multi buy possible avant sell
     ns.print(`Wait repay time (Ask Price: \$${ns.formatNumber(askPriceWaiting)})...`);
-    await waitRepayTime(ns, stockSymbol, spent);
+    await waitRepayTime(ns, stockSymbol, buyPriceLong*sharesLong, sharesLong);
 
     const sellPrice = ns.stock.sellStock(stockSymbol, sharesLong);
     const gain = sellPrice * sharesLong;

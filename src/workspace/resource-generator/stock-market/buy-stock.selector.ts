@@ -39,10 +39,10 @@ export function getMaxShares(ns: NS, stockSymbol: string, maxMoneyToSpend: numbe
     );
 }
 
-export async function waitRepayTime(ns: NS, stockSymbol: string, moneySpent: number) {
+export async function waitRepayTime(ns: NS, stockSymbol: string, moneySpent: number, shares: number) {
     while(
-        ns.stock.getAskPrice(stockSymbol) - ns.stock.getConstants().StockMarketCommission 
-        < moneySpent + ns.stock.getConstants().StockMarketCommission
+        ns.stock.getAskPrice(stockSymbol)
+        < (moneySpent + ns.stock.getConstants().StockMarketCommission * 2) / shares
     ) {
         await waitSellTime(ns, stockSymbol);
     }
@@ -50,9 +50,11 @@ export async function waitRepayTime(ns: NS, stockSymbol: string, moneySpent: num
 
 async function waitSellTime(ns: NS, stockSymbol: string) {
     // wait stop decrease
+    ns.print(`Wait stop decrease...`);
     await waitStopDecrease(ns, stockSymbol);
 
     // wait stop increase
+    ns.print(`Wait stop increase...`);
     await waitStopIncrease(ns, stockSymbol);
 }
 
