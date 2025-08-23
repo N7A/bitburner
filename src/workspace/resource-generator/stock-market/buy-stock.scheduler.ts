@@ -41,7 +41,7 @@ class Main {
             if (!this.stockSymbol) {
                 return;
             }
-            this.logger.log(`Best to buy : ${this.stockSymbol}`);
+            this.logger.log(`Best to buy : ${Log.target(this.stockSymbol)}`);
 
             this.logger.log('Wait buy time...');
             await waitBuyTime(this.ns, this.stockSymbol);
@@ -81,6 +81,9 @@ class Main {
         Log.initTailTitle(this.ns, 'Buy max volatility stock', 'scheduler');
         
         this.ns.ui.openTail();
+    
+        const ligneNumber = 10;
+        this.ns.ui.resizeTail(500, Math.min(ligneNumber * 25, 600));
     }
     //#endregion Dashboard
 }

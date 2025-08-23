@@ -41,7 +41,7 @@ class Main {
             if (!this.stockSymbol) {
                 return;
             }
-            this.logger.log(`Best to buy : ${this.stockSymbol}`);
+            this.logger.log(`Best to buy : ${Log.target(this.stockSymbol)}`);
 
             const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money));
             shares = getMaxShares(this.ns, this.stockSymbol, availableMoney);
@@ -78,6 +78,9 @@ class Main {
         Log.initTailTitle(this.ns, 'Buy max forecast stock', 'scheduler');
         
         this.ns.ui.openTail();
+        
+        const ligneNumber = 10;
+        this.ns.ui.resizeTail(500, Math.min(ligneNumber * 25, 600));
     }
     //#endregion Dashboard
 }
