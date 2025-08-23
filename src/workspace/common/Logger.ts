@@ -31,7 +31,7 @@ export class Logger {
         let dotsTime = 0;
         do {
             this.ns.clearLog();
-            this.history.slice(0, this.history.length-2).forEach(element => {
+            this.history.slice(0, this.history.length-1).forEach(element => {
                 this.ns.print(element);
             });
 
