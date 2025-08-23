@@ -115,6 +115,7 @@
 /workspace/resource-generator/stock-market/purchase-4s-market-data-tix-api.worker.ts
 /workspace/resource-generator/stock-market/purchase-tix-api.worker.ts
 /workspace/resource-generator/stock-market/purchase-wse-account.worker.ts
+/workspace/resource-generator/stock-market/sell-stock.worker.ts
 /workspace/resource-generator/stock-market/wse-upgrade.scheduler.ts
 /workspace/resource-generator/stock-market/wse-upgrade.selector.ts
 /workspace/servers/domain/model/HackData.ts
