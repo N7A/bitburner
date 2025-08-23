@@ -107,7 +107,7 @@ export function color(message: string, color: Color) {
  * @remarks Ram cost : 0
  */
 export function money(ns: NS, montant: number): string {
-    return '$' + ns.formatNumber(montant);
+    return color(`\$${ns.formatNumber(montant)}`, Color.YELLOW);
 }
 
 /**

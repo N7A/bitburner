@@ -21,15 +21,15 @@ class Main {
     }
 
     async run() {
-        this.logger.log(`${Log.time(new Date(Date.now()))} - Start`);
+        this.logger.log(`Start`);
         const workStartTime = new Date();
         await this.buy();
         const profit = await this.sell();
         const workEndTime = new Date();
         const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime());
         this.logger.log(Log.INFO("Time to profit",  Log.time(workDuration)));
-        this.logger.log(Log.INFO("Production", `\$${this.ns.formatNumber(profit / workDuration.getTime()*1000)} / s`));
-        this.logger.log(`${Log.time(new Date(Date.now()))} - End`);
+        this.logger.log(Log.INFO("Production", `${Log.money(this.ns, profit / workDuration.getTime()*1000)} / s`));
+        this.logger.log(`End`);
     }
 
     async buy(): Promise<string> {
@@ -49,7 +49,7 @@ class Main {
         
         const buyPrice = this.ns.stock.buyStock(this.stockSymbol, shares);
         const spent = buyPrice * shares;
-        this.logger.log(`Buy ${this.ns.formatNumber(shares)} ${this.stockSymbol} for \$${this.ns.formatNumber(spent)} (\$${this.ns.formatNumber(buyPrice)})`);
+        this.logger.log(`Buy ${this.ns.formatNumber(shares)} ${this.stockSymbol} for ${Log.money(this.ns, spent)} (${Log.money(this.ns, buyPrice)})`);
 
         return this.stockSymbol;
     }
@@ -60,13 +60,13 @@ class Main {
         const spent = buyPriceLong*sharesLong + 2*this.ns.stock.getConstants().StockMarketCommission;
         const askPriceWaiting = spent / sharesLong;
         // TODO : split script buy / sell -> multi buy possible avant sell
-        this.logger.log(`Wait repay time (Ask Price: \$${this.ns.formatNumber(askPriceWaiting)})...`);
+        this.logger.log(`Wait repay time (Ask Price: ${Log.money(this.ns, askPriceWaiting)})...`);
         await waitRepayTime(this.ns, this.stockSymbol, buyPriceLong*sharesLong, sharesLong);
 
         const sellPrice = this.ns.stock.sellStock(this.stockSymbol, sharesLong);
         const gain = sellPrice * sharesLong;
-        this.logger.log(`Sell ${this.ns.formatNumber(sharesLong)} ${this.stockSymbol} for \$${this.ns.formatNumber(sellPrice)}`);
-        this.logger.log(`Profit : \$${this.ns.formatNumber(gain - spent)}`);
+        this.logger.log(`Sell ${this.ns.formatNumber(sharesLong)} ${this.stockSymbol} for ${Log.money(this.ns, sellPrice)}`);
+        this.logger.log(`Profit : ${Log.money(this.ns, gain - spent)}`);
         return gain - spent
     }
     
