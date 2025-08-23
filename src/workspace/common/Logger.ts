@@ -26,7 +26,7 @@ export class Logger {
     async waiting(subject: string) {
         this.isWaiting = true;
 
-        this.history.push(`${new Date(Date.now())} - Waiting ${subject}${'.'.repeat(3)}`)
+        this.history.push(`${Log.time(new Date(Date.now()))} - Waiting ${subject}${'.'.repeat(3)}`)
 
         let dotsTime = 0;
         do {

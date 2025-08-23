@@ -124,7 +124,7 @@ export function time(date: Date) {
     const hour: number = date.getHours()
     const minute: number = date.getMinutes()
     const second: number = date.getSeconds()
-    return hour + ":" + minute + ":" + second
+    return hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0') + ":" + second.toString().padStart(2, '0')
 }
 
 /**
