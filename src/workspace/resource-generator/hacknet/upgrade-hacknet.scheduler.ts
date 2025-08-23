@@ -90,23 +90,24 @@ function setupDashboard(ns: NS) {
 
 function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null, nextUpgrade?: UpgradeExecution | undefined) {
     ns.clearLog();
-    let nodes: NodeStats[] = Array(ns.hacknet.numNodes()).fill(0)
-        .map((value, index) => ns.hacknet.getNodeStats(index))
+    const allNodes: NodeStats[] = Array(ns.hacknet.numNodes()).fill(0)
+        .map((value, index) => ns.hacknet.getNodeStats(index));
+    const nodesToShow: NodeStats[] = allNodes
         .filter(x => x.cores < 16 || x.level < 200 || x.ram < 64);
     
     ns.print(`Nodes: ${ns.hacknet.numNodes()}`);
 
-    if (nodes.length > 0) {
+    if (nodesToShow.length > 0) {
         ns.print(Log.buildTable(
                 ["Node", "Produced", "Uptime", "Production", "Level", "RAM", "Cores"],
-                nodes.map((v, i) => `${i}`),
-                nodes.map((v, i) => `\$${ns.formatNumber(v.totalProduction)}`),
-                nodes.map((v, i) => `${new Date(v.timeOnline * 1000).toLocaleTimeString()}`),
-                nodes.map((v, i) => `\$${ns.formatNumber(v.production)} /s`),
-                //nodes.map((v, i) => `\$${ns.formatRam(v.ramUsed ?? 0)}`),
-                nodes.map((v, i) => `${v.level}`),
-                nodes.map((v, i) => `${v.ram}`),
-                nodes.map((v, i) => `${v.cores}`),
+                nodesToShow.map((v, i) => `${i}`),
+                nodesToShow.map((v, i) => `${Log.money(ns, v.totalProduction)}`),
+                nodesToShow.map((v, i) => `${new Date(v.timeOnline * 1000).toLocaleTimeString()}`),
+                nodesToShow.map((v, i) => `${Log.money(ns, v.production)} /s`),
+                //nodes.map((v, i) => `${ns.formatRam(v.ramUsed ?? 0)}`),
+                nodesToShow.map((v, i) => `${v.level}`),
+                nodesToShow.map((v, i) => `${v.ram}`),
+                nodesToShow.map((v, i) => `${v.cores}`),
             ));
     }
     
@@ -116,7 +117,7 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
     }
 
     const currentGain = ns.getMoneySources().sinceInstall.hacknet + ns.getMoneySources().sinceInstall.hacknet_expenses;
-    const totalProduction: number = nodes.map(x => x.production).reduce((a,b) => a + b);
+    const totalProduction: number = allNodes.map(x => x.production).reduce((a,b) => a + b);
     if (currentGain < 0) {
         ns.print(Log.INFO(`Auto-repay time`, `${Log.time(new Date(-currentGain/totalProduction * 1000))}`));
     }
@@ -125,9 +126,9 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
         ns.print(Log.INFO('Next upgrade ratio', ns.formatNumber(nextUpgrade.ratio)));
         ns.print(Log.INFO('Next upgrade cost', Log.money(ns, nextUpgrade.cost)));
     }
-    ns.print(Log.INFO(`Current money `, `\$${ns.formatNumber(currentMoney)}`));
-    ns.print(Log.INFO(`Available`, `\$${ns.formatNumber(new MoneyPiggyBankService(ns).getDisponibleMoney(currentMoney))}`));
-    ns.ui.resizeTail(650, Math.min(nodes.length * 25 + 300, 600))
+    ns.print(Log.INFO(`Current money `, `${Log.money(ns, currentMoney)}`));
+    ns.print(Log.INFO(`Available`, `${Log.money(ns, new MoneyPiggyBankService(ns).getDisponibleMoney(currentMoney))}`));
+    ns.ui.resizeTail(650, Math.min(nodesToShow.length * 25 + 300, 600))
 }
 
 function getAutoRepayTime(ns: NS) {
