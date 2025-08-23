@@ -8,8 +8,8 @@ export const repoParams = {
         "/workspace/synchronize/model/GitRepository.ts",
         "/workspace/common/TerminalLogger.ts",
         "/workspace/common/model/LogLevelLitteral.ts",
-        "workspace/common/model/LogLevel",
-        "workspace/common/application-properties"
+        "/workspace/common/model/LogLevel",
+        "/workspace/common/application-properties"
     ]
 };
 //#endregion Constants
