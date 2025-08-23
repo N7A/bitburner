@@ -14,7 +14,7 @@ export function selectBestBuyQuick(ns: NS) {
  */
 export function selectBestTrainEnMarche(ns: NS) {
     return ns.stock.getSymbols()
-        .filter(x => ns.stock.getForecast(x) > 50)
+        .filter(x => ns.stock.getForecast(x) > 0.5)
         // la plus haute chance d'augmenter en premier
         .sort((a: string, b: string) => ns.stock.getForecast(b) - ns.stock.getForecast(a))
         // top 5
