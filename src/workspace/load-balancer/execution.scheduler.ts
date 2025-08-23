@@ -1,6 +1,5 @@
 import {ProcessRequest} from 'workspace/load-balancer/domain/model/ProcessRequest'
 import { ProcessRequestType } from "workspace/load-balancer/domain/model/ProcessRequestType";
-import * as ExecutionsRepository from 'workspace/load-balancer/domain/executions.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
