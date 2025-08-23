@@ -13,8 +13,8 @@
 /workspace/analyze/self_info.ts
 /workspace/common/application-properties.ts
 /workspace/common/daemon.ts
-/workspace/common/headhunter copy.ts
 /workspace/common/headhunter.ts
+/workspace/common/headhunter2.ts
 /workspace/common/JsonRepository.ts
 /workspace/common/Logger.ts
 /workspace/common/model/LogLevel.ts
