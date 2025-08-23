@@ -41,7 +41,7 @@ export class Logger {
             if (dotsTime > 3) {
                 dotsTime = 0;
             }
-            await this.ns.asleep(500);
+            await this.ns.asleep(1000);
         } while(this.isWaiting);
 
         this.ns.clearLog();

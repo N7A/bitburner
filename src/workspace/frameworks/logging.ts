@@ -77,7 +77,6 @@ export enum Color {
     RED = "\u001b[31m",
     GREEN = "\u001b[32m",
     YELLOW = "\u001b[33m",
-    BRIGHT_YELLOW = "\u001b[93m",
     BLUE = "\u001b[34m",
     MAGENTA = "\u001b[35m",
     CYAN = "\u001b[36m",
@@ -108,7 +107,7 @@ export function color(message: string, color: Color) {
  * @remarks Ram cost : 0
  */
 export function money(ns: NS, montant: number): string {
-    return color(`\$${ns.formatNumber(montant)}`, Color.BRIGHT_YELLOW);
+    return color(`\$${ns.formatNumber(montant)}`, Color.YELLOW);
 }
 
 /**
