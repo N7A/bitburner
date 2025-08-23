@@ -59,13 +59,13 @@ async function waitSellTime(ns: NS, stockSymbol: string) {
 async function waitStopDecrease(ns: NS, stockSymbol: string) {
     ns.print(`Wait stop decrease...`);
     while(ns.stock.getForecast(stockSymbol) < 0.5) {
-        await ns.sleep(ns.stock.getConstants().msPerStockUpdate)
+        await ns.asleep(ns.stock.getConstants().msPerStockUpdate)
     }
 }
 
 async function waitStopIncrease(ns: NS, stockSymbol: string) {
     ns.print(`Wait stop increase...`);
     while(ns.stock.getForecast(stockSymbol) > 0.5) {
-        await ns.sleep(ns.stock.getConstants().msPerStockUpdate)
+        await ns.asleep(ns.stock.getConstants().msPerStockUpdate)
     }
 }

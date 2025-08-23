@@ -21,23 +21,21 @@ export class Logger {
 
     stopWaiting() {
         this.isWaiting = false;
-        this.ns.clearLog();
-        this.history.forEach(element => {
-            this.ns.print(element);
-        });
     }
 
     async waiting(subject: string) {
         this.isWaiting = true;
 
+        this.history.push(`${new Date(Date.now())} - Waiting ${subject}${'.'.repeat(3)}`)
+
         let dotsTime = 0;
         do {
             this.ns.clearLog();
-            this.history.forEach(element => {
+            this.history.slice(0, this.history.length-2).forEach(element => {
                 this.ns.print(element);
             });
 
-            const message = `Waiting ${Log.color(`${subject}${'.'.repeat(dotsTime).padEnd(3)}`, Color.MAGENTA)}`;
+            const message = `Waiting ${subject}${Log.color('.'.repeat(dotsTime).padEnd(3), Color.MAGENTA)}`;
             this.ns.print(message);
             dotsTime ++
             if (dotsTime > 3) {
@@ -45,6 +43,11 @@ export class Logger {
             }
             await this.ns.asleep(500);
         } while(this.isWaiting);
+
+        this.ns.clearLog();
+        this.history.forEach(element => {
+            this.ns.print(element);
+        });
     }
 
     err(msg: string, ...args: string[]) {

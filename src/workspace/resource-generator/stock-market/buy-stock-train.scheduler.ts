@@ -74,6 +74,7 @@ class Main {
     //#region Dashboard
     private setupDashboard() {
         this.ns.disableLog('sleep');
+        this.ns.disableLog('asleep');
         this.ns.clearLog();
         
         Log.initTailTitle(this.ns, 'Buy max forecast stock', 'scheduler');
