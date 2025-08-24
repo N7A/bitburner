@@ -1,24 +1,14 @@
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import * as Log from 'workspace/frameworks/logging';
 import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import { Alert } from 'workspace/notification/alert';
 
 export async function main(ns: NS) {
-    const serversRepository = new ServersRepository(ns);
     const input: InputArg = getInput(ns);
 
-    const startTime: Date = new Date();
-    while(!serversRepository.get(input.targetHostname)?.state.unlocked) {
-        await ns.sleep(500);
-    }
-    const endTime: Date = new Date();
+    const main: UnlockedServerAlert = new UnlockedServerAlert(ns, input.targetHostname);
     
-    const duration = new Date(endTime.getTime() - startTime.getTime())
-
-    ns.alert('Serveur ' 
-        + `> ${input.targetHostname} <`
-        + ' unlocked en ' + Log.date(ns, duration) + '\n'
-        + '(Demandé à ' + Log.date(ns, startTime) + ')'
-    );
+    await main.run();
 }
 
 //#region Input parameters
@@ -44,3 +34,22 @@ function getInput(ns: NS): InputArg {
     };
 }
 //#endregion Input parameters
+
+class UnlockedServerAlert extends Alert {
+    private targetHostname: string;
+    private serversRepository: ServersRepository;
+
+    constructor(ns: NS, targetHostname: string) {
+        super(ns);
+        this.targetHostname = targetHostname;
+        this.serversRepository = new ServersRepository(ns);
+    }
+
+    waitingEvent(): boolean {
+        return this.serversRepository.get(this.targetHostname)?.state.unlocked;
+    }
+
+    getAlertMessage(): string {
+        return `Serveur ${Log.target(this.targetHostname)} unlocked`;
+    }
+}
