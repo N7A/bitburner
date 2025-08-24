@@ -3,7 +3,6 @@
 - Commentaires
 - Reorg
 - more log
-- RAM minimum dans application.properties (pour les run a la main et les alias)
 - see https://github.com/alainbryden/bitburner-scripts
 - next objectif
 - permettre call by cmd & by run (cf payload.launcher)

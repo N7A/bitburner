@@ -6,6 +6,7 @@ declare global {
     
     interface NS extends bitburner.NS {}
     interface GangTaskStats extends bitburner.GangTaskStats {}
+    interface Server extends bitburner.Server {}
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 
