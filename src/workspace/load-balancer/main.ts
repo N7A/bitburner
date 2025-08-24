@@ -63,12 +63,13 @@ function getAvailableServers(ns: NS, priorityTarget: string|undefined, ramNeeded
 }
 
 function getOwnedServers(ns: NS, priorityTarget?: string) {
+    const serversService = new ServersService(ns);
     let ownedHosts: string[] = []
     if (priorityTarget) {
         ownedHosts.push(priorityTarget);
     }
     ownedHosts.push(
-        ...ServersService.getAllExecutable(ns)
+        ...serversService.getAllExecutable()
         .sort((a, b) =>  availableRam(ns, a) - availableRam(ns, b))
         .reverse()
     );

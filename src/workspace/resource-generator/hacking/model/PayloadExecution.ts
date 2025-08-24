@@ -24,8 +24,9 @@ export class PayloadExecution implements RamResourceExecution {
         this.request = request;
         this.targetHost = request.target;
     
+        const serversRepository = new ServersRepository(ns);
         // load host data
-        const data: ServerData|null = ServersRepository.get(ns, this.targetHost);
+        const data: ServerData|null = serversRepository.get(this.targetHost);
         const hackData: HackData = data!.hackData;
     
         let scripts = [];

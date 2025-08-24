@@ -7,6 +7,8 @@ import { TerminalLogger } from 'workspace/common/TerminalLogger';
  * Scan les cibles données par le unlock.
  */
 export async function main(ns: NS, scanTarget: string) {
+    const serversRepository = new ServersRepository(ns);
+
     // load input arguments
     const input: InputArg = getInput(ns, scanTarget);
     const logger = new TerminalLogger(ns);
@@ -19,7 +21,7 @@ export async function main(ns: NS, scanTarget: string) {
     ns.print(Log.action('Scan'), ' ', Log.target(input.targetHost));
 
     // update targets repository
-    ServersRepository.setScanned(ns, input.targetHost);
+    serversRepository.setScanned(input.targetHost);
 
     // listing des voisins
     const neighbors = getNeighbors(ns, input.targetHost);
@@ -28,7 +30,7 @@ export async function main(ns: NS, scanTarget: string) {
 
     // load targets
     const newTargets = neighbors
-        .filter(x => !ServersRepository.getAll(ns).includes(x));
+        .filter(x => !serversRepository.getAllIds().includes(x));
 
     handleNewTargets(ns, newTargets, input.targetHost);
     
@@ -91,6 +93,8 @@ function getNeighbors(ns: NS, target: string): string[] {
  * @returns true si de nouvelles cibles on été traité; false sinon
  */
 function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean {
+    const repository = new ServersRepository(ns);
+
     // aucune nouvelle cible à traiter
     if (newTargets.length <= 0) {
         return false;
@@ -103,7 +107,7 @@ function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean
         depth = 1;
     } else {
         // get parent data
-        let data: ServerData|null = ServersRepository.get(ns, parent);
+        let data: ServerData|null = repository.get(parent);
         depth = data?.depth ? data.depth + 1 : null;
     }
     
@@ -111,7 +115,7 @@ function handleNewTargets(ns: NS, newTargets: string[], parent: string): boolean
     for (const newTarget of newTargets) {
         // add to scan targets
         // add to unlock targets
-        ServersRepository.add(ns, newTarget, parent, depth ?? undefined);
+        repository.add(newTarget, parent, depth ?? undefined);
     }
 
     return true;

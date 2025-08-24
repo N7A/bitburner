@@ -1,7 +1,8 @@
 import { ServersService } from 'workspace/servers/servers.service';
 
 export function getPayloadTargets(ns: NS): string[] {
-    return ServersService.getAllHackable(ns);
+    const serversService = new ServersService(ns);
+    return serversService.getAllHackable();
 }
 
 export function getBestPayloadTarget(ns: NS): string | undefined {

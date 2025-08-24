@@ -11,10 +11,11 @@ export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
+    const serversService = new ServersService(ns);
     const executionsRepository = new ExecutionsRepository(ns);
 
     // kill all scripts
-    ServersService.getAllExecutable(ns).forEach(x => ns.killall(x))
+    serversService.getAllExecutable().forEach(x => ns.killall(x))
 
     // reset des bases de données
     executionsRepository.reset();

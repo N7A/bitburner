@@ -3,25 +3,35 @@ import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServerType } from "workspace/servers/domain/model/ServerType";
 
 export class ServersService {
+    private ns: NS;
+    private repository: ServersRepository;
+
+    /**
+     * 
+     * @param ns Bitburner API
+     */
+    constructor(ns: NS) {
+        this.ns = ns;
+        this.repository = new ServersRepository(ns);
+    }
     
     /**
      * Retrouve le chemin de serveur pour atteindre un serveur.
-     * @param ns Bitburner API
      * @param hostname serveur cible
      * @returns 
      */
-    private static getHostPath(ns: NS, hostname: string): string[] {
-        const data: ServerData|null = ServersRepository.get(ns, hostname);
+    private getHostPath(hostname: string): string[] {
+        const data: ServerData|null = this.repository.get(hostname);
         if (!data?.parent) {
             return [hostname];
         }
 
-        return [...ServersService.getHostPath(ns, data.parent), hostname];
+        return [...this.getHostPath(data.parent), hostname];
     }
 
-    static getHostPathLibelle(ns: NS, hostname: string): string {
-        return ServersService.getHostPath(ns, hostname).map(x => {
-            const data: ServerData|null = ServersRepository.get(ns, x);
+    getHostPathLibelle(hostname: string): string {
+        return this.getHostPath(hostname).map(x => {
+            const data: ServerData|null = this.repository.get(x);
             const unlocked: string = data?.state.unlocked ? 'unlocked' : 'locked';
 
             return '/' + x + `[${unlocked}]`
@@ -30,59 +40,58 @@ export class ServersService {
 
     /**
      * Construit la commande à executer dans le terminal pour se connecter au serveur cible.
-     * @param ns Bitburner API
      * @param hostname serveur cible
      * @returns 
      */
-    static getConnectCommand(ns: NS, hostname: string): string {
-        return ServersService.getHostPath(ns, hostname).map(x => {
+    getConnectCommand(hostname: string): string {
+        return this.getHostPath(hostname).map(x => {
             return `connect ${x};`
         }).reduce((a, b) => a + ' ' + b);
     }
 
-    static getAllUnscanned(ns: NS): string[] {
-        return Array.from(new Set(ServersRepository.getAll(ns)
-                .map(x => ServersRepository.get(ns, x))
+    getAllUnscanned(): string[] {
+        return Array.from(new Set(this.repository.getAllIds()
+                .map(x => this.repository.get(x))
                 .filter(x => x !== null)
                 .filter(x => !x.state.scanned)
                 .map(x => x?.name ?? '')))
     }
 
-    static getAllLocked(ns: NS): string[] {
-        return ServersRepository.getAll(ns)
-                .map(x => ServersRepository.get(ns, x))
+    getAllLocked(): string[] {
+        return this.repository.getAllIds()
+                .map(x => this.repository.get(x))
                 .filter(x => x !== null)
                 .filter(x => !x.state.unlocked && x.type === ServerType.EXTERNAL)
                 .map(x => x.name)
     }
     
-    static getAllUnlocked(ns: NS): string[] {
-        return ServersRepository.getAll(ns)
-                .map(x => ServersRepository.get(ns, x))
+    getAllUnlocked(): string[] {
+        return this.repository.getAllIds()
+                .map(x => this.repository.get(x))
                 .filter(x => x?.state.unlocked)
                 .map(x => x?.name ?? '')
     }
     
-    static getAllHackable(ns: NS): string[] {
-        return ServersService.getAllExecutable(ns)
-            .filter(x => ServersRepository.get(ns, x)?.type === ServerType.EXTERNAL);
+    getAllHackable(): string[] {
+        return this.getAllExecutable()
+            .filter(x => this.repository.get(x)?.type === ServerType.EXTERNAL);
     }
 
-    static getAllExecutable(ns: NS): string[] {
-        return ServersService.getAllUnlocked(ns);
+    getAllExecutable(): string[] {
+        return this.getAllUnlocked();
     }
 
-    static getOwned(ns: NS): string[] {
-        return ServersRepository.getAll(ns)
-            .map(x => ServersRepository.get(ns, x))
+    getOwned(): string[] {
+        return this.repository.getAllIds()
+            .map(x => this.repository.get(x))
             .filter(x => x?.type === ServerType.BOUGHT)
             .map(x => x?.name ?? '');
     }
 
-    static getAllUpgradable(ns: NS): ServerData[] {
-        return ServersService.getOwned(ns)
-            .map(x => ServersRepository.get(ns, x))
+    getAllUpgradable(): ServerData[] {
+        return this.getOwned()
+            .map(x => this.repository.get(x))
             .filter(x => x !== null)
-            .filter(x => x.hackData.maxRam < ns.getPurchasedServerMaxRam());
+            .filter(x => x.hackData.maxRam < this.ns.getPurchasedServerMaxRam());
     }
 }

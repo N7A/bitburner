@@ -43,10 +43,12 @@ function getInput(ns: NS): InputArg {
 
 class ServerInfo extends Info {
     private data: Server;
+    private service: ServersService;
 
     constructor(ns: NS, data: Server) {
         super(ns, data.hostname);
         this.data = data;
+        this.service = new ServersService(ns);
     }
 
     printData() {
@@ -56,9 +58,9 @@ class ServerInfo extends Info {
             this.ns.print(Log.INFO('Unlock possible', this.nukeAchievable(this.ns, this.data.hostname)));
             this.ns.print(Log.INFO('Backdoor installé', this.data.backdoorInstalled));
         } else if (!this.data.backdoorInstalled) {
-            this.ns.print(Log.INFO('Deep connect command', ServersService.getConnectCommand(this.ns, this.data.hostname) + ' backdoor;'));
+            this.ns.print(Log.INFO('Deep connect command', this.service.getConnectCommand(this.data.hostname) + ' backdoor;'));
         }
-        this.ns.print(Log.INFO('Path', ServersService.getHostPathLibelle(this.ns, this.data.hostname)));
+        this.ns.print(Log.INFO('Path', this.service.getHostPathLibelle(this.data.hostname)));
         this.ns.print(Log.INFO('Money', Log.money(this.ns, this.data.moneyAvailable as number) + ' / ' + this.ns.formatNumber(this.data.moneyMax as number)
             + ' (~' + Log.money(this.ns, (this.data.moneyMax as number) - (this.data.moneyAvailable as number)) + ')'));
         this.ns.print(Log.INFO('Security level', this.ns.formatNumber(this.data.hackDifficulty as number) + ' >>> ' + this.ns.formatNumber(this.data.minDifficulty as number)

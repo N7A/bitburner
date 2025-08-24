@@ -207,7 +207,8 @@ async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Prom
 
 //#region Répartition
 function getTargetServers(ns: NS) {
-    return Array.from(new Set(ServersService.getAllExecutable(ns)));
+    const serversService = new ServersService(ns);
+    return Array.from(new Set(serversService.getAllExecutable()));
 }
 
 async function getRepartitions(ns: NS, orders: RamResourceExecution[], targetServers: string[]): Promise<Map<RamResourceExecution, ExecutionOrder[]>> {

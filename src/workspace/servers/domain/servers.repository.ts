@@ -3,39 +3,18 @@ import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServerType } from "workspace/servers/domain/model/ServerType";
 import { UnlockRequirements } from "workspace/servers/domain/model/UnlockRequirements";
 import { HackData } from "workspace/servers/domain/model/HackData";
-import { getFilepaths } from 'workspace/frameworks/file';
+import { DirectoryRepository } from 'workspace/common/DirectoryRepository';
 
 const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
 
-export class ServersRepository {
-
-    static readonly ARCHIVE_DIRECTORY = 'archive';
-
+export class ServersRepository extends DirectoryRepository<ServerData> {
+    
     /**
-     * Récupère les serveurs enregistrées en base de données.
      * 
      * @param ns Bitburner API
-     * 
-     * @remarks Ram cost : 0.2 GB
      */
-    static getAll(ns: NS): string[] {
-        return getFilepaths(ns, 'home', REPOSITORY)
-            .filter(x => !x.startsWith(`${REPOSITORY}/${ServersRepository.ARCHIVE_DIRECTORY}/`))
-            .map(x => x.substring(x.lastIndexOf('/')+1, x.lastIndexOf('.json')));
-    }
-
-    /**
-     * Récupère les données du serveurs.
-     * 
-     * @param ns Bitburner API
-     * 
-     * @remarks Ram cost : 0.1 GB
-     */
-    static get(ns: NS, hostname: string): ServerData|null {
-        if (!ns.fileExists(REPOSITORY + '/' + hostname + '.json', 'home')) {
-            return null;
-        }
-        return JSON.parse(ns.read(REPOSITORY + '/' + hostname + '.json'));
+    constructor(ns: NS) {
+        super(ns);
     }
 
     /**
@@ -47,8 +26,8 @@ export class ServersRepository {
      * 
      * @remarks Ram cost : 2 GB
      */
-    static add(ns: NS, hostname: string, parentHost: string = 'UNKNOWN', depth?: number) {
-        const server = ns.getServer(hostname);
+    add(hostname: string, parentHost: string = 'UNKNOWN', depth?: number) {
+        const server = this.ns.getServer(hostname);
         
         const unlockRequirements: UnlockRequirements = {
             numOpenPortsRequired: server.numOpenPortsRequired,
@@ -74,8 +53,8 @@ export class ServersRepository {
         };
         
         // save data
-        ServersRepository.resetWith(ns, hostname, targetData);
-        ns.tprint('INFO', ' ', 'New target to scan : ' + hostname);
+        this.resetWith(hostname, targetData);
+        this.ns.tprint('INFO', ' ', 'New target to scan : ' + hostname);
     }
 
     /**
@@ -86,8 +65,8 @@ export class ServersRepository {
      * 
      * @remarks Ram cost : 0.1 GB
      */
-    static setScanned(ns: NS, hostname: string) {
-        let serverData: ServerData|null = ServersRepository.get(ns, hostname);
+    setScanned(hostname: string) {
+        let serverData: ServerData|null = this.get(hostname);
 
         if (serverData === null) {
             return;
@@ -96,8 +75,8 @@ export class ServersRepository {
         serverData.state.scanned = true;
 
         // save data
-        ServersRepository.resetWith(ns, hostname, serverData);
-        ns.tprint('INFO', ' ', 'New targets to unlock : ' + hostname);
+        this.resetWith(hostname, serverData);
+        this.ns.tprint('INFO', ' ', 'New targets to unlock : ' + hostname);
     }
 
     /**
@@ -108,8 +87,8 @@ export class ServersRepository {
      * 
      * @remarks Ram cost : 0.1 GB
      */
-    static setUnlocked(ns: NS, hostname: string) {
-        let serverData: ServerData|null = ServersRepository.get(ns, hostname);
+    setUnlocked(hostname: string) {
+        let serverData: ServerData|null = this.get(hostname);
 
         if (serverData === null) {
             return;
@@ -118,21 +97,8 @@ export class ServersRepository {
         serverData.state.unlocked = true;
 
         // save data
-        ServersRepository.resetWith(ns, hostname, serverData);
-        ns.tprint('INFO', ' ', 'New target hackable : ' + hostname);
-    }
-
-    /**
-     * Enregistre en base la mise à jour d'un serveur.
-     * 
-     * @param ns Bitburner API
-     * @param server serveur à mettre à jour
-     * 
-     * @remarks Ram cost : 0 GB
-     */
-    static save(ns: NS, serverData: ServerData) {
-        // save data
-        ServersRepository.resetWith(ns, serverData.name, serverData);
+        this.resetWith(hostname, serverData);
+        this.ns.tprint('INFO', ' ', 'New target hackable : ' + hostname);
     }
 
     /**
@@ -143,9 +109,9 @@ export class ServersRepository {
      * 
      * @remarks Ram cost : 2.1 GB
      */
-    static refresh(ns: NS, hostname: string) {
-        const server = ns.getServer(hostname);
-        let serverData = ServersRepository.get(ns, hostname);
+    refresh(hostname: string) {
+        const server = this.ns.getServer(hostname);
+        let serverData = this.get(hostname);
         
         serverData.unlockRequirements.numOpenPortsRequired = server.numOpenPortsRequired;
         serverData.unlockRequirements.requiredHackingSkill = server.requiredHackingSkill;
@@ -159,7 +125,7 @@ export class ServersRepository {
         serverData.type = hostname === 'home' ? ServerType.MAIN : server.purchasedByPlayer ? ServerType.BOUGHT : ServerType.EXTERNAL,
         serverData.state.unlocked = server.hasAdminRights;
         
-        ServersRepository.resetWith(ns, serverData.name, serverData);
+        this.resetWith(serverData.name, serverData);
     }
 
     /**
@@ -169,25 +135,11 @@ export class ServersRepository {
      * 
      * @remarks Ram cost : 2.2 GB
      */
-    static reset(ns: NS) {
-        const knownServers: string[] = ServersRepository.getAll(ns);
+    reset() {
+        const knownServers: string[] = this.getAllIds();
         for (const server of knownServers) {
-            ns.mv('home', `${REPOSITORY}/${server}.json`, `${REPOSITORY}/${ServersRepository.ARCHIVE_DIRECTORY}/${server}.json`)
+            this.ns.mv('home', `${REPOSITORY}/${server}.json`, `${REPOSITORY}/${DirectoryRepository.ARCHIVE_DIRECTORY}/${server}.json`)
         }
-        ServersRepository.add(ns, 'home', null);
+        this.add('home', null);
     }
-
-    /**
-     * Remet à zéro la base de données avec les serveurs fournis en entrée.
-     * 
-     * @param ns Bitburner API
-     * @param hostname serveur qui porte l'execution
-     * @param executions executions à sauvegarder
-     * 
-     * @remarks Ram cost : 0 GB
-     */
-    private static resetWith(ns: NS, hostname: string, data: ServerData) {
-        ns.write(`${REPOSITORY}/${hostname}.json`, JSON.stringify(data, null, 4), "w");
-    }
-    
 }

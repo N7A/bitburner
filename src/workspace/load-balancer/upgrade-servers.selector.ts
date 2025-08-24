@@ -4,7 +4,8 @@ import { ServerData } from 'workspace/servers/domain/model/ServerData';
 import { ServersService } from 'workspace/servers/servers.service';
 
 export async function selectUpgrade(ns: NS, maxMoneyToSpend?: number): Promise<UpgradeExecution> {
-    let upgradableServers: ServerData[] = ServersService.getAllUpgradable(ns);
+    const serversService = new ServersService(ns);
+    let upgradableServers: ServerData[] = serversService.getAllUpgradable();
 
     upgradableServers = upgradableServers.sort((a, b) => a.hackData.maxRam - b.hackData.maxRam);
 

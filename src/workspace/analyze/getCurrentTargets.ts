@@ -6,13 +6,15 @@ import { ServersService } from 'workspace/servers/servers.service';
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 
 export async function main(ns: NS) {
+    const serversRepository = new ServersRepository(ns);
+    const serversService = new ServersService(ns);
     ns.ui.setTailTitle('Unlock targets');
     ns.ui.openTail();
 
     // load target files
-    let targets: ServerData[] = ServersService.getAllLocked(ns)
+    let targets: ServerData[] = serversService.getAllLocked()
         // load host data
-        .map(target => ServersRepository.get(ns, target) as ServerData)
+        .map(target => serversRepository.get(target) as ServerData)
         .sort((a, b) => (a.unlockRequirements.requiredHackingSkill as number) - (b.unlockRequirements.requiredHackingSkill as number))
         .reverse();
 

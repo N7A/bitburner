@@ -11,5 +11,5 @@ export async function main(ns: NS) {
     //ns.tprint(JSON.stringify(ns.getServer('home')));
     //ns.tprint(JSON.stringify(ns.getServer('f1rst')));
     
-    ServersRepository.add(ns, 'f1rst');
+    new ServersRepository(ns).add('f1rst');
 }

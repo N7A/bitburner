@@ -4,13 +4,15 @@ import {PortProgram, getPortPrograms} from 'workspace/resource-generator/hacking
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 export async function main(ns: NS, targetHost: string) {
+    const serversRepository = new ServersRepository(ns);
+
     // load input arguments
     const input: InputArg = getInput(ns, targetHost);
 
     let result: boolean = true;
 
 	// load host data
-	const data: ServerData = ServersRepository.get(ns, input.hostnameTarget) as ServerData;
+	const data: ServerData = serversRepository.get(input.hostnameTarget) as ServerData;
 	const requirements: UnlockRequirements = data.unlockRequirements
     const serverData = ns.getServer(input.hostnameTarget);
     

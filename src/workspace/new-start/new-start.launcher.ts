@@ -13,6 +13,7 @@ export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
+    const serversRepository = new ServersRepository(ns);
     const executionsRepository: ExecutionsRepository = new ExecutionsRepository(ns);
     const moneyPiggyBankService: MoneyPiggyBankService = new MoneyPiggyBankService(ns);
 
@@ -25,7 +26,7 @@ export async function main(ns: NS) {
     }*/
 
     // reset des bases de données
-    ServersRepository.reset(ns);
+    serversRepository.reset();
     executionsRepository.reset();
 
     // lancement du hacking automatisé

@@ -2,7 +2,8 @@ import * as Log from 'workspace/frameworks/logging';
 import { ServersService } from 'workspace/servers/servers.service';
 
 export async function main(ns: NS) {
-    const servers = ServersService.getAllHackable(ns);
+    const serversService = new ServersService(ns);
+    const servers = serversService.getAllHackable();
     ns.tprint(Log.getStartLog())
     for (const server of servers) {
         const indices = ns.ls(server)

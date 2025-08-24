@@ -3,10 +3,11 @@ import * as Log from 'workspace/frameworks/logging';
 import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
 export async function main(ns: NS) {
+    const serversRepository = new ServersRepository(ns);
     const input: InputArg = getInput(ns);
 
     const startTime: Date = new Date();
-    while(!ServersRepository.get(ns, input.targetHostname)?.state.unlocked) {
+    while(!serversRepository.get(input.targetHostname)?.state.unlocked) {
         await ns.sleep(500);
     }
     const endTime: Date = new Date();

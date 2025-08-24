@@ -6,6 +6,9 @@ import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import { ServersService } from 'workspace/servers/servers.service';
 
 export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
+    const serversRepository = new ServersRepository(ns);
+    const serversService = new ServersService(ns);
+
     if (upgrade.upgradeType === UpgradeType.RAM) {
         ns.print('Upgrade de serveur');
         
@@ -16,18 +19,18 @@ export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
 
         if(ns.upgradePurchasedServer(upgrade.hostname, upgrade.ram)) {
             ns.toast(`{${upgrade.hostname}} upgrade to (${ns.formatRam(upgrade.ram)}) RAM for ${Log.money(ns, upgrade.cost)}`, ns.enums.ToastVariant.SUCCESS, 5000);
-            ServersRepository.refresh(ns, upgrade.hostname);
+            serversRepository.refresh(upgrade.hostname);
         }
     } else if (upgrade.upgradeType === UpgradeType.SERVER) {
         ns.print('Achat de serveur');
         const hostnames = ['f1rst', 'se2ond', 'th3rd', 'fourt4'];
-        const boughtServers: string[] = ServersService.getOwned(ns);
+        const boughtServers: string[] = serversService.getOwned();
         const nextHostname: string = hostnames
             .filter(x => !boughtServers.includes(x))
             .shift() as string;
         ns.purchaseServer(nextHostname, upgrade.ram);
         // TODO : add upgrade.cost to server repo ?
-        ServersRepository.add(ns, nextHostname);
+        serversRepository.add(nextHostname);
 
         // copie du toolkit
         await copyToolkit(ns, nextHostname);

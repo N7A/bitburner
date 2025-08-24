@@ -34,11 +34,11 @@ export class DirectoryRepository<T> {
      * 
      * @remarks Ram cost : 0.1 GB
      */
-    get(ns: NS, id: string): T | null {
-        if (!ns.fileExists(this.REPOSITORY + '/' + id + '.json', DirectoryRepository.REPOSITORY_SERVER)) {
+    get(id: string): T | null {
+        if (!this.ns.fileExists(this.REPOSITORY + '/' + id + '.json', DirectoryRepository.REPOSITORY_SERVER)) {
             return null;
         }
-        return JSON.parse(ns.read(this.REPOSITORY + '/' + id + '.json'));
+        return JSON.parse(this.ns.read(this.REPOSITORY + '/' + id + '.json'));
     }
 
     /**
@@ -48,13 +48,10 @@ export class DirectoryRepository<T> {
      * 
      * @remarks RAM cost : 0.1 GB
      */
-    add(id: string, data: T) {
-        // save data
-        this.resetWith(id, data);
-    }
+    add(id: string, ...data: any) {}
 
     /**
-     * Enregistre en base la mise à jour d'un serveur.
+     * Enregistre en base la mise à jour d'une donnée.
      * 
      * @param ns Bitburner API
      * @param server serveur à mettre à jour
@@ -73,10 +70,10 @@ export class DirectoryRepository<T> {
      * 
      * @remarks Ram cost : 2.2 GB
      */
-    reset(ns: NS) {
-        const knownServers: string[] = this.getAllIds();
-        for (const server of knownServers) {
-            ns.mv(DirectoryRepository.ARCHIVE_DIRECTORY, `${this.REPOSITORY}/${server}.json`, `${this.REPOSITORY}/${DirectoryRepository.ARCHIVE_DIRECTORY}/${server}.json`)
+    reset() {
+        const ids: string[] = this.getAllIds();
+        for (const id of ids) {
+            this.ns.mv(DirectoryRepository.ARCHIVE_DIRECTORY, `${this.REPOSITORY}/${id}.json`, `${this.REPOSITORY}/${DirectoryRepository.ARCHIVE_DIRECTORY}/${id}.json`)
         }
     }
     

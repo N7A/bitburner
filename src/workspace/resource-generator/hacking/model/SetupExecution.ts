@@ -35,8 +35,9 @@ export class SetupExecution implements RamResourceExecution {
     }
 
     isExecutionUsless(ns: NS): boolean {
+        const serversRepository = new ServersRepository(ns);
         // load host data
-        const data: ServerData|null = ServersRepository.get(ns, this.targetHost);
+        const data: ServerData|null = serversRepository.get(this.targetHost);
         const hackData: HackData = data!.hackData;
         return ns.getServer(this.targetHost).hackDifficulty <= hackData.minDifficulty
             && ns.getServer(this.targetHost).moneyAvailable >= hackData.moneyMax

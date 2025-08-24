@@ -21,6 +21,8 @@ const GROW_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/grow.daemon.ts';
  * puis lance les runners de grow, weaken et hack.
  */
 export async function main(ns: NS) {
+    const serversRepository = new ServersRepository(ns);
+
     //#region input parameters
     var targetHost: string = ns.args.length >= 1 ? ns.args[0] as string : ns.getHostname()
     //#endregion input parameters
@@ -30,7 +32,7 @@ export async function main(ns: NS) {
     const executionsRepository = new ExecutionsRepository(ns);
 
     // load host data
-    const data: ServerData|null = ServersRepository.get(ns, targetHost);
+    const data: ServerData|null = serversRepository.get(targetHost);
     const hackData: HackData = data!.hackData
 
     //#region Setup
@@ -103,8 +105,9 @@ async function runScriptUntilEnoughThread(
 }
 
 async function growToMax(ns: NS, threadToLaunch: number, sourceHostname: string, targetHost: string) {
+    const repository = new ServersRepository(ns);
     // load host data
-    const data: ServerData|null = ServersRepository.get(ns, targetHost);
+    const data: ServerData|null = repository.get(targetHost);
     const hackData: HackData = data!.hackData
 
     // execute grow with max threads possible

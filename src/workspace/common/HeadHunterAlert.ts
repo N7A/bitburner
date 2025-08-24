@@ -4,14 +4,16 @@ import { ServersService } from "workspace/servers/servers.service";
 export class HeadHunterAlert {
     private ns: NS;
     private headHunterScriptPath: string;
+    private serversService: ServersService;
 
     constructor(ns: NS, headHunterScriptPath: string) {
         this.ns = ns;
         this.headHunterScriptPath = headHunterScriptPath;
+        this.serversService = new ServersService(ns);
     }
 
     newTarget() {
-        const executableServers = ServersService.getAllExecutable(this.ns);
+        const executableServers = this.serversService.getAllExecutable();
         let isHeadHunterRunning: boolean = executableServers
             .some(server => this.ns.isRunning(this.headHunterScriptPath, server));
 

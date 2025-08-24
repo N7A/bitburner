@@ -10,6 +10,7 @@ export async function main(ns: NS, targetHost: string) {
     // load input arguments
     const input: InputArg = getInput(ns, targetHost);
     const logger = new TerminalLogger(ns);
+    const serversRepository = new ServersRepository(ns);
 
     var nuked: boolean = false
     let resultMessage: string;
@@ -25,7 +26,7 @@ export async function main(ns: NS, targetHost: string) {
 
 
     // load host data
-    const data: ServerData | null = ServersRepository.get(ns, input.hostnameTarget);
+    const data: ServerData | null = serversRepository.get(input.hostnameTarget);
     const requirements: UnlockRequirements = data!.unlockRequirements
 
     if (ns.hasRootAccess(data!.name)) {
@@ -91,8 +92,9 @@ function missedHackingLevels(ns: NS, requiredHackingLevel: number): number {
  * Enregistre en base le fait qu'on ai débloqué la cible ainsi que les nouvelles cibles accessibles.
  */
 function saveUnlocked(ns: NS, targetUnlocked: string) {
+    const repository = new ServersRepository(ns);
     // add to hackable targets
-    ServersRepository.setUnlocked(ns, targetUnlocked);
+    repository.setUnlocked(targetUnlocked);
 }
 
 async function handleUnlock(ns: NS, targetUnlocked: string) {

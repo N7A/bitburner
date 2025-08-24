@@ -3,8 +3,9 @@ import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {
-    const servers = ServersRepository.getAll(ns);
-    let sortedServers: ServerData[] = servers.map(x => ServersRepository.get(ns, x) as ServerData)
+    const serversRepository = new ServersRepository(ns);
+    const servers = serversRepository.getAllIds();
+    let sortedServers: ServerData[] = servers.map(x => serversRepository.get(x) as ServerData)
     .sort((a, b) => {
         return (a.depth ?? 0) - (b.depth ?? 0)
     });
