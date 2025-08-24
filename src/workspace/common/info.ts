@@ -19,6 +19,11 @@ export class Info {
         this.ns.print(Log.getEndLog());
     }
     
+    /**
+     * Définition des données à afficher en log.
+     */
+    printData() {}
+
     //#region Dashboard
     setupDashboard() {
         this.ns.disableLog("ALL");
@@ -29,6 +34,4 @@ export class Info {
         this.ns.ui.openTail();
     }
     //#endregion Dashboard
-    
-    printData() {}
 }
