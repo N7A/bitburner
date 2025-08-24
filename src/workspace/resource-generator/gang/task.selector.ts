@@ -1,4 +1,4 @@
-import { TaskType } from "workspace/resource-generator/gang/domain/TaskType";
+import { TaskType } from "/workspace/resource-generator/gang/model/TaskType";
 
 export function getTargetTask(ns: NS, type: TaskType): GangTaskStats[] {
     const tasks = getAvailableTask(ns);
@@ -16,6 +16,8 @@ export function getTargetTask(ns: NS, type: TaskType): GangTaskStats[] {
             .filter(x => x.baseRespect < 0)
             .sort((a, b) => b.baseRespect - a.baseRespect);
     } else if (type === TaskType.UP_STAT) {
+        return tasks;
+    } else if (type === TaskType.POWER_TERRITORY) {
         return tasks;
     }
 
