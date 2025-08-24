@@ -1,14 +1,12 @@
 import * as Log from 'workspace/frameworks/logging';
 
-export class Info<T> {
+export class Info {
     protected ns: NS;
     protected target: string;
-    protected data: T;
 
-    constructor(ns: NS, target: string, data: T) {
+    constructor(ns: NS, target: string) {
         this.ns = ns;
         this.target = target;
-        this.data = data;
     }
 
     run() {

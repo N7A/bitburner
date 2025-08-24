@@ -1,31 +1,31 @@
 import * as Log from 'workspace/frameworks/logging';
 import { Logger } from 'workspace/common/Logger';
+import { Info } from 'workspace/common/info';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
-	const main: Main = new Main(ns);
+    const info: PlayerInfo = new PlayerInfo(ns);
 
-	ns.print(Log.getStartLog())
-	
-	main.showPlayeurStats();
-	ns.print('\n')
-    main.showResetInfo();
-	ns.print('\n')
-    main.showProductionInfo();
-	ns.print('\n')
-	main.showServeurs();
-
-	ns.print(Log.getEndLog())
+    info.run();
 }
 
-class Main {
-	private ns: NS;
+class PlayerInfo extends Info {
 	private logger: Logger
 
 	constructor(ns: NS) {
-		this.ns = ns;
+        super(ns, 'Self');
 		this.logger = new Logger(ns);
 		this.setupDashboard();
+	}
+
+    printData() {
+		this.showPlayeurStats();
+		this.ns.print('\n')
+		this.showResetInfo();
+		this.ns.print('\n')
+		this.showProductionInfo();
+		this.ns.print('\n')
+		this.showServeurs();
 	}
 
 	showPlayeurStats() {
@@ -73,15 +73,4 @@ class Main {
 			'/' + this.ns.formatNumber(this.ns.getServer(owned).maxRam)));
 		}
 	}
-
-	//#region Dashboard
-	private setupDashboard() {
-		this.ns.disableLog("ALL");
-		this.ns.clearLog();
-		
-		Log.initTailTitle(this.ns, 'Self', 'info');
-		
-		this.ns.ui.openTail();
-	}
-	//#endregion Dashboard
 }
