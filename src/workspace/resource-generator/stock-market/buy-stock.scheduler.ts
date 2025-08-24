@@ -10,14 +10,11 @@ export async function main(ns: NS) {
 	const input: InputArg = getInput(ns);
     const main: Main = new Main(ns);
 
-    // waitNewTargets = true : contracts appear over the time
-    const daemon = new Headhunter<string>(ns, () => main.getTargets(), main.run, true);
-    
     if (!input.runHasLoop) {
-        daemon.killAfterLoop();
+        main.killAfterLoop();
     }
     
-    await daemon.run();
+    await main.run();
 }
 
 //#region Input arguments
@@ -38,18 +35,18 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
-class Main {
-    private ns: NS;
+class Main extends Headhunter<string> {
     private logger: Logger;
     private stockSymbol: string;
 
     constructor(ns: NS) {
-        this.ns = ns;
+        // waitNewTargets = true : contracts appear over the time
+        super(ns, true)
         this.logger = new Logger(ns);
         this.setupDashboard();
     }
 
-    async run() {
+    protected async work(targets: string[]): Promise<any> {
         this.logger.log(`Start`);
         const workStartTime = new Date();
         await this.getTargets();

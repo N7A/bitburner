@@ -1,4 +1,4 @@
-import { Headhunter } from 'workspace/common/headhunter2';
+import { Headhunter } from 'workspace/common/headhunter';
 import { getMaxShares, selectBestTrainEnMarche } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import * as Log from 'workspace/frameworks/logging';
@@ -10,7 +10,6 @@ export async function main(ns: NS) {
 	const input: InputArg = getInput(ns);
     const main: Main = new Main(ns);
 
-    // TODO : headhunter don't use Main (like this.logger don't work)
     if (!input.runHasLoop) {
         main.killAfterLoop();
     }

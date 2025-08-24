@@ -4,13 +4,10 @@ import * as Log from 'workspace/frameworks/logging';
  * Execute en boucle une séquence ayant pour ressource une cible.
  */
 export class Headhunter<T> {
-    private ns: NS;
-    private getTargets: () => Promise<T[]>;
-    private work: (ns: NS, targets: T[]) => Promise<any>;
+    protected ns: NS;
     private waitNewTargets: boolean;
     private runHasLoop: boolean = true;
     private durationLimit?: number;
-    private isKillConditionReached?: () => boolean
 
     /**
      * 
@@ -20,18 +17,12 @@ export class Headhunter<T> {
      */
     constructor(
         ns: NS, 
-        getTargets: () => Promise<T[]>, 
-        work: (ns: NS, targets: T[]) => Promise<any>, 
         waitNewTargets: boolean, 
-        durationLimit?: number,
-        isKillConditionReached?: () => boolean
+        durationLimit?: number
     ) {
         this.ns = ns;
-        this.getTargets = getTargets;
-        this.work = work;
         this.waitNewTargets = waitNewTargets;
         this.durationLimit = durationLimit;
-        this.isKillConditionReached = isKillConditionReached;
     }
     
     async run() {
@@ -46,7 +37,7 @@ export class Headhunter<T> {
 
             this.ns.print(Log.INFO('Selected targets', targets));
 
-            await this.work(this.ns, targets);
+            await this.work(targets);
 
             const workEndTime = new Date();
             this.refreshDashBoard(threadStartTime, workStartTime, workEndTime);
@@ -64,7 +55,19 @@ export class Headhunter<T> {
             }
         } while (this.needLoop(threadStartTime, targets))
     }
-    
+
+    protected async work(targets: T[]): Promise<any> {
+
+    }
+
+    protected async getTargets(): Promise<T[]> {
+        return [];
+    }
+
+    isKillConditionReached(): boolean {
+        return false;
+    }
+
     private isTimeOut(threadStartTime: Date): boolean {
         return this.durationLimit !== undefined 
             && (new Date().getTime() - threadStartTime.getTime() > this.durationLimit)
@@ -82,7 +85,7 @@ export class Headhunter<T> {
         return this.runHasLoop 
             && !this.isTimeOut(threadStartTime) 
             && !this.isTargetOut(targets)
-            && (this.isKillConditionReached === undefined || !this.isKillConditionReached());
+            && !this.isKillConditionReached();
     }
 
     //#region Dashboard    

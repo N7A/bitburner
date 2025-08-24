@@ -4,16 +4,7 @@ import { Contract } from 'workspace/resource-generator/coding-contract/model/Con
 import { getFilepaths } from 'workspace/frameworks/file';
 
 //#region Constantes
-const getTargets = async (ns: NS) => {
-    return await getContracts(ns);
-}
-const work = async (ns: NS, targets: Contract[]) => {
-    const resolvers = getFilepaths(ns, 'home', 'workspace/resource-generator/coding-contract')
-        .filter(x => x.endsWith('.resolve.ts'));
-    for(const resolver of resolvers) {
-        ns.run(resolver);
-    }
-}
+export const RESOLVER_SCRIPT_DIRECTORY = 'workspace/resource-generator/coding-contract';
 //#endregion Constantes
 
 export async function main(ns: NS) {
@@ -21,7 +12,7 @@ export async function main(ns: NS) {
 	const input: InputArg = getInput(ns);
     
     // waitNewTargets = true : contracts appear over the time
-    const daemon = new Headhunter<Contract>(ns, () => getTargets(ns), work, true);
+    const daemon = new Main(ns);
     
     if (!input.runHasLoop) {
         daemon.killAfterLoop();
@@ -47,3 +38,23 @@ function getInput(ns: NS): InputArg {
 	};
 }
 //#endregion Input arguments
+
+class Main extends Headhunter<Contract> {
+    constructor(ns: NS) {
+        // waitNewTargets = true : contracts appear over the time
+        super(ns, true)
+    }
+
+    async work(targets: Contract[]) {
+        const resolvers = getFilepaths(this.ns, 'home', RESOLVER_SCRIPT_DIRECTORY)
+            .filter(x => x.endsWith('.resolve.ts'));
+        for(const resolver of resolvers) {
+            this.ns.run(resolver);
+        }
+    }
+
+    async getTargets(): Promise<Contract[]> {
+        return await getContracts(this.ns);
+    }
+
+}

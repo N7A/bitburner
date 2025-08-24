@@ -3,17 +3,6 @@ import { main as doScan } from 'workspace/resource-generator/hacking/scan/scan.w
 import * as Log from 'workspace/frameworks/logging';
 import { Headhunter } from 'workspace/common/headhunter';
 
-//#region Constantes
-const getTargets = async (ns: NS) => getScanTarget(ns)
-const work = async (ns: NS, targets: string[]) => {
-    for (const target of targets) {
-        ns.print('Wait scan end...');
-        await doScan(ns, target);
-        // TODO : when new unlock target, si infection not running -> execute infection
-    }
-}
-//#endregion Constantes
-
 /**
  * Cartographie et enregistre les données des serveurs du réseau.
  */
@@ -21,10 +10,7 @@ export async function main(ns: NS) {
     // load input arguments
 	const input: InputArg = getInput(ns);
 
-    setupDashboard(ns);
-
-    // waitNewTargets = false : targets fix and auto discovered
-    const daemon = new Headhunter<string>(ns, () => getTargets(ns), work, false);
+    const daemon = new Main(ns);
     
     if (!input.runHasLoop) {
         daemon.killAfterLoop();
@@ -53,12 +39,32 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
-//#region Dashboard
-function setupDashboard(ns: NS) {
-    ns.disableLog("ALL");
-    ns.clearLog();
+class Main extends Headhunter<string> {
+    constructor(ns: NS) {
+        // waitNewTargets = false : targets fix and auto discovered
+        super(ns, false)
+        this.setupDashboard();
+    }
     
-    Log.initTailTitle(ns, 'Scan', 'Scheduler');
-    ns.ui.openTail();
+    async work(targets: string[]): Promise<any> {
+        for (const target of targets) {
+            this.ns.print('Wait scan end...');
+            await doScan(this.ns, target);
+            // TODO : when new unlock target, si infection not running -> execute infection
+        }
+    }
+
+    async getTargets(): Promise<string[]> {
+        return getScanTarget(this.ns);
+    }
+
+    //#region Dashboard
+    setupDashboard() {
+        this.ns.disableLog("ALL");
+        this.ns.clearLog();
+        
+        Log.initTailTitle(this.ns, 'Scan', 'Scheduler');
+        this.ns.ui.openTail();
+    }
+    //#endregion Dashboard
 }
-//#endregion Dashboard
