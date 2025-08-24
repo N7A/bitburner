@@ -2,8 +2,7 @@ export async function main(ns: NS): Promise<void> {
     const hashes: Record<string,number> = {}
 
     // init footprint
-    // TODO : add repositories .json ?
-    const files = ns.ls('home', '.js')
+    const files = ns.ls('home', '.ts');
     for (const file of files) {
         const contents = ns.read(file)
         hashes[file] = getHash(contents)
@@ -11,34 +10,34 @@ export async function main(ns: NS): Promise<void> {
 
     while (true) {
         // get current scripts files
-        const files = ns.ls('home', '.js')
-
-        for (const file of files) {
-            const contents = ns.read(file)
-            const hash = getHash(contents)
-
-            if (hash != hashes[file]) {
-                ns.tprint(`INFO: Detected change in ${file}`)
-
-                // TODO : copy to owned server
-                
-                // relaunch process
-                const processes = ns.ps().filter((p: ProcessInfo) => {
-                    return p.filename == file
-                })
-
-                for (const process of processes) {
-                    ns.tprint(`INFO: Restarting ${process.filename} ${process.args} -t ${process.threads}`)
-                    if (process.filename != ns.getScriptName()) {
-                        ns.kill(process.pid)
-                        ns.run(process.filename, process.threads, ...process.args)
-                    } else {
-                        ns.spawn(process.filename, process.threads, ...process.args)
-                    }
-                }
-
+        const changedFiles = ns.ls('home', '.ts')
+            .filter(file => {
+                const contents = ns.read(file);
+                const newHash = getHash(contents);
+                const change: boolean =  newHash != hashes[file];
                 // maj footprint
-                hashes[file] = hash
+                hashes[file] = newHash;
+                return change;
+            });
+
+        for (const file of changedFiles) {
+            ns.tprint(`INFO: Detected change in ${file}`)
+
+            // TODO : copy to executable server
+            
+            // relaunch process
+            const processes = ns.ps().filter((p: ProcessInfo) => {
+                return p.filename == file
+            });
+
+            for (const process of processes) {
+                ns.tprint(`INFO: Restarting ${process.filename} ${process.args} -t ${process.threads}`)
+                if (process.filename != ns.getScriptName()) {
+                    ns.kill(process.pid)
+                    ns.run(process.filename, process.threads, ...process.args)
+                } else {
+                    ns.spawn(process.filename, process.threads, ...process.args)
+                }
             }
         }
 
