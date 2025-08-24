@@ -1,7 +1,5 @@
-import { ServersRepository } from 'workspace/servers/domain/servers.repository'
+import { ServersService } from 'workspace/servers/servers.service';
 
 export async function main(ns: NS) {
-    const serversRepository = new ServersRepository(ns);
-
-    serversRepository.getAllIds().forEach(x => serversRepository.refresh(x));
+    new ServersService(ns).refreshAll();
 }

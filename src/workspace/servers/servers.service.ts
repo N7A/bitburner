@@ -89,4 +89,9 @@ export class ServersService {
             .filter(x => x !== null)
             .filter(x => x.hackData.maxRam < this.ns.getPurchasedServerMaxRam());
     }
+
+    refreshAll(): void {
+        this.repository.getAllIds()
+            .forEach(x => this.repository.refresh(x));
+    }
 }
