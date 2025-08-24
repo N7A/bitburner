@@ -106,8 +106,14 @@ export function color(message: string, color: Color) {
  * 
  * @remarks Ram cost : 0
  */
-export function money(ns: NS, montant: number): string {
-    return color(`\$${ns.formatNumber(montant)}`, Color.YELLOW);
+export function money(ns: NS, montant: number, colorless = false): string {
+    const message: string = `\$${ns.formatNumber(montant)}`;
+
+    if (colorless) {
+        return message;
+    }
+
+    return color(message, Color.YELLOW);
 }
 
 /**

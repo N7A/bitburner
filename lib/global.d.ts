@@ -5,6 +5,7 @@ export { };
 declare global {
     
     interface NS extends bitburner.NS {}
+    interface GangTaskStats extends bitburner.GangTaskStats {}
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 

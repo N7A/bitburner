@@ -14,8 +14,12 @@ export type ExecutionOrder = {
     request: ExecutionRequest;
 }
 
+// TODO : one shot prio par rapport à looper (faire de la place niveau ram)
+// une fois one shot exec, remove from order
 export enum ExecutionType {
+    // worker, launcher, setup
     ONESHOT,
-    RUNNER,
-    FIT_RAM
+    // ram resource, scheduler, worker
+    RUNNER, // DAEMON // LOOPER
+    FIT_RAM // not same layer
 }

@@ -6,6 +6,7 @@ export class JsonRepository<T> {
     protected REPOSITORY: string;
     protected ns: NS;
 
+    // TODO: call run repositoryworker with queue handler
     constructor(ns: NS) {
         this.ns = ns;
     }
