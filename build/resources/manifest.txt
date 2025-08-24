@@ -6,6 +6,7 @@
 /lab/repo-broker/service.ts
 /lab/test.ts
 /workspace/analyze/analyze.ts
+/workspace/analyze/crimes.ts
 /workspace/analyze/findServer.ts
 /workspace/analyze/getCurrentTargets.ts
 /workspace/analyze/getDeeperServerKnown.ts
@@ -15,6 +16,7 @@
 /workspace/common/daemon.ts
 /workspace/common/headhunter.ts
 /workspace/common/headhunter2.ts
+/workspace/common/info.ts
 /workspace/common/JsonRepository.ts
 /workspace/common/Logger.ts
 /workspace/common/model/LogLevel.ts
@@ -74,6 +76,9 @@
 /workspace/resource-generator/coding-contract/total-ways-to-sum.ts
 /workspace/resource-generator/faction/model/ShareRamExecution.ts
 /workspace/resource-generator/faction/share-ram.daemon.ts
+/workspace/resource-generator/gang/create-gang.manager.ts
+/workspace/resource-generator/gang/task.info.ts
+/workspace/resource-generator/gang/task.selector.ts
 /workspace/resource-generator/hacking/application-properties.ts
 /workspace/resource-generator/hacking/infection/auto-infection.launcher.ts
 /workspace/resource-generator/hacking/infection/infection.scheduler.ts
