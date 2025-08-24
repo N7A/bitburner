@@ -50,24 +50,20 @@ export class ServersService {
     }
 
     getAllUnscanned(): string[] {
-        return Array.from(new Set(this.repository.getAllIds()
-                .map(x => this.repository.get(x))
-                .filter(x => x !== null)
+        return Array.from(new Set(this.repository.getAll()
                 .filter(x => !x.state.scanned)
                 .map(x => x?.name ?? '')))
     }
 
     getAllLocked(): string[] {
-        return this.repository.getAllIds()
-                .map(x => this.repository.get(x))
+        return this.repository.getAll()
                 .filter(x => x !== null)
                 .filter(x => !x.state.unlocked && x.type === ServerType.EXTERNAL)
                 .map(x => x.name)
     }
     
     getAllUnlocked(): string[] {
-        return this.repository.getAllIds()
-                .map(x => this.repository.get(x))
+        return this.repository.getAll()
                 .filter(x => x?.state.unlocked)
                 .map(x => x?.name ?? '')
     }
@@ -82,8 +78,7 @@ export class ServersService {
     }
 
     getOwned(): string[] {
-        return this.repository.getAllIds()
-            .map(x => this.repository.get(x))
+        return this.repository.getAll()
             .filter(x => x?.type === ServerType.BOUGHT)
             .map(x => x?.name ?? '');
     }

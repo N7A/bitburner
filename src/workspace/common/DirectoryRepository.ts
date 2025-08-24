@@ -28,6 +28,16 @@ export class DirectoryRepository<T> {
     }
 
     /**
+     * Récupère les données enregistrées en base de données.
+     * 
+     * @remarks RAM cost : 0.2 GB
+     */
+    getAll(): T[] {
+        return this.getAllIds()
+                .map(id => JSON.parse(this.ns.read(this.REPOSITORY + '/' + id + '.json')));
+    }
+
+    /**
      * Récupère les données du serveurs.
      * 
      * @param ns Bitburner API

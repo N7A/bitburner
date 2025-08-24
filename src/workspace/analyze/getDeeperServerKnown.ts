@@ -4,11 +4,10 @@ import * as Log from 'workspace/frameworks/logging';
 
 export async function main(ns: NS) {
     const serversRepository = new ServersRepository(ns);
-    const servers = serversRepository.getAllIds();
-    let sortedServers: ServerData[] = servers.map(x => serversRepository.get(x) as ServerData)
-    .sort((a, b) => {
-        return (a.depth ?? 0) - (b.depth ?? 0)
-    });
+    let sortedServers: ServerData[] = serversRepository.getAll()
+        .sort((a, b) => {
+            return (a.depth ?? 0) - (b.depth ?? 0)
+        });
 
     for (const server of sortedServers) {
         ns.tprint(Log.color(server.name, Log.Color.CYAN));
