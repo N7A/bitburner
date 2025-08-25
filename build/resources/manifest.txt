@@ -78,7 +78,10 @@
 /workspace/resource-generator/faction/model/ShareRamExecution.ts
 /workspace/resource-generator/faction/share-ram.daemon.ts
 /workspace/resource-generator/gang/create-gang.scheduler.ts
+/workspace/resource-generator/gang/domain/GangDirective.repository.ts
 /workspace/resource-generator/gang/domain/MemberNamesRepository.ts
+/workspace/resource-generator/gang/domain/model/GangDirective.ts
+/workspace/resource-generator/gang/domain/model/WantedLvl.ts
 /workspace/resource-generator/gang/model/TaskType.ts
 /workspace/resource-generator/gang/recruit.scheduler.ts
 /workspace/resource-generator/gang/task.info.ts
