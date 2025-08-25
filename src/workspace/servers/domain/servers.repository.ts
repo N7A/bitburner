@@ -14,7 +14,7 @@ export class ServersRepository extends DirectoryRepository<ServerData> {
      * @param ns Bitburner API
      */
     constructor(ns: NS) {
-        super(ns);
+        super(ns, REPOSITORY);
     }
 
     /**

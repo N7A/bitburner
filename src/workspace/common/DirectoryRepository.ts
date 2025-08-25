@@ -12,8 +12,9 @@ export class DirectoryRepository<T> {
     protected ns: NS;
 
     // TODO: call run repositoryworker with queue handler
-    constructor(ns: NS) {
+    constructor(ns: NS, repositoryPath: string) {
         this.ns = ns;
+        this.REPOSITORY = repositoryPath;
     }
 
     /**
