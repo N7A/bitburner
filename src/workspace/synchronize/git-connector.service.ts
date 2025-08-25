@@ -1,5 +1,6 @@
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { TerminalLogger } from "workspace/common/TerminalLogger";
+import { getFilepaths } from "workspace/frameworks/file";
 
 //#region Constants
 const MAIN_SERVER = 'home';
@@ -29,6 +30,8 @@ export class GitHubConnector {
         await this.pullFile(this.repository.manifestFilepath);
         // recupération des fichiers définis dans le manifest
         await this.pullManifestFiles();
+        // suppression des fichiers non définis dans le manifest
+        this.clearButManifestFiles();
     }
 
     /**
@@ -84,5 +87,29 @@ export class GitHubConnector {
             // recuperation du fichier
             await this.pullFile(file, this.repository.sourceDirectoryPath);
         }
+    }
+
+    /**
+     * Suppress files not define in manifest to home.
+     */
+    private clearButManifestFiles() {
+        // recuperation des fichiers définis dans le fichier manifest
+        const files = (this.ns.read(this.repository.manifestFilepath) as string)
+            // ligne par ligne
+            .split(/\r?\n/)
+            // ignore ligne vide
+            .filter((x) => x.trim() != "")
+            .map(line => {
+                return line.startsWith("./")
+                    ? line.substring(1)
+                    : line.startsWith("/")
+                    ? line
+                    : null
+            });
+
+        getFilepaths(this.ns, 'home', '/workspace')
+            .map(x => '/' + x)
+            .filter(x => files.includes(x) && x.endsWith('.ts'))
+            .forEach(x => this.ns.rm(x));
     }
 }
