@@ -62,7 +62,7 @@ export class GitHubConnector {
      */
     private async pullManifestFiles() {
         // recuperation des fichiers définis dans le fichier manifest
-        const files = (this.ns.read(this.repository.manifestFilepath) as string)
+        const manifestFiles = (this.ns.read(this.repository.manifestFilepath) as string)
             // ligne par ligne
             .split(/\r?\n/)
             // ignore ligne vide
@@ -76,9 +76,9 @@ export class GitHubConnector {
             });
 
         this.logger.trace(`Contents of manifest:`);
-        this.logger.trace(`\t${files}`);
+        this.logger.trace(`\t${manifestFiles}`);
 
-        for (let file of files) {
+        for (let file of manifestFiles) {
             if (!file) {
                 this.logger.err(`Could not read line ${file}`);
                 continue;
@@ -87,7 +87,7 @@ export class GitHubConnector {
             // recuperation du fichier
             await this.pullFile(file, this.repository.sourceDirectoryPath);
         }
-        this.logger.success(`${files.length} files pulled`)
+        this.logger.success(`${manifestFiles.length} files pulled`)
     }
 
     /**
@@ -95,7 +95,7 @@ export class GitHubConnector {
      */
     private clearButManifestFiles() {
         // recuperation des fichiers définis dans le fichier manifest
-        const files = (this.ns.read(this.repository.manifestFilepath) as string)
+        const manifestFiles = (this.ns.read(this.repository.manifestFilepath) as string)
             // ligne par ligne
             .split(/\r?\n/)
             // ignore ligne vide
@@ -110,7 +110,7 @@ export class GitHubConnector {
 
         const filesToRemove = getFilepaths(this.ns, 'home', '/workspace')
             .map(x => '/' + x)
-            .filter(x => files.includes(x) && x.endsWith('.ts'));
+            .filter(x => !manifestFiles.includes(x) && x.endsWith('.ts'));
         filesToRemove.forEach(x => this.ns.rm(x));
         this.logger.success(`${filesToRemove.length} files removed`)
     }
