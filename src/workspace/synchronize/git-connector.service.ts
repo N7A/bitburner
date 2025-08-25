@@ -87,6 +87,7 @@ export class GitHubConnector {
             // recuperation du fichier
             await this.pullFile(file, this.repository.sourceDirectoryPath);
         }
+        this.logger.success(`${files.length} files pulled`)
     }
 
     /**
@@ -107,9 +108,10 @@ export class GitHubConnector {
                     : null
             });
 
-        getFilepaths(this.ns, 'home', '/workspace')
+        const filesToRemove = getFilepaths(this.ns, 'home', '/workspace')
             .map(x => '/' + x)
-            .filter(x => files.includes(x) && x.endsWith('.ts'))
-            .forEach(x => this.ns.rm(x));
+            .filter(x => files.includes(x) && x.endsWith('.ts'));
+        filesToRemove.forEach(x => this.ns.rm(x));
+        this.logger.success(`${filesToRemove.length} files removed`)
     }
 }
