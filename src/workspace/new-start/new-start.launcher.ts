@@ -7,6 +7,7 @@ import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 //#region Constants
 export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
 export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts';
+export const EXECUTION_SCRIPT = 'workspace/load-balancer/execution.scheduler.ts true';
 //#endregion Constants
 
 /**
@@ -36,6 +37,9 @@ export async function main(ns: NS) {
 
     // lancement de l'achat de node automatisé
     ns.run(HACKNET_SCRIPT, 1, true);
+
+    // lancement du hack automatisé
+    ns.run(EXECUTION_SCRIPT, 1, true);
 
     // affichage de la TODO list et informations diverses
     showTodo(ns);
