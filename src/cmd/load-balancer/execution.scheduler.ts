@@ -92,7 +92,7 @@ type InputArg = {
  */
 function getInput(ns: NS): InputArg {
     return {
-        runHasLoop: ns.args !== undefined ? (ns.args[0] as boolean) : true
+        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
     };
 }
 //#endregion Input arguments
