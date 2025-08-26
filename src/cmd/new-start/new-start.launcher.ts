@@ -17,7 +17,7 @@ class NewStart {
     //#region Constants
     readonly INFECTION_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
     readonly HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts';
-    readonly EXECUTION_SCRIPT = 'cmd/load-balancer/execution.scheduler.ts true';
+    readonly EXECUTION_SCRIPT = 'cmd/load-balancer/execution.scheduler.ts';
     //#endregion Constants
 
     private ns: NS;
