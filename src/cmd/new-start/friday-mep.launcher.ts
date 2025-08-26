@@ -2,29 +2,56 @@ import * as Referentiel from 'workspace/referentiel'
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 
-//#region Constants
-export const INFECTION_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
-export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts';
-//#endregion Constants
-
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
  */
 export async function main(ns: NS) {
-    const serversService = new ServersService(ns);
-    const executionsRepository = new ExecutionsRepository(ns);
+    const fridayMep = new FridayMep(ns);
 
-    // kill all scripts
-    serversService.getAllExecutable().forEach(x => ns.killall(x))
+    fridayMep.run();
+}
 
-    // reset des bases de données
-    executionsRepository.reset();
+class FridayMep {
+    //#region Constants
+    readonly INFECTION_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
+    readonly HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts';
+    readonly EXECUTION_SCRIPT = 'cmd/load-balancer/execution.scheduler.ts true';
+    //#endregion Constants
 
-    // lancement du hacking automatisé
-    ns.run(INFECTION_SCRIPT);
+    private ns: NS;
+    private serversService: ServersService;
+    private executionsRepository: ExecutionsRepository;
 
-    // TODO : lancement du gestionnaire d'embauche
+    constructor(ns: NS) {
+        this.ns = ns;
+        this.serversService = new ServersService(ns);
+        this.executionsRepository = new ExecutionsRepository(ns);
+    }
 
-    // lancement de l'achat de node automatisé
-    ns.run(HACKNET_SCRIPT, 1, true);
+    run() {
+        // kill all scripts
+        this.serversService.getAllExecutable().forEach(x => this.ns.killall(x))
+        
+        this.resetRepositories();
+
+        this.startScripts();
+    }
+
+    private resetRepositories() {
+        // reset des bases de données
+        this.executionsRepository.reset();
+    }
+
+    private startScripts() {
+        // lancement du unlock automatisé
+        this.ns.run(this.INFECTION_SCRIPT);
+
+        // TODO : lancement du gestionnaire d'embauche
+
+        // lancement de l'achat de node automatisé
+        this.ns.run(this.HACKNET_SCRIPT, 1, true);
+        
+        // lancement du hacking automatisé
+        this.ns.run(this.EXECUTION_SCRIPT, 1, true);
+    }
 }
