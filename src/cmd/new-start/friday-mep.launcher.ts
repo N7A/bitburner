@@ -3,7 +3,7 @@ import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.
 import { ServersService } from 'workspace/servers/servers.service';
 
 //#region Constants
-export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
+export const INFECTION_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
 export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts';
 //#endregion Constants
 

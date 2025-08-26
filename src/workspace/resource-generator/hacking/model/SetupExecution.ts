@@ -8,7 +8,7 @@ import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequ
 import * as Log from 'workspace/frameworks/logging';
 
 //#region Constants
-export const SETUP_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/setup-server.sequencer.ts';
+export const SETUP_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/setup-server.sequencer.ts';
 //#endregion Constants
 
 export class SetupExecution implements RamResourceExecution {

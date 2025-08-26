@@ -35,21 +35,21 @@ npm run build
 4. Aller dans le terminal du jeu
 5. Récupérer le script qui pull le repository
 ```bash
-wget https://raw.githubusercontent.com/N7A/bitburner/refs/heads/main/src/workspace/synchronize/init-pull.ts /workspace/synchronize/init-pull.ts
+wget https://raw.githubusercontent.com/N7A/bitburner/refs/heads/main/src/cmd/synchronize/init-pull.ts /cmd/synchronize/init-pull.ts
 ```
 6. Executer le script
 ```bash
-run /workspace/synchronize/init-pull.ts
+run /cmd/synchronize/init-pull.ts
 ```
 
 ## 🔄 Refresh pull
 
 ```bash
-run /workspace/synchronize/pull.launcher.ts
+run /cmd/synchronize/pull.launcher.ts
 ```
 
 # ▶️ Run
 
 ```bash
-run /workspace/new-start/new-start.launcher.ts
+run /cmd/new-start/new-start.launcher.ts
 ```

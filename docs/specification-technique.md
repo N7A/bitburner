@@ -5,3 +5,11 @@ Par rapport à un fichier ts exportant des constantes, cela permet un rechargeme
 
 - GangDirectiveRepository
 - PiggyBankRepository
+
+# Package cmd vs workspace
+
+Le package workspace contient toutes les classes et model utilisable par les scripts.
+
+Le package cmd contient tous les scripts avec un main, pouvant être démarré depuis le terminal.
+
+Le but de cette séparation est d'améliorer l'affichage de l'auto-complétion lors d'une execution via le terminal.

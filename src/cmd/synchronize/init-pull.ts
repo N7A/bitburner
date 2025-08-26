@@ -1,7 +1,7 @@
 //#region Constants
 export const repoParams = {
     baseUrl: "https://raw.githubusercontent.com/N7A/bitburner/refs/heads/main/src",
-    pullLauncherScript: "/workspace/synchronize/pull.launcher.ts",
+    pullLauncherScript: "/cmd/synchronize/pull.launcher.ts",
     pullLauncherDependencies: [
         "/workspace/synchronize/application-properties.ts",
         "/workspace/synchronize/git-connector.service.ts",

@@ -5,9 +5,9 @@ import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.ser
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 //#region Constants
-export const INFECTION_SCRIPT = Referentiel.HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
+export const INFECTION_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/infection/auto-infection.launcher.ts';
 export const HACKNET_SCRIPT = Referentiel.HACKNET_DIRECTORY + '/upgrade-hacknet.scheduler.ts';
-export const EXECUTION_SCRIPT = 'workspace/load-balancer/execution.scheduler.ts true';
+export const EXECUTION_SCRIPT = 'cmd/load-balancer/execution.scheduler.ts true';
 //#endregion Constants
 
 /**

@@ -3,6 +3,7 @@ import { getFilepaths } from 'workspace/frameworks/file'
 
 //#region Constants
 const WORKSPACE_DIRECTORY = Referentiel.WORKSPACE_DIRECTORY;
+const CMD_DIRECTORY = Referentiel.CMD_DIRECTORY;
 const DIRECTORIES_SOURCE_HOSTNAME = 'home';
 //#endregion Constants
 
@@ -22,21 +23,18 @@ export async function main(ns: NS) {
 }
 
 function work(ns: NS, request: Request) {
-	// copy home workspace
+	// copy home
 	ns.scp(
 		// get all workspace filepaths
-		getFilepaths(ns, DIRECTORIES_SOURCE_HOSTNAME, WORKSPACE_DIRECTORY),
-		// to target hostname
-		request.hostnameTarget,
-		// from home
-		DIRECTORIES_SOURCE_HOSTNAME
-	)
-
-	// TODO : temporaire, pas de sync disponible
-	// copy home repositories
-	ns.scp(
-		// get all workspace filepaths
-		getFilepaths(ns, DIRECTORIES_SOURCE_HOSTNAME, Referentiel.REPOSITORIES_DIRECTORY),
+		[
+			// workspace
+			...getFilepaths(ns, DIRECTORIES_SOURCE_HOSTNAME, WORKSPACE_DIRECTORY),
+			// cmd
+			...getFilepaths(ns, DIRECTORIES_SOURCE_HOSTNAME, CMD_DIRECTORY),
+			// TODO : temporaire, pas de sync disponible
+			// repositories
+			...getFilepaths(ns, DIRECTORIES_SOURCE_HOSTNAME, Referentiel.REPOSITORIES_DIRECTORY)
+		],
 		// to target hostname
 		request.hostnameTarget,
 		// from home

@@ -10,7 +10,7 @@ import { waitEndExecution } from 'workspace/frameworks/execution';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 //#region Constants
-const ENABLE_PAYLOAD_SCRIPT = "workspace/load-balancer/domain/payload.enable.ts";
+const ENABLE_PAYLOAD_SCRIPT = "cmd/load-balancer/domain/payload.enable.ts";
 const WEAKEN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/weaken.daemon.ts';
 const GROW_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/grow.daemon.ts';
 //#endregion Constants

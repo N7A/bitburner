@@ -108,7 +108,7 @@ export class GitHubConnector {
                     : null
             });
 
-        const filesToRemove = getFilepaths(this.ns, 'home', 'workspace')
+        const filesToRemove = [...getFilepaths(this.ns, 'home', 'workspace'), ...getFilepaths(this.ns, 'home', 'cmd')]
             .map(x => '/' + x)
             .filter(x => !manifestFiles.includes(x) && x.endsWith('.ts'));
         filesToRemove.forEach(x => this.ns.rm(x));

@@ -3,7 +3,7 @@ import { getMaxShares, selectBestTrainEnMarche } from "workspace/resource-genera
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import * as Log from 'workspace/frameworks/logging';
 import { Logger } from 'workspace/common/Logger';
-import { SellStockWorker } from "workspace/resource-generator/stock-market/sell-stock.worker";
+import { SellStockWorker } from "/cmd/resource-generator/stock-market/sell-stock.worker";
 
 export async function main(ns: NS) {
     // load input arguments

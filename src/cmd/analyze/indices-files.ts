@@ -7,7 +7,10 @@ export async function main(ns: NS) {
     ns.tprint(Log.getStartLog())
     for (const server of servers) {
         const indices = ns.ls(server)
-            .filter(x => !x.startsWith('repositories') && !x.startsWith('workspace') && !x.endsWith('.cct'));
+            .filter(x => !x.startsWith('repositories') 
+                && !x.startsWith('workspace') 
+                && !x.startsWith('cmd') 
+                && !x.endsWith('.cct'));
         if (indices.length > 0) {
             ns.tprint(Log.title(server))
             indices.forEach(x => ns.tprint(x));

@@ -8,6 +8,7 @@ declare global {
     interface GangTaskStats extends bitburner.GangTaskStats {}
     interface Server extends bitburner.Server {}
     interface NodeStats extends bitburner.NodeStats {}
+    interface ProcessInfo extends bitburner.ProcessInfo {}
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 

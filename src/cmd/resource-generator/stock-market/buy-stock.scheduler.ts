@@ -3,7 +3,7 @@ import { getMaxShares, selectBestBuyQuick, waitBuyTime } from "workspace/resourc
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import * as Log from 'workspace/frameworks/logging';
 import { Logger } from 'workspace/common/Logger';
-import { SellStockWorker } from "workspace/resource-generator/stock-market/sell-stock.worker";
+import { SellStockWorker } from "/cmd/resource-generator/stock-market/sell-stock.worker";
 
 /**
  * 

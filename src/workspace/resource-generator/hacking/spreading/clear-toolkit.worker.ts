@@ -3,6 +3,7 @@ import { getFilepaths } from 'workspace/frameworks/file'
 
 //#region Constants
 const WORKSPACE_DIRECTORY = Referentiel.WORKSPACE_DIRECTORY;
+const CMD_DIRECTORY = Referentiel.CMD_DIRECTORY;
 //#endregion Constants
 
 /**
@@ -18,7 +19,10 @@ export async function main(ns: NS) {
 	const input: InputArg = getInput(ns);
 
 	// get all workspace filepaths
-	getFilepaths(ns, input.hostnameTarget, WORKSPACE_DIRECTORY)
+	[
+		...getFilepaths(ns, input.hostnameTarget, WORKSPACE_DIRECTORY), 
+		...getFilepaths(ns, input.hostnameTarget, CMD_DIRECTORY)
+	]
         // delete all
         .forEach(x => ns.rm(x, input.hostnameTarget));
 }

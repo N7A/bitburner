@@ -8,9 +8,9 @@ import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortPr
 import { Headhunter } from 'workspace/common/headhunter';
 
 //#region Constants
-export const SCAN_SCRIPT = Referentiel.HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
+export const SCAN_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
 export const UNLOCK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/unlock/unlock.launcher.ts';
-export const PAYLOAD_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/payload.launcher.ts';
+export const PAYLOAD_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/payload.launcher.ts';
 //#endregion Constantes
 
 export async function main(ns: NS) {
