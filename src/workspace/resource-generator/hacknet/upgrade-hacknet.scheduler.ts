@@ -48,7 +48,15 @@ export async function main(ns: NS) {
         // do purchase
         executeUpgrade(ns, selectedUpgrade);
         
+
         if (input.runHasLoop) {
+            // wait purchase to be possible
+            while(getAutoRepayTime(ns) > 1000 * 60 * 60 * 1) {
+                refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
+                // sleep to prevent crash because of infinite loop
+                await ns.sleep(500);
+            }
+            
             nextUpgrade = getBestProfits(ns);
             
             refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
@@ -56,7 +64,7 @@ export async function main(ns: NS) {
             // sleep to prevent crash because of infinite loop
             await ns.sleep(interval);
         }
-	} while (input.runHasLoop || getAutoRepayTime(ns) > 1000 * 60 * 60 * 1)
+	} while (input.runHasLoop)
 }
 
 //#region Input arguments
