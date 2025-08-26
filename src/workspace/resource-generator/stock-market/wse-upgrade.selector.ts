@@ -27,12 +27,12 @@ function getAllUpgrades(ns: NS): WseUpgrade[] {
             cost: ns.stock.getConstants().TIXAPICost, 
             purchase: '/workspace/resource-generator/stock-market/purchase-tix-api.worker.ts'
         },
-        {
+        /* TODO: useful only visualy{
             name: '4S data',
             isPurchased: ns.stock.has4SData, 
             cost: ns.stock.getConstants().MarketData4SCost, 
             purchase: '/workspace/resource-generator/stock-market/purchase-4s-market-data.worker.ts'
-        },
+        },*/
         {
             name: '4S data TIX API',
             isPurchased: ns.stock.has4SDataTIXAPI, 

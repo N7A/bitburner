@@ -10,7 +10,6 @@ const REPOSITORY = Referentiel.REPOSITORIES_DIRECTORY + '/gang-task.json';
  * 
  * @remarks Ram cost : 0.1 GB
  */
-// INFO : repository instead of application .properties because rechargement à chaud + setup values by script
 export class GangDirectiveRepository {
 
     private ns: NS;

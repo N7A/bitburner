@@ -5,6 +5,11 @@ import * as Log from 'workspace/frameworks/logging';
 import { Logger } from 'workspace/common/Logger';
 import { SellStockWorker } from "workspace/resource-generator/stock-market/sell-stock.worker";
 
+/**
+ * 
+ * @param ns 
+ * @requires 4S Market Data TIX API Access
+ */
 export async function main(ns: NS) {
     // load input arguments
 	const input: InputArg = getInput(ns);
@@ -66,22 +71,26 @@ class Main extends Headhunter<string> {
         const moneyPiggyBankService = new MoneyPiggyBankService(this.ns);
 
         let shares: number = 0;
+        let potentialTarget: string | undefined;
         do {
-            this.stockSymbol = selectBestBuyQuick(this.ns);
-            if (!this.stockSymbol) {
+            potentialTarget = selectBestBuyQuick(this.ns);
+            if (!potentialTarget) {
                 this.logger.warn('Aucune cible trouvée')
                 await this.ns.asleep(500);
                 continue;
             }
 
+            this.logger.log(`Potential target : ${potentialTarget}`);
+            
             this.logger.waiting('buy time');
-            await waitBuyTime(this.ns, this.stockSymbol);
+            await waitBuyTime(this.ns, potentialTarget);
             this.logger.stopWaiting();
 
             const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money));
-            shares = getMaxShares(this.ns, this.stockSymbol, availableMoney);
+            shares = getMaxShares(this.ns, potentialTarget, availableMoney);
         } while(shares === 0)
 
+        this.stockSymbol = potentialTarget ?? ''
         return [this.stockSymbol]
     }
     

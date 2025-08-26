@@ -24,7 +24,7 @@ export async function main(ns: NS) {
             continue;
         }
 
-        ns.print(Log.INFO('Prochain upgrade', `${nextUpgrade.name} (${Log.money(ns, nextUpgrade.cost)})`));
+        ns.print(Log.INFO('Prochaine amélioration', `${nextUpgrade.name} (${Log.money(ns, nextUpgrade.cost)})`));
 
         ns.print('Waiting to have enough money...');
         // wait purchase to be possible
@@ -33,7 +33,7 @@ export async function main(ns: NS) {
             await ns.sleep(500);
         }
         
-        ns.print('Buy upgrade');
+        ns.print('Achat de l\'amélioration');
         // do purchase
         ns.run(nextUpgrade.purchase);
         

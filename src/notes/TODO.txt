@@ -10,6 +10,7 @@
 - script get best hack target pour lvl up : temps min + chance de reussite max
 - core on home help to grow and weaken, check if same on external servers; if yes repartition en fonction
 - save on repository contract fail
+- coordonner hack et stock
 
 # Réflexions
 

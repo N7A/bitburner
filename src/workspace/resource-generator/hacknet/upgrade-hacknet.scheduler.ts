@@ -56,7 +56,7 @@ export async function main(ns: NS) {
             // sleep to prevent crash because of infinite loop
             await ns.sleep(interval);
         }
-	} while (input.runHasLoop || getAutoRepayTime(ns) > 1000 * 60 * 60 * 9)
+	} while (input.runHasLoop || getAutoRepayTime(ns) > 1000 * 60 * 60 * 1)
 }
 
 //#region Input arguments
@@ -117,9 +117,8 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
     }
 
     const currentGain = ns.getMoneySources().sinceInstall.hacknet + ns.getMoneySources().sinceInstall.hacknet_expenses;
-    const totalProduction: number = allNodes.map(x => x.production).reduce((a,b) => a + b);
     if (currentGain < 0) {
-        ns.print(Log.INFO(`Auto-repay time`, `${Log.time(new Date(-currentGain/totalProduction * 1000))}`));
+        ns.print(Log.INFO(`Auto-repay time`, `${Log.time(new Date(getAutoRepayTime(ns)))}`));
     }
     if (nextUpgrade) {
         ns.print(Log.INFO('Next upgrade type', nextUpgrade.upgradeType));
