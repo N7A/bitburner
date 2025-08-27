@@ -4,21 +4,21 @@ import { TaskType } from "workspace/resource-generator/gang/model/TaskType";
 export function getTargetTask(ns: NS, type: TaskType): GangTaskStats[] {
     const tasks = getAvailableTask(ns);
 
-    if (type === TaskType.DOWN_WANTED) {
+    if (type == TaskType.DOWN_WANTED) {
         return tasks
             .filter(x => x.baseWanted < 0)
             .sort((a, b) => a.baseWanted - b.baseWanted);
-    } else if (type === TaskType.UP_MONEY) {
+    } else if (type == TaskType.UP_MONEY) {
         return tasks
-            .filter(x => x.baseMoney < 0)
+            .filter(x => x.baseMoney > 0)
             .sort((a, b) => b.baseMoney - a.baseMoney);
-    } else if (type === TaskType.UP_REPUTATION) {
+    } else if (type == TaskType.UP_REPUTATION) {
         return tasks
-            .filter(x => x.baseRespect < 0)
+            .filter(x => x.baseRespect > 0)
             .sort((a, b) => b.baseRespect - a.baseRespect);
-    } else if (type === TaskType.UP_STAT) {
+    } else if (type == TaskType.UP_STAT) {
         return tasks;
-    } else if (type === TaskType.POWER_TERRITORY) {
+    } else if (type == TaskType.POWER_TERRITORY) {
         return tasks;
     }
 
