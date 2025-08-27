@@ -49,12 +49,19 @@ class TaskInfo extends Info {
         this.ns.print(Log.INFO('Hacking task', this.data.isHacking));
         this.ns.print('\n');
         this.ns.print(Log.title('Weight'));
-        this.ns.print(Log.INFO('Hack', this.data.hackWeight));
-        this.ns.print(Log.INFO('Strength', this.data.strWeight));
-        this.ns.print(Log.INFO('Defense', this.data.defWeight));
-        this.ns.print(Log.INFO('Dexterity', this.data.dexWeight));
-        this.ns.print(Log.INFO('Agility', this.data.agiWeight));
-        this.ns.print(Log.INFO('Charisma', this.data.chaWeight));
+        const weightStats = [
+            'hackWeight',
+            'strWeight',
+            'defWeight',
+            'dexWeight',
+            'agiWeight',
+            'chaWeight'
+        ]
+        for (const weightStat of weightStats) {
+            if (this.data[weightStat as keyof GangTaskStats] as number > 0) {
+                this.ns.print(Log.INFO(weightStat, this.data[weightStat as keyof GangTaskStats] as number));
+            }
+        }
         this.ns.print(Log.INFO('Territory', this.data.territory));
         this.ns.print(Log.INFO('Difficulty', this.data.difficulty));
         this.ns.print('\n');
