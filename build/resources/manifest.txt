@@ -1,8 +1,6 @@
 /cmd/analyze/crimes.ts
-/cmd/analyze/findServer.ts
 /cmd/analyze/getCurrentTargets.ts
 /cmd/analyze/getDeeperServerKnown.ts
-/cmd/analyze/indices-files.ts
 /cmd/analyze/self.info.ts
 /cmd/load-balancer/domain/payload.disable.ts
 /cmd/load-balancer/domain/payload.enable.ts
@@ -19,6 +17,7 @@
 /cmd/resource-generator/coding-contract/all-contracts.info.ts
 /cmd/resource-generator/coding-contract/contract.info.ts
 /cmd/resource-generator/coding-contract/resolve-contracts.scheduler.ts
+/cmd/resource-generator/faction/indices-files.info.ts
 /cmd/resource-generator/faction/share-ram.daemon.ts
 /cmd/resource-generator/gang/create-gang.scheduler.ts
 /cmd/resource-generator/gang/recruit.scheduler.ts
@@ -144,6 +143,7 @@
 /workspace/servers/domain/model/ServerType.ts
 /workspace/servers/domain/model/UnlockRequirements.ts
 /workspace/servers/domain/servers.repository.ts
+/workspace/servers/findServer.ts
 /workspace/servers/servers.service.ts
 /workspace/synchronize/application-properties.ts
 /workspace/synchronize/git-connector.service.ts
