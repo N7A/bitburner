@@ -13,11 +13,10 @@ export async function main(ns: NS) {
     setupDashboard(ns, input);
 
     if (!input.runHasLoop) {
-        await work(ns);
-        return;
+        daemon.killAfterLoop();
     }
 
-    daemon = new Daemon(ns, () => work(ns));
+    daemon = new ShareRamDaemon(ns);
     
     await daemon.run();
 }
@@ -51,10 +50,18 @@ function setupDashboard(ns: NS, input: InputArg) {
 }
 //#endregion Dashboard
 
-async function work(ns: NS) {
-    await ns.share();
-}
-
+// TODO: will not work, find the good way
 export function killAfterLoop() {
     daemon.killAfterLoop();
+}
+
+class ShareRamDaemon extends Daemon {
+    constructor(ns: NS) {
+        super(ns);
+    }
+    
+    async work() {
+        await this.ns.share();
+    }
+
 }

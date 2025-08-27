@@ -3,7 +3,7 @@ import * as Log from 'workspace/frameworks/logging';
 import { waitEndExecution } from 'workspace/frameworks/execution';
 import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
-let daemon: Daemon;
+let daemon: WeakenManager;
 
 const WORKER_SCRIPT = 'workspace/resource-generator/hacking/payload/weaken.worker.ts';
 
@@ -11,19 +11,18 @@ export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
 
-    setupDashboard(ns, input);
-
     // TODO : add to input
     // INFO : getServerMinSecurityLevel aussi cher que get depuis la bdd
     const securityThresh = ns.getServerMinSecurityLevel(input.targetHost);
 
+    daemon = new WeakenManager(ns, input.targetHost, securityThresh, input.threadAmount);
+    
+    daemon.setupDashboard();
+
     if (!input.runHasLoop) {
-        await work(ns, input, securityThresh);
-        return;
+        daemon.killAfterLoop();
     }
 
-    daemon = new Daemon(ns, () => work(ns, input, securityThresh));
-    
     await daemon.run();
 }
 
@@ -54,28 +53,43 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
-//#region Dashboard
-function setupDashboard(ns: NS, input: InputArg) {
-    ns.disableLog("ALL");
-    ns.enableLog('weaken');
-    ns.clearLog();
-    
-    Log.initTailTitle(ns, `Weaken ${Log.targetColorLess(input.targetHost)}`, 'manager');
-}
-//#endregion Dashboard
-
-async function work(ns: NS, input: InputArg, securityThresh: number) {
-    const currentSecurityLevel = ns.getServerSecurityLevel(input.targetHost);
-    ns.print(Log.threshold(ns, currentSecurityLevel, securityThresh));
-    // If security level too high
-    if (currentSecurityLevel > securityThresh) {
-        var pid: number = ns.run(WORKER_SCRIPT, input.threadAmount, input.targetHost);
-        await waitEndExecution(ns, pid);
-    } else {
-        await ns.asleep(500);
-    }
-}
-
 export function killAfterLoop() {
     daemon.killAfterLoop();
+}
+
+class WeakenManager extends Daemon {
+    private targetHost: string;
+    private securityThresh: number;
+    private threadAmount: number;
+
+    constructor(ns: NS, targetHost: string, securityThresh: number, threadAmount: number) {
+        super(ns);
+
+        this.targetHost = targetHost;
+        this.securityThresh = securityThresh;
+        this.threadAmount = threadAmount;
+    }
+
+    async work() {
+        const currentSecurityLevel = this.ns.getServerSecurityLevel(this.targetHost);
+        this.ns.print(Log.threshold(this.ns, currentSecurityLevel, this.securityThresh));
+        // If security level too high
+        if (currentSecurityLevel > this.securityThresh) {
+            var pid: number = this.ns.run(WORKER_SCRIPT, this.threadAmount, this.targetHost);
+            await waitEndExecution(this.ns, pid);
+        } else {
+            await this.ns.asleep(500);
+        }
+    }
+
+    //#region Dashboard
+    setupDashboard() {
+        this.ns.disableLog("ALL");
+        this.ns.enableLog('weaken');
+        this.ns.clearLog();
+        
+        Log.initTailTitle(this.ns, `Weaken ${Log.targetColorLess(this.targetHost)}`, 'manager');
+    }
+    //#endregion Dashboard
+
 }

@@ -2,15 +2,15 @@ import { Daemon } from 'workspace/common/daemon';
 import * as Log from 'workspace/frameworks/logging';
 import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
-let daemon: Daemon;
+let daemon: HackDaemon;
 
 export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
     
-    setupDashboard(ns, input);
+    daemon = new HackDaemon(ns, input.targetHost);
 
-    daemon = new Daemon(ns, () => work(ns, input));
+    daemon.setupDashboard();
 
     if (!input.runHasLoop) {
         daemon.killAfterLoop();
@@ -19,10 +19,6 @@ export async function main(ns: NS) {
     await daemon.run();
 }
 
-
-async function work(ns: NS, input: InputArg) {
-    await ns.hack(input.targetHost)
-}
 
 //#region Input arguments
 type InputArg = {
@@ -50,19 +46,29 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
-//#region Dashboard
-function setupDashboard(ns: NS, input: InputArg) {
-    ns.disableLog("ALL");
-    ns.enableLog('hack');
-    ns.clearLog();
-    
-    Log.initTailTitle(ns, `Hack ${Log.targetColorLess(input.targetHost)}`, 'Daemon');
-    ns.print(Log.title('Données d\'entrée'));
-    ns.print(Log.object(input));
-}
-//#endregion Dashboard
-
 // TODO : a remplacer par port communication
 export function killAfterLoop() {
     daemon.killAfterLoop();
+}
+
+class HackDaemon extends Daemon {
+    private targetHost: string;
+
+    constructor(ns: NS, targetHost: string) {
+        super(ns);
+        
+        this.targetHost = targetHost;
+    }
+
+    async work() {
+        await this.ns.hack(this.targetHost)
+    }
+
+    setupDashboard() {
+        this.ns.disableLog("ALL");
+        this.ns.enableLog('hack');
+        this.ns.clearLog();
+        
+        Log.initTailTitle(this.ns, `Hack ${Log.targetColorLess(this.targetHost)}`, 'Daemon');
+    }
 }

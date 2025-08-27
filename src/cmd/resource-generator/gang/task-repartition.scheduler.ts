@@ -44,7 +44,7 @@ class Main extends Daemon {
         this.setupDashboard();
     }
 
-    async work(targets: string[]): Promise<any> {
+    async work(): Promise<any> {
         const recruitsAvailable: number = this.ns.gang.getRecruitsAvailable();
         if (recruitsAvailable > 0) {
             // TODO: select name

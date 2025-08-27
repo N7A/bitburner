@@ -4,8 +4,7 @@ import * as Log from 'workspace/frameworks/logging';
  * Execute en boucle une séquence ayant pour ressource le nombre de thread.
  */
 export class Daemon {
-    private ns: NS;
-    private work: () => Promise<any>;
+    protected ns: NS;
     // TODO : nb loop usefull ?
     private runHasLoop: boolean = true;
     private durationLimit?: number;
@@ -16,9 +15,8 @@ export class Daemon {
      * @param work execution to loop
      * @param durationLimit maximum duration wanted (in ms); endless if undefined
      */
-    constructor(ns: NS, work: () => Promise<any>, durationLimit?: number) {
+    constructor(ns: NS, durationLimit?: number) {
         this.ns = ns;
-        this.work = work;
         this.durationLimit = durationLimit;
     }
     
@@ -36,7 +34,13 @@ export class Daemon {
             this.refreshDashBoard(threadStartTime, workStartTime, workEndTime);
 
             this.ns.print(Log.getEndLog());
-        } while (this.runHasLoop && !this.isTimeOut(threadStartTime))
+        } while (this.runHasLoop && !this.isTimeOut(threadStartTime) && !this.isKillConditionReached())
+    }
+
+    async work(): Promise<any> {}
+    
+    isKillConditionReached(): boolean {
+        return false;
     }
     
     private isTimeOut(threadStartTime: Date): boolean {

@@ -2,20 +2,20 @@ import { Daemon } from 'workspace/common/daemon';
 import * as Log from 'workspace/frameworks/logging';
 import { TerminalLogger } from 'workspace/common/TerminalLogger';
 
-let daemon: Daemon;
+let daemon: WeakenDaemon;
 
 export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
 
-    setupDashboard(ns, input);
-
     // TODO : add to input
     // INFO : getServerMinSecurityLevel aussi cher que get depuis la bdd
     const securityThresh = ns.getServerMinSecurityLevel(input.targetHost);
 
-    daemon = new Daemon(ns, () => work(ns, input, securityThresh));
+    daemon = new WeakenDaemon(ns, input.targetHost, securityThresh);
     
+    daemon.setupDashboard();
+
     if (!input.runHasLoop) {
         daemon.killAfterLoop();
     }
@@ -48,27 +48,39 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
-//#region Dashboard
-function setupDashboard(ns: NS, input: InputArg) {
-    ns.disableLog("ALL");
-    ns.enableLog('weaken');
-    ns.clearLog();
-    
-    Log.initTailTitle(ns, `Weaken ${Log.targetColorLess(input.targetHost)}`, 'Daemon');
-}
-//#endregion Dashboard
-
-async function work(ns: NS, input: InputArg, securityThresh: number) {
-    const currentSecurityLevel = ns.getServerSecurityLevel(input.targetHost);
-    ns.print(Log.threshold(ns, currentSecurityLevel, securityThresh));
-    // If security level too high
-    if (currentSecurityLevel > securityThresh) {
-        await ns.weaken(input.targetHost);
-    } else {
-        await ns.asleep(500);
-    }
-}
-
 export function killAfterLoop() {
     daemon.killAfterLoop();
+}
+
+class WeakenDaemon extends Daemon {
+    private targetHost: string;
+    private securityThresh: number;
+
+    constructor(ns: NS, targetHost: string, securityThresh: number) {
+        super(ns);
+        
+        this.targetHost = targetHost;
+        this.securityThresh = securityThresh;
+    }
+
+    async work() {
+        const currentSecurityLevel = this.ns.getServerSecurityLevel(this.targetHost);
+        this.ns.print(Log.threshold(this.ns, currentSecurityLevel, this.securityThresh));
+        // If security level too high
+        if (currentSecurityLevel > this.securityThresh) {
+            await this.ns.weaken(this.targetHost);
+        } else {
+            await this.ns.asleep(500);
+        }
+    }
+    
+    //#region Dashboard
+    setupDashboard() {
+        this.ns.disableLog("ALL");
+        this.ns.enableLog('weaken');
+        this.ns.clearLog();
+        
+        Log.initTailTitle(this.ns, `Weaken ${Log.targetColorLess(this.targetHost)}`, 'Daemon');
+    }
+    //#endregion Dashboard
 }
