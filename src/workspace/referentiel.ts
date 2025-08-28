@@ -11,4 +11,5 @@ export const REPOSITORIES_DIRECTORY: string = 'repositories';
 export const SERVERS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/servers';
 export const GAME_DATA_REPOSITORY_FILE: string = REPOSITORIES_DIRECTORY + '/game/production.json';
 export const EXECUTION_ORDERS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/executions/executions.json';
+export const GANG_MEMBER_NAMES_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/gang-member-names.json';
 //#endregion Repositories
