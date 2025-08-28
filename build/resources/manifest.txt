@@ -103,6 +103,7 @@
 /workspace/resource-generator/gang/domain/MemberNamesRepository.ts
 /workspace/resource-generator/gang/domain/model/GangDirective.ts
 /workspace/resource-generator/gang/domain/model/WantedLvl.ts
+/workspace/resource-generator/gang/MemberNamesService.ts
 /workspace/resource-generator/gang/model/TaskType.ts
 /workspace/resource-generator/gang/task.selector.ts
 /workspace/resource-generator/hacking/application-properties.ts
