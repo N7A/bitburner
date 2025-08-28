@@ -2,6 +2,8 @@ import * as Log from 'workspace/socle/utils/logging';
 
 /**
  * Execute en boucle une séquence ayant pour ressource le nombre de thread.
+ * 
+ * @remarks RAM cost : 0 GB
  */
 export class Daemon {
     protected ns: NS;
@@ -20,6 +22,10 @@ export class Daemon {
         this.durationLimit = durationLimit;
     }
     
+    /**
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     async run() {
         const threadStartTime = new Date();
 
@@ -37,22 +43,51 @@ export class Daemon {
         } while (this.runHasLoop && !this.isTimeOut(threadStartTime) && !this.isKillConditionReached())
     }
 
+    /**
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     async work(): Promise<any> {}
     
+    /**
+     * 
+     * @returns 
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     isKillConditionReached(): boolean {
         return false;
     }
     
+    /**
+     * 
+     * @param threadStartTime 
+     * @returns 
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     private isTimeOut(threadStartTime: Date): boolean {
         return this.durationLimit !== undefined 
             && (new Date().getTime() - threadStartTime.getTime() > this.durationLimit)
     }
 
+    /**
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     killAfterLoop() {
         this.runHasLoop = false;
     }
 
-    //#region Dashboard    
+    //#region Dashboard
+    /**
+     * 
+     * @param threadStartTime 
+     * @param workStartTime 
+     * @param workEndTime 
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     private refreshDashBoard(threadStartTime: Date, workStartTime: Date, workEndTime: Date) {
         const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime())
         this.ns.print(Log.INFO("Thread start time", Log.time(threadStartTime)));

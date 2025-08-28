@@ -1,5 +1,9 @@
 import * as Log from 'workspace/socle/utils/logging';
 
+/**
+ * 
+ * @remarks RAM cost : 0 GB
+ */
 export class Info {
     protected ns: NS;
     protected target: string;
@@ -9,6 +13,10 @@ export class Info {
         this.target = target;
     }
 
+    /**
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     run() {
         this.setupDashboard();
     
@@ -21,10 +29,16 @@ export class Info {
     
     /**
      * Définition des données à afficher en log.
+     * 
+     * @remarks RAM cost : 0 GB
      */
     printData() {}
 
     //#region Dashboard
+    /**
+     * 
+     * @remarks RAM cost : 0 GB
+     */
     setupDashboard() {
         this.ns.disableLog("ALL");
         this.ns.clearLog();

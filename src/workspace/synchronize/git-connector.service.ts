@@ -1,13 +1,12 @@
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { TerminalLogger } from "workspace/socle/TerminalLogger";
 import { getFilepaths } from "workspace/socle/utils/file";
-
-//#region Constants
-const MAIN_SERVER = 'home';
-//#endregion Constants
+import * as Referentiel from 'workspace/referentiel'
 
 /**
  * Service de connection à un repository GitHub.
+ * 
+ * @remarks RAM cost: 1.2 GB
  */
 export class GitHubConnector {
     private ns: NS;
@@ -25,6 +24,11 @@ export class GitHubConnector {
         this.logger = new TerminalLogger(ns);
     }
 
+    /**
+     * Synchronize files from Git repository to home.
+     * 
+     * @remarks RAM cost: 1.2 GB
+     */
     async pullAll() {
         // recupération du fichier manifest
         await this.pullFile(this.repository.manifestFilepath);
@@ -38,6 +42,8 @@ export class GitHubConnector {
      * Pull file to home.
      * @param ns Bitburner API
      * @param file filepath from source directory to pull
+     * 
+     * @remarks RAM cost: 0 GB
      */
     private async pullFile(
         file: string,
@@ -46,11 +52,9 @@ export class GitHubConnector {
         // definition du chemin de telechargement
         const sourceFile = `${this.repository.baseUrl}${sourceDirectoryPath}${file}`;
         this.logger.info(`Downloading ${sourceFile} -> ${file}...`);
-        // suppression du fichier si déjà existant
-        if (this.ns.fileExists(file)) this.ns.rm(file)
     
         // telechargement du fichier
-        if (!(await this.ns.wget(sourceFile, file, MAIN_SERVER))) {
+        if (!(await this.ns.wget(sourceFile, file, Referentiel.MAIN_HOSTNAME))) {
             this.logger.err(`${sourceFile} -> ${file} download failed`);
             this.ns.exit();
         }
@@ -59,6 +63,8 @@ export class GitHubConnector {
     
     /**
      * Pull files define in manifest to home.
+     * 
+     * @remarks RAM cost: 0 GB
      */
     private async pullManifestFiles() {
         // recuperation des fichiers définis dans le fichier manifest
@@ -92,6 +98,8 @@ export class GitHubConnector {
 
     /**
      * Suppress files not define in manifest to home.
+     * 
+     * @remarks RAM cost: 1.2 GB
      */
     private clearButManifestFiles() {
         // recuperation des fichiers définis dans le fichier manifest
@@ -108,10 +116,12 @@ export class GitHubConnector {
                     : null
             });
 
-        const filesToRemove = [...getFilepaths(this.ns, 'home', 'workspace'), ...getFilepaths(this.ns, 'home', 'cmd')]
-            .map(x => '/' + x)
-            .filter(x => !manifestFiles.includes(x) && x.endsWith('.ts'));
+        const filesToRemove = [
+            ...getFilepaths(this.ns, Referentiel.MAIN_HOSTNAME, 'workspace'), 
+            ...getFilepaths(this.ns, Referentiel.MAIN_HOSTNAME, 'cmd')
+        ].map(x => '/' + x)
+            .filter(x => !manifestFiles.includes(x) && x.endsWith(Referentiel.SCRIPT_EXTENSION));
         filesToRemove.forEach(x => this.ns.rm(x));
-        this.logger.success(`${filesToRemove.length} files removed`)
+        this.logger.success(`${filesToRemove.length} files removed`);
     }
 }

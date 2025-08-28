@@ -1,17 +1,18 @@
 import { getHash } from 'workspace/socle/utils/file'
+import * as Referentiel from 'workspace/referentiel'
 
 export async function main(ns: NS): Promise<void> {
     const hashes: Record<string,number> = {}
 
     // init footprint
-    const files = ns.ls('home', '.ts');
+    const files = ns.ls(Referentiel.MAIN_HOSTNAME, Referentiel.SCRIPT_EXTENSION);
     for (const file of files) {
         hashes[file] = getHash(ns, file);
     }
 
     while (true) {
         // get current scripts files
-        const changedFiles = ns.ls('home', '.ts')
+        const changedFiles = ns.ls(Referentiel.MAIN_HOSTNAME, Referentiel.SCRIPT_EXTENSION)
             .filter(file => {
                 const newHash = getHash(ns, file);
                 const change: boolean =  newHash != hashes[file];

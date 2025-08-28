@@ -13,3 +13,7 @@ export const GAME_DATA_REPOSITORY_FILE: string = REPOSITORIES_DIRECTORY + '/game
 export const EXECUTION_ORDERS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/executions/executions.json';
 export const GANG_MEMBER_NAMES_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/gang-member-names.json';
 //#endregion Repositories
+
+export const MAIN_HOSTNAME: string = 'home';
+export const SCRIPT_EXTENSION: string = '.ts';
+export const REPOSITORY_EXTENSION: string = '.json';

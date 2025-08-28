@@ -7,6 +7,10 @@ import { DirectoryRepository } from 'workspace/socle/interface/directory-reposit
 
 const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
 
+/**
+ * 
+ * @remarks RAM cost: 2.3 GB
+ */
 export class ServersRepository extends DirectoryRepository<ServerData> {
     
     /**
