@@ -67,7 +67,9 @@ class Main extends Daemon {
 
         // TODO: wait wanted to lowest THEN set wantedLvl 0/s + do new repartition
 
-        const taskRepartition: Map<TaskType, number> = getRepartitionEmployee(this.ns, availableMembers.length);
+        const availableMembersNumber = (gangDirective.wantedLvl == WantedLvl.ZERO_BY_SECOND) ? 
+            Math.floor(availableMembers.length / 2) : availableMembers.length;
+        const taskRepartition: Map<TaskType, number> = getRepartitionEmployee(this.ns, availableMembersNumber);
 
         // utiliser le meilleur membre en priorité à la tache la plus importante
         const taskTypes = Array.from((gangDirective.tasksWeight as Map<TaskType, number>).keys())
@@ -96,14 +98,14 @@ class Main extends Daemon {
         const tasks: GangTaskStats[] = getTargetTask(this.ns, taskType);
         // select best task
         const bestTask: GangTaskStats = tasks.shift();
-        this.ns.tprint('Best task : ', bestTask);
+        this.ns.tprint('Best task : ', bestTask.name);
         // select member
         const bestEmployee = getBestEmployee(this.ns, availableMembers, bestTask?.name ?? '').pop();
         this.ns.tprint('Best employee : ', bestEmployee);
         // TODO: if emp can't do task (difficutlty + stat) get next best task
         // TODO: if no task possible found task upstat THEN retry later
         // assign
-        availableMembers = availableMembers.filter(x => x !== bestEmployee);
+        availableMembers.splice(availableMembers.indexOf(bestEmployee), 1);
         this.ns.gang.setMemberTask(bestEmployee, bestTask.name);
 
         return bestTask;
