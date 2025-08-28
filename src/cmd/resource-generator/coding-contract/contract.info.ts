@@ -1,6 +1,6 @@
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);

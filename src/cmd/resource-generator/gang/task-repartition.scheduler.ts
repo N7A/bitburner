@@ -1,5 +1,5 @@
-import { Daemon } from 'workspace/common/daemon';
-import * as Log from 'workspace/socle/logging';
+import { Daemon } from 'workspace/socle/interface/daemon';
+import * as Log from 'workspace/socle/utils/logging';
 import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domain/GangDirective.repository';
 import { getBestEmployee, getRepartitionEmployee, getTargetTask } from 'workspace/resource-generator/gang/task.selector';
 import { GangDirective } from 'workspace/resource-generator/gang/domain/model/GangDirective';

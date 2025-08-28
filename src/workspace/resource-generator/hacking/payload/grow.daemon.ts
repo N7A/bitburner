@@ -1,6 +1,6 @@
-import * as Log from 'workspace/socle/logging';
-import { Daemon } from 'workspace/common/daemon';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import * as Log from 'workspace/socle/utils/logging';
+import { Daemon } from 'workspace/socle/interface/daemon';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 let daemon: GrowDaemon;
 

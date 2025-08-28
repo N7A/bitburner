@@ -1,6 +1,6 @@
 import * as Referentiel from 'workspace/referentiel'
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domain/GangDirective.repository';

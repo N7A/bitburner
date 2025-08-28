@@ -1,9 +1,9 @@
-import { Headhunter } from 'workspace/common/headhunter';
+import { Headhunter } from 'workspace/socle/interface/headhunter';
 import { getMaxShares, selectBestBuyQuick, waitBuyTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
-import * as Log from 'workspace/socle/logging';
-import { Logger } from 'workspace/common/Logger';
-import { SellStockWorker } from "/cmd/resource-generator/stock-market/sell-stock.worker";
+import * as Log from 'workspace/socle/utils/logging';
+import { Logger } from 'workspace/socle/Logger';
+import { SellStockWorker } from "cmd/resource-generator/stock-market/sell-stock.worker";
 
 /**
  * 

@@ -1,5 +1,5 @@
-import { Daemon } from 'workspace/common/daemon';
-import * as Log from 'workspace/socle/logging';
+import { Daemon } from 'workspace/socle/interface/daemon';
+import * as Log from 'workspace/socle/utils/logging';
 
 let daemon: Daemon;
 

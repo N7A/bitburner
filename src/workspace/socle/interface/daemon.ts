@@ -1,4 +1,4 @@
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 
 /**
  * Execute en boucle une séquence ayant pour ressource le nombre de thread.

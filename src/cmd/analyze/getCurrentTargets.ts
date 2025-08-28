@@ -1,5 +1,5 @@
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import { getNextTarget } from 'workspace/resource-generator/hacking/unlock/unlock.selector'
 import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortProgram'
 import { ServersService } from 'workspace/servers/servers.service';

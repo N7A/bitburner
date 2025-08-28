@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import { waitEndExecution } from 'workspace/socle/execution'
+import { waitEndExecution } from 'workspace/socle/utils/execution'
 
 //#region Constants
 const CLEAR_SCRIPT = Referentiel.HACKING_DIRECTORY + '/spreading/clear-toolkit.worker.ts';

@@ -1,7 +1,7 @@
 import { gitRepositoryBaseUrl, manifestFilepath, sourceDirectoryPath } from "workspace/synchronize/application-properties";
 import { GitHubConnector } from "workspace/synchronize/git-connector.service";
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
-import { TerminalLogger } from "workspace/common/TerminalLogger";
+import { TerminalLogger } from "workspace/socle/TerminalLogger";
 
 export const repoParams: GitRepository = {
     baseUrl: gitRepositoryBaseUrl,

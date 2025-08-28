@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
 import { GangDirective } from 'workspace/resource-generator/gang/domain/model/GangDirective';
-import { WantedLvl } from './model/WantedLvl';
-import { TaskType } from '../model/TaskType';
+import { WantedLvl } from 'workspace/resource-generator/gang/domain/model/WantedLvl';
+import { TaskType } from 'workspace/resource-generator/gang/model/TaskType';
 
 const REPOSITORY = Referentiel.REPOSITORIES_DIRECTORY + '/gang-task.json';
 

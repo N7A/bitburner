@@ -1,11 +1,11 @@
 import * as Referentiel from 'workspace/referentiel'
 import { getNextTarget, getUnlockTarget } from 'workspace/resource-generator/hacking/unlock/unlock.selector'
 import {getAvailablePortProgram} from 'workspace/resource-generator/hacking/unlock/open-ports.worker'
-import * as Log from 'workspace/socle/logging';
-import { waitEndExecution } from 'workspace/socle/execution'
+import * as Log from 'workspace/socle/utils/logging';
+import { waitEndExecution } from 'workspace/socle/utils/execution'
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortProgram'
-import { Headhunter } from 'workspace/common/headhunter';
+import { Headhunter } from 'workspace/socle/interface/headhunter';
 
 //#region Constants
 export const SCAN_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/scan/scan.scheduler.ts';

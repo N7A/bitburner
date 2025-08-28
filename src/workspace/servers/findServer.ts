@@ -1,4 +1,4 @@
-import { TerminalLogger } from "workspace/common/TerminalLogger";
+import { TerminalLogger } from "workspace/socle/TerminalLogger";
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);

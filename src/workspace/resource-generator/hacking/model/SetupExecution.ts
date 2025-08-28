@@ -5,7 +5,7 @@ import { HackData } from 'workspace/servers/domain/model/HackData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 
 //#region Constants
 export const SETUP_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/setup-server.sequencer.ts';

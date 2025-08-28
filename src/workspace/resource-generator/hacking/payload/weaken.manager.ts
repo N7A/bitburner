@@ -1,7 +1,7 @@
-import { Daemon } from 'workspace/common/daemon';
-import * as Log from 'workspace/socle/logging';
-import { waitEndExecution } from 'workspace/socle/execution';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import { Daemon } from 'workspace/socle/interface/daemon';
+import * as Log from 'workspace/socle/utils/logging';
+import { waitEndExecution } from 'workspace/socle/utils/execution';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 let daemon: WeakenManager;
 

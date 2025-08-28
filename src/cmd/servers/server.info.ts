@@ -1,7 +1,7 @@
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import { ServersService } from 'workspace/servers/servers.service';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
-import { Info } from 'workspace/common/info';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Info } from 'workspace/socle/interface/info';
 
 /**
  * Affiche les données utiles pour backdoor un serveur.

@@ -1,10 +1,10 @@
 import { main as openPorts } from 'workspace/resource-generator/hacking/unlock/open-ports.worker'
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import { ServerData } from 'workspace/servers/domain/model/ServerData'
 import { UnlockRequirements } from 'workspace/servers/domain/model/UnlockRequirements'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { main as copyToolkit } from 'workspace/resource-generator/hacking/spreading/copy-toolkit.launcher'
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 export async function main(ns: NS, targetHost: string) {
     // load input arguments

@@ -3,15 +3,16 @@ import { ProcessRequestType } from "workspace/load-balancer/domain/model/Process
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service'
 import { weights } from 'workspace/load-balancer/application-properties'
 import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import { SetupExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
+import { waitEndExecution } from 'workspace/socle/utils/execution';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -321,9 +322,8 @@ async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]):
         if (!ns.fileExists(script.scriptsFilepath, hostname)) {
             logger.warn(`Script ${script.scriptsFilepath} inexistant sur ${hostname}`);
             const copyPid = ns.run(Referentiel.HACKING_DIRECTORY + '/spreading/copy-toolkit.worker.ts', 1, hostname);
-            while(copyPid != 0 && ns.isRunning(copyPid)) {
-                await ns.asleep(500);
-            }
+
+            await waitEndExecution(ns, copyPid);
         }
 
         let ramNeededByThread = ns.getScriptRam(script.scriptsFilepath, hostname);
@@ -358,9 +358,8 @@ async function execute(ns: NS, executionOrder: ExecutionOrder): Promise<number[]
         if (!ns.fileExists(script.scriptsFilepath, executionOrder.sourceHostname)) {
             logger.warn(`Script ${script.scriptsFilepath} inexistant sur ${executionOrder.sourceHostname}`);
             const copyPid = ns.run(Referentiel.HACKING_DIRECTORY + '/spreading/copy-toolkit.worker.ts', 1, executionOrder.sourceHostname);
-            while(copyPid != 0 && ns.isRunning(copyPid)) {
-                await ns.asleep(500);
-            }
+            
+            await waitEndExecution(ns, copyPid);
         }
 
         const executionPid: number = ns.exec(script.scriptsFilepath, executionOrder.sourceHostname, executionOrder.nbThread, ...script.args ?? []);

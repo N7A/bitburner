@@ -1,4 +1,4 @@
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 
 export class Alert {
     protected ns: NS;

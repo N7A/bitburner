@@ -1,7 +1,7 @@
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
-import * as Log from 'workspace/socle/logging';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import * as Log from 'workspace/socle/utils/logging';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 /**
  * Scan les cibles données par le unlock.

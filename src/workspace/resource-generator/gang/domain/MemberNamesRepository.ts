@@ -1,4 +1,4 @@
-import { JsonRepository } from "workspace/common/JsonRepository";
+import { JsonRepository } from "workspace/socle/interface/JsonRepository";
 import * as Referentiel from 'workspace/referentiel'
 
 export class MemberNamesRepository extends JsonRepository<string[]> {

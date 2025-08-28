@@ -1,5 +1,5 @@
-import { Headhunter } from 'workspace/common/headhunter';
-import * as Log from 'workspace/socle/logging';
+import { Headhunter } from 'workspace/socle/interface/headhunter';
+import * as Log from 'workspace/socle/utils/logging';
 import { MemberNamesService } from 'workspace/resource-generator/gang/MemberNamesService';
 
 /**

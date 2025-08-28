@@ -1,8 +1,8 @@
 import {Contract} from 'workspace/resource-generator/coding-contract/model/Contract';
 import {Transaction} from 'workspace/resource-generator/coding-contract/model/Transaction';
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 export async function main(ns: NS) {
     const logger = new TerminalLogger(ns);

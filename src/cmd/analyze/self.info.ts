@@ -1,6 +1,6 @@
-import * as Log from 'workspace/socle/logging';
-import { Logger } from 'workspace/common/Logger';
-import { Info } from 'workspace/common/info';
+import * as Log from 'workspace/socle/utils/logging';
+import { Logger } from 'workspace/socle/Logger';
+import { Info } from 'workspace/socle/interface/info';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {

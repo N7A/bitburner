@@ -1,7 +1,7 @@
 import { waitRepayTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
-import * as Log from 'workspace/socle/logging';
-import { Logger } from 'workspace/common/Logger';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import * as Log from 'workspace/socle/utils/logging';
+import { Logger } from 'workspace/socle/Logger';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 export async function main(ns: NS) {
     // load input arguments

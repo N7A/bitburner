@@ -1,5 +1,5 @@
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export async function main(ns: NS) {

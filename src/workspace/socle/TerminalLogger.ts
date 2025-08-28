@@ -1,6 +1,6 @@
-import { LogLevel } from "workspace/common/model/LogLevel";
+import { LogLevel } from "workspace/socle/model/LogLevel";
 import { logLevel } from "workspace/common/application-properties";
-import { LogLevelLitteral } from "workspace/common/model/LogLevelLitteral";
+import { LogLevelLitteral } from "workspace/socle/model/LogLevelLitteral";
 
 export class TerminalLogger {
     private ns: NS;

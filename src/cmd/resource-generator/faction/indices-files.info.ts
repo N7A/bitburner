@@ -1,7 +1,7 @@
-import * as Log from 'workspace/socle/logging';
+import * as Log from 'workspace/socle/utils/logging';
 import { ServersService } from 'workspace/servers/servers.service';
-import { Logger } from 'workspace/common/Logger';
-import { Info } from 'workspace/common/info';
+import { Logger } from 'workspace/socle/Logger';
+import { Info } from 'workspace/socle/interface/info';
 
 export async function main(ns: NS) {
     const info: IndicesInfo = new IndicesInfo(ns);

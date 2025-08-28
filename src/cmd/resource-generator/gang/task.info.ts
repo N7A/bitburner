@@ -1,6 +1,6 @@
-import * as Log from 'workspace/socle/logging';
-import { TerminalLogger } from 'workspace/common/TerminalLogger';
-import { Info } from 'workspace/common/info';
+import * as Log from 'workspace/socle/utils/logging';
+import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Info } from 'workspace/socle/interface/info';
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);

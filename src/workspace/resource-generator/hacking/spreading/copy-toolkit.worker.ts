@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import { getFilepaths } from 'workspace/socle/file'
+import { getFilepaths } from 'workspace/socle/utils/file'
 
 //#region Constants
 const WORKSPACE_DIRECTORY = Referentiel.WORKSPACE_DIRECTORY;
