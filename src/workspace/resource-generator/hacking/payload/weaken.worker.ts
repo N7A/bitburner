@@ -39,6 +39,6 @@ function setupDashboard(ns: NS, input: InputArg) {
     ns.enableLog('weaken');
     ns.clearLog();
     
-    Log.initTailTitle(ns, `Weaken ${Log.targetColorLess(input.targetHost)}`, 'Worker');
+    Log.initTailTitle(ns, `Weaken ${Log.target(input.targetHost, {colorless: true})}`, 'Worker');
 }
 //#endregion Dashboard

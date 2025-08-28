@@ -1,6 +1,16 @@
+/**
+ * 
+ * @param ns 
+ * @param service 
+ * @param role 
+ * @param hostSource 
+ * @param pid 
+ * 
+ * @remarks Ram cost : 0
+ */
 export function initTailTitle(ns: NS, service: string, role?: string, hostSource?: string, pid?: number) {
     const roleLabel = role ? ` #${role.toLowerCase()}` : ''
-    const sourceLabel = hostSource ? `<${hostSource}> ` : ''
+    const sourceLabel = hostSource ? source(hostSource, {colorless: true}) : ''
     
     ns.ui.setTailTitle(`${sourceLabel}[${service}]${roleLabel}`, pid);
 }
@@ -106,10 +116,10 @@ export function color(message: string, color: Color) {
  * 
  * @remarks Ram cost : 0
  */
-export function money(ns: NS, montant: number, colorless = false): string {
+export function money(ns: NS, montant: number, options: {colorless:boolean} = {colorless: false}): string {
     const message: string = `\$${ns.formatNumber(montant)}`;
 
-    if (colorless) {
+    if (options.colorless) {
         return message;
     }
 
@@ -149,17 +159,12 @@ export function INFO(fieldName: string, value: any, unit?: string): string {
  * 
  * @remarks Ram cost : 0
  */
-export function target(hostname: string): string {
-    return '> ' + color(hostname, Color.CYAN) + ' <';
-}
+export function target(hostname: string, options: {colorless:boolean} = {colorless: false}): string {
+    if (options.colorless) {
+        return '> ' + hostname + ' <';
+    }
 
-/**
- * @param hostname cible
- * 
- * @remarks Ram cost : 0
- */
-export function targetColorLess(hostname: string): string {
-    return '> ' + hostname + ' <';
+    return '> ' + color(hostname, Color.CYAN) + ' <';
 }
 
 /**
@@ -167,8 +172,12 @@ export function targetColorLess(hostname: string): string {
  * 
  * @remarks Ram cost : 0
  */
-export function source(hostname: string): string {
-    return '<' + color(hostname, Color.YELLOW) + '>';
+export function source(hostname: string, options: {colorless:boolean} = {colorless: false}): string {
+    if (options.colorless) {
+        return '< ' + hostname + ' >';
+    }
+
+    return '< ' + color(hostname, Color.YELLOW) + ' >';
 }
 
 /**

@@ -80,7 +80,7 @@ class WeakenDaemon extends Daemon {
         this.ns.enableLog('weaken');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, `Weaken ${Log.targetColorLess(this.targetHost)}`, 'Daemon');
+        Log.initTailTitle(this.ns, `Weaken ${Log.target(this.targetHost, {colorless: true})}`, 'Daemon');
     }
     //#endregion Dashboard
 }

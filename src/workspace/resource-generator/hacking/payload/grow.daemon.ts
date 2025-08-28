@@ -89,7 +89,7 @@ class GrowDaemon extends Daemon {
         this.ns.enableLog('grow');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, `Grow ${Log.targetColorLess(this.targetHost)}`, 'Daemon');
+        Log.initTailTitle(this.ns, `Grow ${Log.target(this.targetHost, {colorless: true})}`, 'Daemon');
     }
     //#endregion Dashboard
 

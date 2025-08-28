@@ -14,6 +14,15 @@ export function getFilepaths(ns: NS, hostname: string, directory: string) {
 		.filter(file => file.startsWith(directory))
 }
 
+/**
+ * Calcule le hash du contenu d'un fichier.
+ * 
+ * @param ns Bitburner API
+ * @param filepath chemin du fichier cible
+ * @returns hash correspondant au contenu du fichier
+ * 
+ * @remarks RAM cost: 0 GB
+ */
 export function getHash(ns: NS, filepath: string): number {
     const contents = ns.read(filepath);
     let hash = 0;

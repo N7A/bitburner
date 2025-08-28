@@ -43,7 +43,7 @@ function setupDashboard(ns: NS, input: InputArg) {
     ns.enableLog('scan');
     ns.clearLog();
         
-    Log.initTailTitle(ns, `Scan ${Log.targetColorLess(input.targetHost)}`, 'Worker');
+    Log.initTailTitle(ns, `Scan ${Log.target(input.targetHost, {colorless: true})}`, 'Worker');
 }
 
 //#region Input arguments

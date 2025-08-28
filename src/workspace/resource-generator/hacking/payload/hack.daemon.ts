@@ -69,6 +69,6 @@ class HackDaemon extends Daemon {
         this.ns.enableLog('hack');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, `Hack ${Log.targetColorLess(this.targetHost)}`, 'Daemon');
+        Log.initTailTitle(this.ns, `Hack ${Log.target(this.targetHost, {colorless: true})}`, 'Daemon');
     }
 }

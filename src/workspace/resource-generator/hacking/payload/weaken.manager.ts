@@ -88,7 +88,7 @@ class WeakenManager extends Daemon {
         this.ns.enableLog('weaken');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, `Weaken ${Log.targetColorLess(this.targetHost)}`, 'manager');
+        Log.initTailTitle(this.ns, `Weaken ${Log.target(this.targetHost, {colorless: true})}`, 'manager');
     }
     //#endregion Dashboard
 

@@ -43,7 +43,7 @@ export class Info {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, Log.targetColorLess(this.target), 'info');
+        Log.initTailTitle(this.ns, Log.target(this.target, {colorless: true}), 'info');
         
         this.ns.ui.openTail();
     }
