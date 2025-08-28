@@ -3,8 +3,8 @@ import * as Log from 'workspace/frameworks/logging';
 import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domain/GangDirective.repository';
 import { getBestEmployee, getRepartitionEmployee, getTargetTask } from 'workspace/resource-generator/gang/task.selector';
 import { GangDirective } from 'workspace/resource-generator/gang/domain/model/GangDirective';
-import { WantedLvl } from '/workspace/resource-generator/gang/domain/model/WantedLvl';
-import { TaskType } from '/workspace/resource-generator/gang/model/TaskType';
+import { WantedLvl } from 'workspace/resource-generator/gang/domain/model/WantedLvl';
+import { TaskType } from 'workspace/resource-generator/gang/model/TaskType';
 
 /**
  * Cartographie et enregistre les données des serveurs du réseau.

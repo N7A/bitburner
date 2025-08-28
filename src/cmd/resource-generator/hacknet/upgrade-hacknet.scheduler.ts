@@ -51,7 +51,7 @@ export async function main(ns: NS) {
 
         if (input.runHasLoop) {
             // wait purchase to be possible
-            while(getAutoRepayTime(ns) > 1000 * 60 * 60 * 1) {
+            while(getAutoRepayTime(ns) > 1000 * 60 * 60 * 5) {
                 refreshDashBoard(ns, getMoney(), interval, nextUpgrade);
                 // sleep to prevent crash because of infinite loop
                 await ns.sleep(500);

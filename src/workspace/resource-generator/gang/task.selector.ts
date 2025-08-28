@@ -48,7 +48,7 @@ export function getRepartitionEmployee(ns: NS, employeeNumber: number): Map<Task
 
     const employeeByTask: Map<TaskType, number> = new Map<TaskType, number>();
     for(const task of tasks) {
-        const employeeToCurrentTask = Math.min(1, Math.floor(employeeNumber * (weightByTask.get(task) / totalWeight)));
+        const employeeToCurrentTask = Math.max(1, Math.floor(employeeNumber * (weightByTask.get(task) / totalWeight)));
         employeeByTask.set(task, employeeToCurrentTask);
     };
 
@@ -56,7 +56,7 @@ export function getRepartitionEmployee(ns: NS, employeeNumber: number): Map<Task
 }
 
 export function getBestEmployeeFormulas(ns: NS, member: string[], task: string, taskType: TaskType): string[] {
-    if (ns.ls('home').includes('formulas.exe')) {
+    if (ns.ls('home').includes('Formulas.exe')) {
         const gangInformation: GangGenInfo = ns.gang.getGangInformation();
         const taskStat: GangTaskStats = ns.gang.getTaskStats(task);
 
