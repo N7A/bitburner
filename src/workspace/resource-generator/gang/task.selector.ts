@@ -55,6 +55,44 @@ export function getRepartitionEmployee(ns: NS, employeeNumber: number): Map<Task
     return employeeByTask;
 }
 
+export function getBestEmployeeFormulas(ns: NS, member: string[], task: string, taskType: TaskType): string[] {
+    if (ns.ls('home').includes('formulas.exe')) {
+        const gangInformation: GangGenInfo = ns.gang.getGangInformation();
+        const taskStat: GangTaskStats = ns.gang.getTaskStats(task);
+
+        if (taskType == TaskType.UP_MONEY) {
+            return member.map(x => ns.gang.getMemberInformation(x))
+                // filter task not possible
+                .filter(x => ns.formulas.gang.moneyGain(gangInformation, x, taskStat) > 0)
+                .sort((a, b) => {
+                    return ns.formulas.gang.moneyGain(gangInformation, a, taskStat) 
+                        - ns.formulas.gang.moneyGain(gangInformation, b, taskStat);
+                })
+                .map(x => x.name);
+        } else if (taskType == TaskType.UP_REPUTATION) {
+            return member.map(x => ns.gang.getMemberInformation(x))
+                // filter task not possible
+                .filter(x => ns.formulas.gang.respectGain(gangInformation, x, taskStat) > 0)
+                .sort((a, b) => {
+                    return ns.formulas.gang.respectGain(gangInformation, a, taskStat) 
+                        - ns.formulas.gang.respectGain(gangInformation, b, taskStat);
+                })
+                .map(x => x.name);
+        } else if (taskType == TaskType.DOWN_WANTED) {
+            return member.map(x => ns.gang.getMemberInformation(x))
+                // filter task not possible
+                .filter(x => ns.formulas.gang.wantedLevelGain(gangInformation, x, taskStat) < 0)
+                .sort((a, b) => {
+                    return ns.formulas.gang.wantedLevelGain(gangInformation, b, taskStat) 
+                        - ns.formulas.gang.wantedLevelGain(gangInformation, a, taskStat);
+                })
+                .map(x => x.name);
+        }
+    }
+    
+    return getBestEmployee(ns, member, task);
+}
+
 export function getBestEmployee(ns: NS, member: string[], task: string): string[] {
     const taskData = ns.gang.getTaskStats(task);
 

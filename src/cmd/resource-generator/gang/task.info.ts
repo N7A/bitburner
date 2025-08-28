@@ -62,7 +62,7 @@ class TaskInfo extends Info {
                 this.ns.print(Log.INFO(weightStat, this.data[weightStat as keyof GangTaskStats] as number));
             }
         }
-        this.ns.print(Log.INFO('Territory', this.data.territory));
+        this.ns.print(Log.INFO('Territory', JSON.stringify(this.data.territory)));
         this.ns.print(Log.INFO('Difficulty', this.data.difficulty));
         this.ns.print('\n');
         this.ns.print(Log.title('Gain'));
