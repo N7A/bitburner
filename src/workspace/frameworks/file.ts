@@ -13,3 +13,13 @@ export function getFilepaths(ns: NS, hostname: string, directory: string) {
 		// keep all files in the workspace directory
 		.filter(file => file.startsWith(directory))
 }
+
+export function getHash(ns: NS, filepath: string): number {
+    const contents = ns.read(filepath);
+    let hash = 0;
+    for (const char of contents) {
+        hash = ((hash << 5) - hash) + char.charCodeAt(0);
+        hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+}

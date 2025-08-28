@@ -1,19 +1,19 @@
+import { getHash } from 'workspace/frameworks/file'
+
 export async function main(ns: NS): Promise<void> {
     const hashes: Record<string,number> = {}
 
     // init footprint
     const files = ns.ls('home', '.ts');
     for (const file of files) {
-        const contents = ns.read(file)
-        hashes[file] = getHash(contents)
+        hashes[file] = getHash(ns, file);
     }
 
     while (true) {
         // get current scripts files
         const changedFiles = ns.ls('home', '.ts')
             .filter(file => {
-                const contents = ns.read(file);
-                const newHash = getHash(contents);
+                const newHash = getHash(ns, file);
                 const change: boolean =  newHash != hashes[file];
                 // maj footprint
                 hashes[file] = newHash;
@@ -43,13 +43,4 @@ export async function main(ns: NS): Promise<void> {
 
         await ns.sleep(1000)
     }
-}
-
-const getHash = (input: string): number => {
-    let hash = 0;
-    for (const char of input) {
-        hash = ((hash << 5) - hash) + char.charCodeAt(0);
-        hash |= 0; // Convert to 32bit integer
-    }
-    return hash;
 }
