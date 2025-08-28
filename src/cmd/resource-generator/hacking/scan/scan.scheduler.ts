@@ -1,6 +1,6 @@
 import { getScanTarget } from 'workspace/resource-generator/hacking/scan/scan.target-selector'
 import { main as doScan } from 'workspace/resource-generator/hacking/scan/scan.worker'
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { Headhunter } from 'workspace/common/headhunter';
 
 /**

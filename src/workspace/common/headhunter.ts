@@ -1,4 +1,4 @@
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 
 /**
  * Execute en boucle une séquence ayant pour ressource une cible.

@@ -1,7 +1,7 @@
 import { Headhunter } from 'workspace/common/headhunter';
 import { getMaxShares, selectBestTrainEnMarche } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { Logger } from 'workspace/common/Logger';
 import { SellStockWorker } from "/cmd/resource-generator/stock-market/sell-stock.worker";
 

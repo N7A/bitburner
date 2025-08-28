@@ -1,4 +1,4 @@
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
 
 export async function main(ns: NS) {

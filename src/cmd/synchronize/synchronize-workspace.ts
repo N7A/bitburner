@@ -1,4 +1,4 @@
-import { getHash } from 'workspace/frameworks/file'
+import { getHash } from 'workspace/socle/file'
 
 export async function main(ns: NS): Promise<void> {
     const hashes: Record<string,number> = {}

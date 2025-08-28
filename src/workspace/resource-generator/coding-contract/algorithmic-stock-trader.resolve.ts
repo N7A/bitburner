@@ -1,6 +1,6 @@
 import {Contract} from 'workspace/resource-generator/coding-contract/model/Contract';
 import {Transaction} from 'workspace/resource-generator/coding-contract/model/Transaction';
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
 import { TerminalLogger } from 'workspace/common/TerminalLogger';
 

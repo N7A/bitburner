@@ -1,5 +1,5 @@
 import { Daemon } from 'workspace/common/daemon';
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domain/GangDirective.repository';
 import { getBestEmployee, getRepartitionEmployee, getTargetTask } from 'workspace/resource-generator/gang/task.selector';
 import { GangDirective } from 'workspace/resource-generator/gang/domain/model/GangDirective';
@@ -76,6 +76,7 @@ class Main extends Daemon {
             .sort((a, b) => taskRepartition.get(b) - taskRepartition.get(a));
         
         for (const taskType of taskTypes) {
+            this.ns.tprint(Log.getStartLog());
             this.ns.tprint('Task type : ', taskType);
             for(let i=0; i < taskRepartition.get(taskType) ; i++) {
                 const bestTask: GangTaskStats = this.assignTask(taskType, availableMembers);
@@ -88,6 +89,7 @@ class Main extends Daemon {
                     this.assignTask(TaskType.DOWN_WANTED, availableMembers);
                 }
             }
+            this.ns.tprint(Log.getEndLog());
         }
 
         // TODO: wait directives change || ascension || equip change (stat or number)

@@ -1,6 +1,6 @@
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { TerminalLogger } from "workspace/common/TerminalLogger";
-import { getFilepaths } from "workspace/frameworks/file";
+import { getFilepaths } from "/workspace/socle/file";
 
 //#region Constants
 const MAIN_SERVER = 'home';

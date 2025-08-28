@@ -1,8 +1,8 @@
 import { logLevel } from "workspace/common/application-properties"
-import * as Log from "workspace/frameworks/logging";
+import * as Log from "/workspace/socle/logging";
 import { LogLevel } from "workspace/common/model/LogLevel";
 import { LogLevelLitteral } from "workspace/common/model/LogLevelLitteral";
-import { Color } from "workspace/frameworks/logging";
+import { Color } from "/workspace/socle/logging";
 
 export class Logger {
     private ns: NS;

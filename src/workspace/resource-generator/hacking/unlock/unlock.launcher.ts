@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { getUnlockTarget } from 'workspace/resource-generator/hacking/unlock/unlock.selector'
-import { waitEndExecution } from 'workspace/frameworks/execution'
+import { waitEndExecution } from 'workspace/socle/execution'
 
 //#region Constants
 const UNLOCK_WORKER_SCRIPT = Referentiel.HACKING_DIRECTORY + '/unlock/unlock.worker.ts';

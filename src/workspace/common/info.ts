@@ -1,4 +1,4 @@
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 
 export class Info {
     protected ns: NS;

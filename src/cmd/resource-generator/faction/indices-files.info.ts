@@ -1,4 +1,4 @@
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { ServersService } from 'workspace/servers/servers.service';
 import { Logger } from 'workspace/common/Logger';
 import { Info } from 'workspace/common/info';

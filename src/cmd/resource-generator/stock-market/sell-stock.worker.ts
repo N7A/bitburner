@@ -1,5 +1,5 @@
 import { waitRepayTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { Logger } from 'workspace/common/Logger';
 import { TerminalLogger } from 'workspace/common/TerminalLogger';
 

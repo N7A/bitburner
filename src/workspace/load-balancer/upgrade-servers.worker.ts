@@ -1,7 +1,7 @@
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'
 import { UpgradeType } from 'workspace/load-balancer/model/UpgradeType'
 import { main as copyToolkit } from 'workspace/resource-generator/hacking/spreading/copy-toolkit.launcher'
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import { ServersService } from 'workspace/servers/servers.service';
 

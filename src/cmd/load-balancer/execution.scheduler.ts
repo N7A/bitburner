@@ -3,7 +3,7 @@ import { ProcessRequestType } from "workspace/load-balancer/domain/model/Process
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service'
 import { weights } from 'workspace/load-balancer/application-properties'
 import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'

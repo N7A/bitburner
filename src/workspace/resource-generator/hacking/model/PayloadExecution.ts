@@ -6,7 +6,7 @@ import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 //#region Constants

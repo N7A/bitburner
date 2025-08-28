@@ -1,7 +1,7 @@
 import { Headhunter } from 'workspace/common/headhunter';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
 import { Contract } from 'workspace/resource-generator/coding-contract/model/Contract';
-import { getFilepaths } from 'workspace/frameworks/file';
+import { getFilepaths } from 'workspace/socle/file';
 
 //#region Constantes
 export const RESOLVER_SCRIPT_DIRECTORY = 'workspace/resource-generator/coding-contract';

@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 
 //#region Constants
 export const SCAN_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/scan/scan.scheduler.ts';

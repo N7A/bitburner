@@ -1,4 +1,4 @@
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import { selectUpgrade } from 'workspace/resource-generator/stock-market/wse-upgrade.selector'
 import { WseUpgrade } from 'workspace/resource-generator/stock-market/model/WseUpgrade';

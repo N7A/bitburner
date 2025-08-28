@@ -1,8 +1,8 @@
 import * as Referentiel from 'workspace/referentiel'
 import { getNextTarget, getUnlockTarget } from 'workspace/resource-generator/hacking/unlock/unlock.selector'
 import {getAvailablePortProgram} from 'workspace/resource-generator/hacking/unlock/open-ports.worker'
-import * as Log from 'workspace/frameworks/logging';
-import { waitEndExecution } from 'workspace/frameworks/execution'
+import * as Log from 'workspace/socle/logging';
+import { waitEndExecution } from 'workspace/socle/execution'
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortProgram'
 import { Headhunter } from 'workspace/common/headhunter';

@@ -1,4 +1,4 @@
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 import {selectUpgrade} from 'workspace/load-balancer/upgrade-servers.selector'
 import {executeUpgrade} from 'workspace/load-balancer/upgrade-servers.worker'
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'

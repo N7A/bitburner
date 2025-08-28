@@ -1,4 +1,4 @@
-import { getFilepaths } from 'workspace/frameworks/file';
+import { getFilepaths } from 'workspace/socle/file';
 
 /**
  * 

@@ -1,5 +1,5 @@
 import { ServersService } from 'workspace/servers/servers.service';
-import * as Log from 'workspace/frameworks/logging';
+import * as Log from 'workspace/socle/logging';
 
 //#region Constants
 const ENABLE_SETUP_SCRIPT = "cmd/load-balancer/domain/setup.enable.ts";
