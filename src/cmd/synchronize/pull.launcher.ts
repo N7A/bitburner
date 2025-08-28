@@ -2,6 +2,7 @@ import { gitRepositoryBaseUrl, manifestFilepath, sourceDirectoryPath } from "wor
 import { GitHubConnector } from "workspace/synchronize/git-connector.service";
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { TerminalLogger } from "workspace/socle/TerminalLogger";
+import * as Log from 'workspace/socle/utils/logging';
 
 export const repoParams: GitRepository = {
     baseUrl: gitRepositoryBaseUrl,
@@ -13,7 +14,24 @@ export async function main(ns: NS) {
     const logger = new TerminalLogger(ns);
     const git = new GitHubConnector(ns, repoParams);
 
+    setupDashboard(ns);
+
     await git.pullAll();
 
     logger.success('Pull from manifest');
 }
+
+//#region Dashboard
+/**
+ * 
+ * @remarks RAM cost : 0 GB
+ */
+function setupDashboard(ns: NS) {
+    ns.disableLog("ALL");
+    ns.clearLog();
+    
+    Log.initTailTitle(this.ns, 'Synchronize', 'launcher');
+    
+    this.ns.ui.openTail();
+}
+//#endregion Dashboard
