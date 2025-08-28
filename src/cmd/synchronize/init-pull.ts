@@ -12,8 +12,15 @@ export const repoParams = {
         "/workspace/common/application-properties.ts"
     ]
 };
+const MAIN_HOSTNAME: string = 'home';
 //#endregion Constants
 
+/**
+ * Pull les fichiers nécessaire à la sychronisation depuis le repository Git, puis déclenche la synchronisation.
+ * @param ns Bitburner API
+ * 
+ * @remarks RAM cost: 1 GB
+ */
 export async function main(ns: NS) {
     // telechargement des fichiers nécessaires au telechargement complet
     for (const dependency of repoParams.pullLauncherDependencies) {
@@ -28,12 +35,16 @@ export async function main(ns: NS) {
     
     // lancement du script de telechargement complet
     ns.run(repoParams.pullLauncherScript);
+
+    // TODO: supprimer le fichier init-pull ? (inutile une fois le toolkit chargé)
 }
 
 /**
  * Pull file to home.
  * @param ns Bitburner API
  * @param file filepath from source directory to pull
+ * 
+ * @remarks RAM cost: 0 GB
  */
 async function pullFile(
     ns: NS,
@@ -41,14 +52,10 @@ async function pullFile(
 ) {
     // definition du chemin de telechargement
     const sourceFile = `${repoParams.baseUrl}${file}`;
-    ns.tprintf(
-        `INFO    > Downloading ${sourceFile} -> ${file}`
-    );
-    // suppression du fichier si déjà existant
-    if (ns.fileExists(file)) ns.rm(file)
+    ns.tprintf(`INFO    > Downloading ${sourceFile} -> ${file}`);
 
     // telechargement du fichier
-    if (!(await ns.wget(sourceFile, file, "home"))) {
+    if (!(await ns.wget(sourceFile, file, MAIN_HOSTNAME))) {
         ns.tprintf(`ERROR   > ${sourceFile} -> ${file} failed.`);
         ns.exit();
     }
