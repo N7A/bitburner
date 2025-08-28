@@ -70,7 +70,7 @@ const DEFAULT_BLOCK_LOG_WIDTH: number = 40
  */
 export function getStartLog() {
     const width: number = DEFAULT_BLOCK_LOG_WIDTH
-    return color(/*'╔' + */'═'.repeat(width-2) + '╗', Color.WHITE)
+    return color(/*'╔' + */'╗'.padStart(width, '═'), Color.WHITE)
 }
 
 /**
@@ -78,7 +78,7 @@ export function getStartLog() {
  */
 export function getEndLog() {
     const width: number = DEFAULT_BLOCK_LOG_WIDTH
-    return color(/*'╚' + */'═'.repeat(width-2) + '╝', Color.WHITE)
+    return color(/*'╚' + */'╝'.padStart(width, '═'), Color.WHITE)
 }
 
 const colorReset = "\u001b[0m";

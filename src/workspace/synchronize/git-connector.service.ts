@@ -2,6 +2,7 @@ import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { TerminalLogger } from "workspace/socle/TerminalLogger";
 import { getFilepaths } from "workspace/socle/utils/file";
 import * as Referentiel from 'workspace/referentiel'
+import { Logger } from "workspace/socle/Logger";
 
 /**
  * Service de connection à un repository GitHub.
@@ -11,7 +12,8 @@ import * as Referentiel from 'workspace/referentiel'
 export class GitHubConnector {
     private ns: NS;
     private repository: GitRepository;
-    private logger: TerminalLogger;
+    private logger: Logger;
+    private terminalLogger: TerminalLogger;
 
     /**
      * Service de connection à un repository GitHub.
@@ -21,7 +23,8 @@ export class GitHubConnector {
     constructor(ns: NS, repository: GitRepository) {
         this.ns = ns;
         this.repository = repository;
-        this.logger = new TerminalLogger(ns);
+        this.logger = new Logger(ns);
+        this.terminalLogger = new TerminalLogger(ns);
     }
 
     /**
@@ -55,7 +58,7 @@ export class GitHubConnector {
     
         // telechargement du fichier
         if (!(await this.ns.wget(sourceFile, file, Referentiel.MAIN_HOSTNAME))) {
-            this.logger.err(`${sourceFile} -> ${file} download failed`);
+            this.terminalLogger.err(`${sourceFile} -> ${file} download failed`);
             this.ns.exit();
         }
         this.logger.success(`${sourceFile} -> ${file} [downloaded]`);
@@ -84,16 +87,25 @@ export class GitHubConnector {
         this.logger.trace(`Contents of manifest:`);
         this.logger.trace(`\t${manifestFiles}`);
 
-        for (let file of manifestFiles) {
+        this.logger.refreshLoadingBar(0, manifestFiles.length);
+
+        let successNumber: number = 0;
+        let failNumber: number = 0;
+        manifestFiles.forEach(async(file, index) => {
             if (!file) {
                 this.logger.err(`Could not read line ${file}`);
-                continue;
+                failNumber++
+            } else {
+                // recuperation du fichier
+                await this.pullFile(file, this.repository.sourceDirectoryPath);
+                successNumber++
             }
-            
-            // recuperation du fichier
-            await this.pullFile(file, this.repository.sourceDirectoryPath);
+            this.logger.refreshLoadingBar(index, manifestFiles.length);
+        });
+        this.terminalLogger.success(`${successNumber} files pulled`);
+        if (failNumber > 0) {
+            this.terminalLogger.err(`${failNumber} files not read`);
         }
-        this.logger.success(`${manifestFiles.length} files pulled`)
     }
 
     /**

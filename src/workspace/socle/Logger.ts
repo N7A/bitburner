@@ -50,6 +50,25 @@ export class Logger {
         });
     }
 
+    refreshLoadingBar(numberDone: number, nuberTotal: number) {
+        this.ns.clearLog();
+        this.history.forEach(element => {
+            this.ns.print(element);
+        });
+
+        const barSize: number = 98
+        const pourcentage: number = Math.floor(numberDone / nuberTotal * barSize);
+        let color = Color.MAGENTA;
+        if (pourcentage === barSize) {
+            color = Color.GREEN;
+        }
+        const message = `${Math.floor(numberDone / nuberTotal * 100).toString().padStart(3)}% ` 
+            + '['
+            + `${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`.padEnd(barSize) 
+            + ']';
+        this.ns.print(message);
+    }
+
     err(msg: string, ...args: string[]) {
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.ERROR} ${msg}`, ...args);
     }
@@ -68,6 +87,14 @@ export class Logger {
         }
         
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.DEBUG} ${message}`);
+    }
+
+    trace(message: string) {        
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.TRACE} ${message}`);
+    }
+    
+    success(message: string) {        
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.SUCCESS} ${message}`);
     }
     
 }
