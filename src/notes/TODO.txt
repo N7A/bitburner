@@ -11,6 +11,7 @@
 - core on home help to grow and weaken, check if same on external servers; if yes repartition en fonction
 - save on repository contract fail
 - coordonner hack et stock
+- utiliser des emoji dans les logs
 
 # Réflexions
 
