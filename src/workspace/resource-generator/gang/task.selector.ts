@@ -17,9 +17,9 @@ export function getTargetTask(ns: NS, type: TaskType): GangTaskStats[] {
             .filter(x => x.baseRespect > 0)
             .sort((a, b) => b.baseRespect - a.baseRespect);
     } else if (type == TaskType.UP_STAT) {
-        return tasks;
+        return ["Train Combat", "Train Hacking", "Train Charisma"].map(x => ns.gang.getTaskStats(x));
     } else if (type == TaskType.POWER_TERRITORY) {
-        return tasks;
+        return ["Territory Warfare"].map(x => ns.gang.getTaskStats(x));
     }
 
     return tasks;
