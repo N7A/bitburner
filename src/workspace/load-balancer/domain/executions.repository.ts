@@ -1,6 +1,6 @@
 import * as Referentiel from 'workspace/referentiel';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
-import { JsonRepository } from 'workspace/socle/interface/JsonRepository';
+import { JsonRepository } from 'workspace/socle/interface/json-repository';
 
 export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
 

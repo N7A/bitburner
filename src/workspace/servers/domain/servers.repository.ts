@@ -3,7 +3,7 @@ import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServerType } from "workspace/servers/domain/model/ServerType";
 import { UnlockRequirements } from "workspace/servers/domain/model/UnlockRequirements";
 import { HackData } from "workspace/servers/domain/model/HackData";
-import { DirectoryRepository } from 'workspace/socle/interface/DirectoryRepository';
+import { DirectoryRepository } from 'workspace/socle/interface/directory-repository';
 
 const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
 
