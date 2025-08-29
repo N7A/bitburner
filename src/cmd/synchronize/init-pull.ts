@@ -11,8 +11,8 @@ export const repoParams = {
         "/workspace/socle/model/LogLevelLitteral.ts",
         "/workspace/socle/model/LogLevel.ts",
         "/workspace/common/application-properties.ts",
-        "workspace/referentiel.ts",
-        "workspace/socle/utils/file.ts"
+        "/workspace/referentiel.ts",
+        "/workspace/socle/utils/file.ts"
     ]
 };
 const MAIN_HOSTNAME: string = 'home';
