@@ -6,10 +6,13 @@ export const repoParams = {
         "/workspace/synchronize/application-properties.ts",
         "/workspace/synchronize/git-connector.service.ts",
         "/workspace/synchronize/model/GitRepository.ts",
-        "/workspace/common/TerminalLogger.ts",
-        "/workspace/common/model/LogLevelLitteral.ts",
-        "/workspace/common/model/LogLevel.ts",
-        "/workspace/common/application-properties.ts"
+        "/workspace/socle/TerminalLogger.ts",
+        "/workspace/socle/Logger.ts",
+        "/workspace/socle/model/LogLevelLitteral.ts",
+        "/workspace/socle/model/LogLevel.ts",
+        "/workspace/common/application-properties.ts",
+        "workspace/referentiel.ts",
+        "workspace/socle/utils/file.ts"
     ]
 };
 const MAIN_HOSTNAME: string = 'home';
