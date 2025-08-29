@@ -81,6 +81,7 @@ class EquipMemberDaemon extends Daemon {
 
         // achat de l'equipement
         this.ns.gang.purchaseEquipment(this.memberName, nextUpgrade);
+        this.ns.print(`✨🆙🔨 Equipement ${nextUpgrade} ✨ !`);
     }
 
     getNextUpgrade() {
