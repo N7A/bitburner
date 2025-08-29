@@ -6,10 +6,8 @@ import { ServersService } from 'workspace/servers/servers.service';
  * Check RAM availability to priorize
  */
 // TODO : ajout possibilité de split entre plusieurs serveurs
-export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: number = 1, priorityTarget?: string): ExecutionOrder {
-    //#region input parameters
-    var executionType: ExecutionType = ns.args.length >= 2 ? ns.args[1] as ExecutionType : ExecutionType.ONESHOT
-    //#endregion input parameters
+export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: number = 1): ExecutionOrder {
+    const serversService = new ServersService(ns);
 
     let result: ExecutionOrder = {
         sourceHostname: '',
@@ -22,31 +20,23 @@ export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: 
         return result;
     }
 
-    const availableServers = getAvailableServers(ns, priorityTarget, ramNeededByThread*nbThread);
-    if (availableServers.length > 0) {
-        result = {
-            sourceHostname: availableServers.shift(),
-            nbThread: nbThread,
-            request: undefined
-        }
-    }
-
-    if (result.nbThread === 0) {
-        if (executionType === ExecutionType.ONESHOT) {
-        }
-        if (executionType === ExecutionType.RUNNER) {
-            ns.print('WARN', ' ', 'Not enough RAM for the runner');
-        }
+    const selectedServer = serversService.getAllExecutable()
+        // remove servers that cant have at least one script
+        .filter(host => hasEnoughRam(ns, host, ramNeededByThread))
+        // get least available ram server
+        .sort((a, b) =>  availableRam(ns, a) - availableRam(ns, b))
+        .shift();
+    if (selectedServer) {
         // TODO : respect max time
         // reduce nb threads to push un host ok
-        const maxRamServer = getOwnedServers(ns, priorityTarget)
-            .sort((a, b) =>  availableRam(ns, a) - availableRam(ns, b))
-            .pop();
-
-
-        if (maxRamServer) {
-            result.sourceHostname = maxRamServer;
-            result.nbThread = getNbPossibleThreads(availableRam(ns, maxRamServer), 1, ramNeededByThread);
+        if (result.nbThread === 0) {
+            // autant de thread que possible
+            nbThread = getNbPossibleThreads(availableRam(ns, selectedServer), 1, ramNeededByThread);
+        }
+        result = {
+            sourceHostname: selectedServer,
+            nbThread: nbThread,
+            request: undefined
         }
     }
 
@@ -55,26 +45,6 @@ export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: 
 
 function getNbPossibleThreads(availiableRam: number, nbScript: number, ramNeededByThread: number) {
     return Math.floor(Math.floor(availiableRam / nbScript) / ramNeededByThread);
-}
-
-function getAvailableServers(ns: NS, priorityTarget: string|undefined, ramNeeded: number) {
-    return getOwnedServers(ns, priorityTarget)
-        .filter(host => hasEnoughRam(ns, host, ramNeeded));
-}
-
-function getOwnedServers(ns: NS, priorityTarget?: string) {
-    const serversService = new ServersService(ns);
-    let ownedHosts: string[] = []
-    if (priorityTarget) {
-        ownedHosts.push(priorityTarget);
-    }
-    ownedHosts.push(
-        ...serversService.getAllExecutable()
-        .sort((a, b) =>  availableRam(ns, a) - availableRam(ns, b))
-        .reverse()
-    );
-
-    return ownedHosts;
 }
 
 function hasEnoughRam(ns: NS, targetHost: string, ramNeeded: number) {
