@@ -69,7 +69,7 @@ class AscensionMemberDaemon extends Daemon {
 
         // achat de l'equipement
         this.ns.gang.ascendMember(this.memberName);
-        this.ns.print(`✨🆙🎖️ ${this.memberName} ascension ✨ !`);
+        this.ns.print(`✨🆙🎖️ ${this.memberName} ascension ! ✨`);
     }
 
     isAscensionPossible() {
