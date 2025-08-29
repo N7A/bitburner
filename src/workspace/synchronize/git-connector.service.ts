@@ -91,17 +91,23 @@ export class GitHubConnector {
 
         let successNumber: number = 0;
         let failNumber: number = 0;
-        manifestFiles.forEach(async(file, index) => {
+
+        
+        for (const [index, file] of manifestFiles.entries()) {
             if (!file) {
                 this.logger.err(`Could not read line ${file}`);
                 failNumber++
-            } else {
-                // recuperation du fichier
-                await this.pullFile(file, this.repository.sourceDirectoryPath);
-                successNumber++
+                this.logger.refreshLoadingBar(index, manifestFiles.length);
+                continue;
             }
+
+            // recuperation du fichier
+            await this.pullFile(file, this.repository.sourceDirectoryPath);
+            successNumber++
+            
             this.logger.refreshLoadingBar(index, manifestFiles.length);
-        });
+        }
+        
         this.terminalLogger.success(`${successNumber} files pulled`);
         if (failNumber > 0) {
             this.terminalLogger.err(`${failNumber} files not read`);
