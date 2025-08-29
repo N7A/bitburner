@@ -40,6 +40,7 @@ function getInput(ns: NS): InputArg {
 
 class Main extends Headhunter<string> {
     readonly EQUIP_SCRIPT = 'workspace/resource-generator/gang/equip-member.daemon.ts';
+    readonly ASCENSION_SCRIPT = 'workspace/resource-generator/gang/ascension-member.daemon.ts';
     private memberNamesService: MemberNamesService;
 
     constructor(ns: NS) {
@@ -59,12 +60,14 @@ class Main extends Headhunter<string> {
             this.ns.gang.recruitMember(newMember);
             const role = 'larbin'
             const resumeParcour = '{parcour à alimenter}'
-            this.ns.tprint(this.getMailDeBienvenue(newMember, role, resumeParcour))
+            this.ns.print(`✨🆕 ${newMember} recruitment ! ✨`);
+            this.ns.tprint(this.getMailDeBienvenue(newMember, role, resumeParcour));
             
             // TODO: new employee guide
             // training, equip, give task
             // TODO: use load balancer
             this.ns.run(this.EQUIP_SCRIPT, 1, newMember);
+            this.ns.run(this.ASCENSION_SCRIPT, 1, newMember);
         }
     }
 

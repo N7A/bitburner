@@ -7,6 +7,7 @@ declare global {
     interface NS extends bitburner.NS {}
     interface GangTaskStats extends bitburner.GangTaskStats {}
     interface GangGenInfo extends bitburner.GangGenInfo {}
+    interface GangMemberAscension extends bitburner.GangMemberAscension {}
     interface Server extends bitburner.Server {}
     interface NodeStats extends bitburner.NodeStats {}
     interface ProcessInfo extends bitburner.ProcessInfo {}

@@ -1,7 +1,12 @@
+const EQUIP_TYPES = [
+    "Weapon", 
+    "Armor", 
+    "Vehicle", 
+    "Augmentation"
+]
+
 export function getAvailableEquipements(ns: NS): string[] {
-    return ns.gang.getEquipmentNames()
-            .map(x => ns.gang.getEquipmentType(x))
-            .filter(x => ns.gang.getEquipmentType(x) === 'upgrade');
+    return ns.gang.getEquipmentNames();
 }
 
 export function getBestEquipement(ns: NS, equipement: string[], task: string): string[] {
@@ -10,7 +15,7 @@ export function getBestEquipement(ns: NS, equipement: string[], task: string): s
     return equipement
         .sort((a, b) => {
             const mappedA = ns.gang.getEquipmentStats(a);
-            const mappedB = ns.gang.getEquipmentStats(a);
+            const mappedB = ns.gang.getEquipmentStats(b);
             return (taskData.agiWeight * mappedA.agi
             + taskData.chaWeight * mappedA.cha
             + taskData.defWeight * mappedA.def
