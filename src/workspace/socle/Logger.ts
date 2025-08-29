@@ -56,7 +56,7 @@ export class Logger {
             this.ns.print(element);
         });
 
-        const barSize: number = 98
+        const barSize: number = 49
         const pourcentage: number = Math.floor(numberDone / nuberTotal * barSize);
         let color = Color.MAGENTA;
         if (pourcentage === barSize) {
@@ -77,8 +77,9 @@ export class Logger {
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.WARN} ${msg}`, ...args);
     }
 
-    info(msg: string, ...args: string[]) {
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.INFO} ${msg}`, ...args);
+    info(message: string, ...args: string[]) {
+        this.history.push(message.concat(...args));
+        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.INFO} ${message}`, ...args);
     }
 
     debug(message: string) {
@@ -93,7 +94,8 @@ export class Logger {
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.TRACE} ${message}`);
     }
     
-    success(message: string) {        
+    success(message: string) {     
+        this.history.push(message);   
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.SUCCESS} ${message}`);
     }
     
