@@ -98,7 +98,7 @@ export class GitHubConnector {
             if (!file) {
                 this.logger.err(`Could not read line ${file}`);
                 failNumber++
-                this.logger.refreshLoadingBar(index, manifestFiles.length);
+                this.logger.refreshLoadingBar(index + 1, manifestFiles.length);
                 continue;
             }
 

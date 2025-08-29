@@ -72,7 +72,7 @@ export class Logger {
         } else {
             this.loadingBar = {numberDone: numberDone, numberTotal: numberTotal};
         }
-        const message = `${numberDone.toString().padStart(numberTotal.toString().length)} / ${numberTotal}\n `
+        const message = `${numberDone.toString().padStart(numberTotal.toString().length)} / ${numberTotal}\n`
             + `${Math.floor(numberDone / numberTotal * 100).toString().padStart(3)}% ` 
             + '['
             + `${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`.padEnd(barSize) 
