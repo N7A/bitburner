@@ -106,7 +106,7 @@ export class GitHubConnector {
             await this.pullFile(file, this.repository.sourceDirectoryPath);
             successNumber++
             
-            this.logger.refreshLoadingBar(index, manifestFiles.length);
+            this.logger.refreshLoadingBar(index + 1, manifestFiles.length);
         }
         
         this.terminalLogger.success(`${successNumber} files pulled`);
