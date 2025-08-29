@@ -40,10 +40,16 @@ export function getRepartitionEmployee(ns: NS, employeeNumber: number): Map<Task
     let totalWeight: number = 0;
     // filter zero weight
     weightByTask.forEach((value: number, key: TaskType) => {
-        if (value > 0) {
-            tasks.push(key);
-            totalWeight += value;
+        if (
+            value <= 0
+            // démobilisation pour éviter les morts
+            || key == TaskType.POWER_TERRITORY && ns.gang.getGangInformation().territoryWarfareEngaged
+        ) {
+            return;
         }
+        
+        tasks.push(key);
+        totalWeight += value;
     });
 
     const employeeByTask: Map<TaskType, number> = new Map<TaskType, number>();
