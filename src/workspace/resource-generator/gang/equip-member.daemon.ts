@@ -67,12 +67,16 @@ class EquipMemberDaemon extends Daemon {
     async work() {
         let nextUpgrade = this.getNextUpgrade();
         // wait purchase to be possible
-        while(this.moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money) < this.ns.gang.getEquipmentCost(nextUpgrade)) {
+        while(nextUpgrade !== null && this.moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money) < this.ns.gang.getEquipmentCost(nextUpgrade)) {
             // sleep to prevent crash because of infinite loop
             await this.ns.sleep(500);
 
             // refresh nextUpgrade
             nextUpgrade = this.getNextUpgrade();
+        }
+
+        if (nextUpgrade === null) {
+            return;
         }
 
         // achat de l'equipement
@@ -85,6 +89,11 @@ class EquipMemberDaemon extends Daemon {
             // filtrage des équipements déjà achetés
             .filter(x => !this.ns.gang.getMemberInformation(this.memberName).upgrades.includes(x) 
             && !this.ns.gang.getMemberInformation(this.memberName).augmentations.includes(x));
+        
+        if (equipementToUp.length <= 0) {
+            this.killAfterLoop();
+            return null;
+        }
 
         // TODO : prioriser upgrade; 
         // prendre en compte le prix quantité d'argent actuelle et la production /s actuelle (temps nécessaire moyen pour pouvoir acheter)
