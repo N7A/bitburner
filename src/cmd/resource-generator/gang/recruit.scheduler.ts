@@ -1,6 +1,7 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import * as Log from 'workspace/socle/utils/logging';
 import { MemberNamesService } from 'workspace/resource-generator/gang/MemberNamesService';
+import { GANG_LOGO } from 'workspace/resource-generator/gang/application-properties';
 
 /**
  * Cartographie et enregistre les données des serveurs du réseau.
@@ -60,7 +61,7 @@ class Main extends Headhunter<string> {
             this.ns.gang.recruitMember(newMember);
             const role = 'larbin'
             const resumeParcour = '{parcour à alimenter}'
-            this.ns.print(`✨🆕 ${newMember} recruitment ! ✨`);
+            this.ns.print(`✨ ${GANG_LOGO}🆕🔰 ${newMember} recruitment ! ✨`);
             this.ns.tprint(this.getMailDeBienvenue(newMember, role, resumeParcour));
             
             // TODO: new employee guide
@@ -72,10 +73,12 @@ class Main extends Headhunter<string> {
     }
 
     private getMailDeBienvenue(newMember: string, role: string, resumeParcour: string) {
-        return `Bonjour à toutes et à tous,\n
+        return `${GANG_LOGO}\n`
+            + `Bonjour à toutes et à tous,\n
                 J'ai le plaisir de vous annoncer le recrutement en CDI de ${newMember} en tant que ${role} au sein du gang à compter de ${new Date().toDateString()}.\n
                 ${resumeParcour}\n\n
                 Nous sommes ravis de son arrivée et lui souhaitons la bienvenue parmi nous !`
+            + `\n${GANG_LOGO}`
     }
     
     isKillConditionReached(): boolean {

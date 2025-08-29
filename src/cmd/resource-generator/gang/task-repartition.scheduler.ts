@@ -96,6 +96,8 @@ class Main extends Daemon {
     }
 
     assignTask(taskType: TaskType, availableMembers: string[]): GangTaskStats {
+        // TODO: influance territoire sur le business
+
         // sort tasks
         const tasks: GangTaskStats[] = getTargetTask(this.ns, taskType);
         // select best task
