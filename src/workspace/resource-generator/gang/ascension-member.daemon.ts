@@ -70,6 +70,7 @@ class AscensionMemberDaemon extends Daemon {
         // achat de l'equipement
         this.ns.gang.ascendMember(this.memberName);
         this.ns.print(`✨🆙🎖️ ${this.memberName} ascension ! ✨`);
+        this.ns.print(`Respect perdu : ${this.ns.gang.getAscensionResult(this.memberName).respect}`)
     }
 
     isAscensionPossible() {
@@ -81,7 +82,7 @@ class AscensionMemberDaemon extends Daemon {
     isAscensionUseful() {
         const ascensionResult: GangMemberAscension = this.ns.gang.getAscensionResult(this.memberName);
         // TODO: parametrage
-        const minFactor: number = 0
+        const minFactor: number = 1
 
         return ascensionResult 
             && (
@@ -90,7 +91,6 @@ class AscensionMemberDaemon extends Daemon {
                 || ascensionResult.def > minFactor
                 || ascensionResult.dex > minFactor
                 || ascensionResult.hack > minFactor
-                || ascensionResult.respect > minFactor
                 || ascensionResult.str > minFactor
             )
     }
