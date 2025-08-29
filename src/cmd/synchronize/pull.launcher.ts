@@ -30,8 +30,8 @@ function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    Log.initTailTitle(this.ns, 'Synchronize', 'launcher');
+    Log.initTailTitle(ns, 'Synchronize', 'launcher');
     
-    this.ns.ui.openTail();
+    ns.ui.openTail();
 }
 //#endregion Dashboard
