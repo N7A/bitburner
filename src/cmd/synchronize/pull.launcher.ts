@@ -18,7 +18,7 @@ export async function main(ns: NS) {
 
     await git.pullAll();
 
-    logger.success('Pull from manifest');
+    logger.success('Pull from manifest [ended]');
 }
 
 //#region Dashboard
