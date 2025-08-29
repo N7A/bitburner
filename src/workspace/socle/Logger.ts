@@ -14,14 +14,16 @@ export class Logger {
         this.ns = ns;
     }
 
-    log(msg: string, ...args: string[]) {
-        const message = `${Log.time(new Date(Date.now()))} - ${msg}`;
-        this.history.push(message.concat(...args));
+    log(message: string, ...args: string[]) {
+        const formatedMessage: string = `${Log.time(new Date(Date.now()))} - ${message}`.concat(...args);
+
+        this.history.push(formatedMessage);
         if (this.loadingBar) {
             this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
             return;
         }
-        this.ns.print(message, ...args);
+
+        this.ns.print(formatedMessage);
     }
 
     stopWaiting() {
@@ -86,12 +88,15 @@ export class Logger {
     }
 
     info(message: string, ...args: string[]) {
-        this.history.push(message.concat(...args));
+        const formatedMessage: string = `${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.INFO} ${message}`.concat(...args)
+        this.history.push(formatedMessage);
+
         if (this.loadingBar) {
             this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
             return;
         }
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.INFO} ${message}`, ...args);
+
+        this.ns.print(formatedMessage);
     }
 
     debug(message: string) {
@@ -107,12 +112,15 @@ export class Logger {
     }
     
     success(message: string) {     
-        this.history.push(message);
+        const formatedMessage: string = `${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.SUCCESS} ${message}`;
+        this.history.push(formatedMessage);
+
         if (this.loadingBar) {
             this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
             return;
         }
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.SUCCESS} ${message}`);
+
+        this.ns.print(formatedMessage);
     }
     
 }
