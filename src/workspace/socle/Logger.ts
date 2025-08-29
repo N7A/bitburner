@@ -63,9 +63,9 @@ export class Logger {
             this.ns.print(element);
         });
 
-        const barSize: number = 49
+        const barSize: number = 40
         const pourcentage: number = Math.floor(numberDone / numberTotal * barSize);
-        let color = Color.MAGENTA;
+        let color = Color.CYAN;
         if (pourcentage === barSize) {
             color = Color.GREEN;
             this.loadingBar = null;
