@@ -39,6 +39,7 @@ export class GitHubConnector {
         await this.pullManifestFiles();
         // suppression des fichiers non définis dans le manifest
         this.clearButManifestFiles();
+        this.logger.success('Pull from manifest');
     }
 
     /**
@@ -140,6 +141,6 @@ export class GitHubConnector {
         ].map(x => '/' + x)
             .filter(x => !manifestFiles.includes(x) && x.endsWith(Referentiel.SCRIPT_EXTENSION));
         filesToRemove.forEach(x => this.ns.rm(x));
-        this.logger.success(`${filesToRemove.length} files removed`);
+        this.terminalLogger.success(`${filesToRemove.length} files removed`);
     }
 }
