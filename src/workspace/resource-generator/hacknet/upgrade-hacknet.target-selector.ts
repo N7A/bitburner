@@ -2,8 +2,9 @@ import { HacknetUpgrade } from 'workspace/resource-generator/hacknet/model/Hackn
 import { UpgradeExecution } from 'workspace/resource-generator/hacknet/model/UpgradeExecution'
 import { UpgradeType } from 'workspace/resource-generator/hacknet/model/UpgradeType'
 
+// TODO: ns.formulas.hacknetNodes
 /**
- * @remarks Import RAM : 4,25GB
+ * @remarks RAM cost: 4.25GB
  */
 export function getBestProfits(ns: NS, maxMoneyToSpend?: number): UpgradeExecution | undefined {
     // load profits disponibles
