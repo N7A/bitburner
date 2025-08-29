@@ -39,6 +39,7 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 class Main extends Headhunter<string> {
+    readonly EQUIP_SCRIPT = 'workspace/resource-generator/gang/equip-member.daemon.ts';
     private memberNamesService: MemberNamesService;
 
     constructor(ns: NS) {
@@ -62,6 +63,8 @@ class Main extends Headhunter<string> {
             
             // TODO: new employee guide
             // training, equip, give task
+            // TODO: use load balancer
+            this.ns.run(this.EQUIP_SCRIPT, 1, newMember);
         }
     }
 
