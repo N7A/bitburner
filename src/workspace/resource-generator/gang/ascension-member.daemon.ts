@@ -67,10 +67,11 @@ class AscensionMemberDaemon extends Daemon {
             await this.ns.sleep(500);
         }
 
+        const reputationLost: number = this.ns.gang.getAscensionResult(this.memberName).respect;
         // achat de l'equipement
         this.ns.gang.ascendMember(this.memberName);
         this.ns.print(`✨🆙🎖️ ${this.memberName} ascension ! ✨`);
-        this.ns.print(`Respect perdu : ${this.ns.gang.getAscensionResult(this.memberName).respect}`)
+        this.ns.print(`Respect perdu : ${reputationLost}`)
     }
 
     isAscensionPossible() {
