@@ -101,16 +101,12 @@ export class GitHubConnector {
                 continue;
             }
 
-            if (index > 0) {
-                this.logger.refreshLoadingBar(index-1, manifestFiles.length);
-            }
-
             // recuperation du fichier
             await this.pullFile(file, this.repository.sourceDirectoryPath);
             successNumber++
+            
+            this.logger.refreshLoadingBar(index, manifestFiles.length);
         }
-        
-        this.logger.refreshLoadingBar(manifestFiles.length, manifestFiles.length);
         
         this.terminalLogger.success(`${successNumber} files pulled`);
         if (failNumber > 0) {

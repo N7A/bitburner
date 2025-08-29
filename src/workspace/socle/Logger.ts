@@ -8,6 +8,7 @@ export class Logger {
     private ns: NS;
     private history: string[] = [];
     private isWaiting: boolean = false;
+    private loadingBar: {numberDone: number, numberTotal: number};
 
     constructor(ns: NS) {
         this.ns = ns;
@@ -16,6 +17,10 @@ export class Logger {
     log(msg: string, ...args: string[]) {
         const message = `${Log.time(new Date(Date.now()))} - ${msg}`;
         this.history.push(message.concat(...args));
+        if (this.loadingBar) {
+            this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
+            return;
+        }
         this.ns.print(message, ...args);
     }
 
@@ -50,19 +55,22 @@ export class Logger {
         });
     }
 
-    refreshLoadingBar(numberDone: number, nuberTotal: number) {
+    refreshLoadingBar(numberDone: number, numberTotal: number) {
         this.ns.clearLog();
         this.history.forEach(element => {
             this.ns.print(element);
         });
 
         const barSize: number = 49
-        const pourcentage: number = Math.floor(numberDone / nuberTotal * barSize);
+        const pourcentage: number = Math.floor(numberDone / numberTotal * barSize);
         let color = Color.MAGENTA;
         if (pourcentage === barSize) {
             color = Color.GREEN;
+            this.loadingBar = null;
+        } else {
+            this.loadingBar = {numberDone: numberDone, numberTotal: numberTotal};
         }
-        const message = `${Math.floor(numberDone / nuberTotal * 100).toString().padStart(3)}% ` 
+        const message = `${Math.floor(numberDone / numberTotal * 100).toString().padStart(3)}% ` 
             + '['
             + `${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`.padEnd(barSize) 
             + ']';
@@ -79,6 +87,10 @@ export class Logger {
 
     info(message: string, ...args: string[]) {
         this.history.push(message.concat(...args));
+        if (this.loadingBar) {
+            this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
+            return;
+        }
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.INFO} ${message}`, ...args);
     }
 
@@ -95,7 +107,11 @@ export class Logger {
     }
     
     success(message: string) {     
-        this.history.push(message);   
+        this.history.push(message);
+        if (this.loadingBar) {
+            this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
+            return;
+        }
         this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.SUCCESS} ${message}`);
     }
     
