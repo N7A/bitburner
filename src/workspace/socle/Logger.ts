@@ -72,10 +72,14 @@ export class Logger {
         } else {
             this.loadingBar = {numberDone: numberDone, numberTotal: numberTotal};
         }
-        const message = `${numberDone.toString().padStart(numberTotal.toString().length)} / ${numberTotal}\n`
-            + `${Math.floor(numberDone / numberTotal * 100).toString().padStart(3)}% ` 
+
+        const pourcent: string = `${Math.floor(numberDone / numberTotal * 100).toString().padStart(3)}% `;
+        const count: string = `${numberDone.toString().padStart(numberTotal.toString().length)} / ${numberTotal}`;
+        this.ns.print(count.padStart(Math.ceil((barSize - count.length) / 2) + pourcent.length));
+        
+        const message = pourcent
             + '['
-            + `${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`.padEnd(barSize) 
+            + (`${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`).padEnd(barSize)
             + ']';
         
         this.ns.print(message);
