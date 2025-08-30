@@ -33,6 +33,7 @@
 /cmd/resource-generator/hacking/payload/setup-server.sequencer.ts
 /cmd/resource-generator/hacking/scan/scan.scheduler.ts
 /cmd/resource-generator/hacking/spreading/spread-all.ts
+/cmd/resource-generator/hacknet/ipvgo/play-board.ts
 /cmd/resource-generator/hacknet/upgrade-hacknet.scheduler.ts
 /cmd/resource-generator/stock-market/buy-stock.scheduler.ts
 /cmd/resource-generator/stock-market/buy-stock-train.scheduler.ts
