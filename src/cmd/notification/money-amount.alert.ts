@@ -1,5 +1,4 @@
 import * as Log from 'workspace/socle/utils/logging';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 import { Alert } from 'workspace/notification/alert';
 
 /**
@@ -7,7 +6,7 @@ import { Alert } from 'workspace/notification/alert';
  * @param ns Bitburner API
  */
 export async function main(ns: NS) {
-    const input: InputArg = getInput(ns);
+    const input: InputArg = await getInput(ns);
 
     const main: MoneyAmountAlert = new MoneyAmountAlert(ns, input.threshold);
     
@@ -25,15 +24,16 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS): InputArg {
-    const logger = new TerminalLogger(ns);
-    if (ns.args[0] === undefined) {
-        logger.err('Merci de renseigner un montant à notifier');
-        ns.exit();
+async function getInput(ns: NS): Promise<InputArg> {
+    let threshold: number;
+    if (ns.args[0] === undefined) {            
+        threshold = Number(await ns.prompt('Merci de renseigner un montant à notifier', { type: "text" }))
+    } else {
+        threshold = (ns.args[0] as number);
     }
-    
+
     return {
-        threshold: (ns.args[0] as number)
+        threshold: threshold
     };
 }
 //#endregion Input parameters

@@ -1,19 +1,23 @@
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
 import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
+import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 export async function main(ns: NS) {
-    const input: InputArg = getInput(ns);
+    const input: InputArg = await getInput(ns);
 
+    const logger = new TerminalLogger(ns);
     const executionsRepository = new ExecutionsRepository(ns);
 
     // si déjà actif
     if (executionsRepository.getAll().some(x => x.type === ProcessRequestType.SETUP_HACK && x.target === input.hostnameTarget)) {
+        logger.warn(`Setup ${input.hostnameTarget} already enabled`);
         // on ne fait rien
         return;
     }
 
     executionsRepository.add({type: ProcessRequestType.SETUP_HACK, target: input.hostnameTarget, weight: 1});
+    logger.success(`Setup ${input.hostnameTarget} [enabled]`);
 }
 
 //#region Input parameters
@@ -27,15 +31,18 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS): InputArg {
-    const logger = new TerminalLogger(ns);
+async function getInput(ns: NS): Promise<InputArg> {
+    let hostnameTarget: string;
     if (ns.args[0] === undefined) {
-        logger.err('Merci de renseigner un hostname');
-        ns.exit();
+        const repository = new ServersRepository(ns);
+        
+        hostnameTarget = await ns.prompt('Merci de renseigner un hostname', { type: "select", choices: repository.getAllIds() }) as string
+    } else {
+        hostnameTarget = (ns.args[0] as string);
     }
 
     return {
-        hostnameTarget: (ns.args[0] as string)
+        hostnameTarget: hostnameTarget
     };
 }
 //#endregion Input parameters

@@ -1,7 +1,7 @@
-import { TerminalLogger } from "workspace/socle/TerminalLogger";
+import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 export async function main(ns: NS) {
-    const input: InputArg = getInput(ns);
+    const input: InputArg = await getInput(ns);
 
 	ns.disableLog('ALL')
 	
@@ -25,17 +25,20 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS): InputArg {
-	const logger = new TerminalLogger(ns);
-    if (ns.args[0] === undefined) {
-        logger.err('Merci de renseigner un hostname');
-        ns.exit();
-    }
+ async function getInput(ns: NS): Promise<InputArg> {
+	let targetHostname: string;
+	if (ns.args[0] === undefined) {
+		const repository = new ServersRepository(ns);
+		
+		targetHostname = await ns.prompt('Merci de renseigner un hostname', { type: "select", choices: repository.getAllIds() }) as string
+	} else {
+		targetHostname = (ns.args[0] as string);
+	}
 
 	return {
-		targetHostname: (ns.args[0] as string)
+		targetHostname: targetHostname
 	};
-}
+ }
 //#endregion Input arguments
 
 class ServerFinder {

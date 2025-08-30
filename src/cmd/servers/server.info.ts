@@ -1,14 +1,14 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { ServersService } from 'workspace/servers/servers.service';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 import { Info } from 'workspace/socle/interface/info';
+import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 /**
  * Affiche les données utiles pour backdoor un serveur.
  * @param ns 
  */
 export async function main(ns: NS) {
-    const input: InputArg = getInput(ns);
+    const input: InputArg = await getInput(ns);
 
     const serverData: Server = ns.getServer(input.hostnameTarget);
 
@@ -28,15 +28,18 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS): InputArg {
-    const logger = new TerminalLogger(ns);
+async function getInput(ns: NS): Promise<InputArg> {
+    let hostnameTarget: string;
     if (ns.args[0] === undefined) {
-        logger.err('Merci de renseigner un hostname');
-        ns.exit();
+        const repository = new ServersRepository(ns);
+        
+        hostnameTarget = await ns.prompt('Merci de renseigner un hostname', { type: "select", choices: repository.getAllIds() }) as string
+    } else {
+        hostnameTarget = (ns.args[0] as string);
     }
 
     return {
-        hostnameTarget: (ns.args[0] as string)
+        hostnameTarget: hostnameTarget
     };
 }
 //#endregion Input parameters

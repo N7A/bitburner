@@ -1,10 +1,9 @@
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import * as Log from 'workspace/socle/utils/logging';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 import { Alert } from 'workspace/notification/alert';
 
 export async function main(ns: NS) {
-    const input: InputArg = getInput(ns);
+    const input: InputArg = await getInput(ns);
 
     const main: UnlockedServerAlert = new UnlockedServerAlert(ns, input.targetHostname);
     
@@ -22,16 +21,19 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS): InputArg {
-    const logger = new TerminalLogger(ns);
-    if (ns.args[0] === undefined) {
-        logger.err('Merci de renseigner un serveur à notifier');
-        ns.exit();
-    }
-    
-    return {
-        targetHostname: (ns.args[0] as string)
-    };
+ async function getInput(ns: NS): Promise<InputArg> {
+     let targetHostname: string;
+     if (ns.args[0] === undefined) {
+         const repository = new ServersRepository(ns);
+         
+         targetHostname = await ns.prompt('Merci de renseigner un serveur à notifier', { type: "select", choices: repository.getAllIds() }) as string
+     } else {
+         targetHostname = (ns.args[0] as string);
+     }
+ 
+     return {
+         targetHostname: targetHostname
+     };
 }
 //#endregion Input parameters
 
