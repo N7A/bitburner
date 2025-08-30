@@ -37,6 +37,8 @@ async function playBoard(ns: NS) {
 
         // Keep looping as long as the opponent is playing moves
     } while (result?.type !== "gameOver");
+
+    ns.print(ns.formatPercent(ns.go.analysis.getStats().Netburners.bonusPercent));
 }
 
 /**
