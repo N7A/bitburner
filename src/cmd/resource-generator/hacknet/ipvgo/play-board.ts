@@ -1,4 +1,11 @@
 export async function main(ns: NS) {
+    ns.disableLog('go.makeMove');
+    ns.disableLog('sleep');
+
+    if (ns.go.getCurrentPlayer() === "None") {
+        // reset board
+        ns.go.resetBoardState("Netburners", 5);
+    }
     // TODO: extend daemon
     while(true) {
         await playBoard(ns);
@@ -38,13 +45,20 @@ async function playBoard(ns: NS) {
         // Keep looping as long as the opponent is playing moves
     } while (result?.type !== "gameOver");
 
-    ns.print(ns.formatPercent(ns.go.analysis.getStats().Netburners.bonusPercent));
+    if (ns.go.getGameState().whiteScore < ns.go.getGameState().blackScore) {
+        ns.print('Win !');
+        ns.print(`${ns.formatNumber(ns.go.analysis.getStats().Netburners?.bonusPercent ?? 0)}%`);
+    } else if (ns.go.getGameState().whiteScore > ns.go.getGameState().blackScore) {
+        ns.print('Lose...');
+    } else {
+        ns.print('Equality.');
+    }
 }
 
 /**
  * Choose one of the empty points on the board at random to play
  */
-const getRandomMove = (board, validMoves) => {
+const getRandomMove = (board: string[], validMoves: boolean[][]) => {
   const moveOptions = [];
   const size = board[0].length;
 
