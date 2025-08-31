@@ -1,4 +1,4 @@
-import { logDestination, logLevel } from "workspace/common/log.properties"
+import { logLevel } from "workspace/common/log.properties"
 import * as Log from "workspace/socle/utils/logging";
 import { LogLevel } from "workspace/socle/model/LogLevel";
 import { LogLevelLitteral } from "workspace/socle/model/LogLevelLitteral";
@@ -122,22 +122,20 @@ export class Logger {
     }
     
     private print(message: string, currentLogLevel: LogLevel) {
-        if (currentLogLevel <= logLevel) {
-            return;
-        }
-
-        if (logDestination.get(logLevel) === 'terminal') {
+        if (currentLogLevel <= logLevel.terminal) {
             this.printTerminal(message);
         }
 
-        const formatedMessage = `${Log.time(new Date(Date.now()))} - ${message}`
-        this.history.push(formatedMessage);
+        if (currentLogLevel <= logLevel.print) {
+            const formatedMessage = `${Log.time(new Date(Date.now()))} - ${message}`
+            this.history.push(formatedMessage);
 
-        if (this.loadingBar) {
-            this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
-            return;
+            if (this.loadingBar) {
+                this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
+                return;
+            }
+            this.printDashboard(formatedMessage);
         }
-        this.printDashboard(formatedMessage);
     }
 
     private printDashboard(message: string) {

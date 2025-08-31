@@ -18,6 +18,7 @@
 /cmd/resource-generator/coding-contract/contract.info.ts
 /cmd/resource-generator/coding-contract/resolve-contracts.scheduler.ts
 /cmd/resource-generator/faction/indices-files.info.ts
+/cmd/resource-generator/faction/join-faction.scheduler.ts
 /cmd/resource-generator/faction/share-ram.daemon.ts
 /cmd/resource-generator/gang/ascend-all.launcher.ts
 /cmd/resource-generator/gang/create-gang.scheduler.ts
@@ -39,6 +40,7 @@
 /cmd/resource-generator/stock-market/buy-stock-train.scheduler.ts
 /cmd/resource-generator/stock-market/sell-stock.worker.ts
 /cmd/resource-generator/stock-market/wse-upgrade.scheduler.ts
+/cmd/servers/backdoor-server.ts
 /cmd/servers/domain/refresh-owned-servers.worker.ts
 /cmd/servers/domain/refresh-servers.worker.ts
 /cmd/servers/server.info.ts
@@ -52,7 +54,7 @@
 /lab/repo-broker/model/CommitType.ts
 /lab/repo-broker/service.ts
 /lab/test.ts
-/workspace/common/application-properties.ts
+/workspace/common/log.properties.ts
 /workspace/load-balancer/analyse.ts
 /workspace/load-balancer/application-properties.ts
 /workspace/load-balancer/domain/executions.repository.ts
@@ -90,6 +92,7 @@
 /workspace/resource-generator/coding-contract/proper-2-coloring-of-a-graph.resolve.ts
 /workspace/resource-generator/coding-contract/sanitize-parentheses-in-expression.resolve.ts
 /workspace/resource-generator/coding-contract/total-ways-to-sum.ts
+/workspace/resource-generator/faction/model/augmentation-selector.ts
 /workspace/resource-generator/faction/model/ShareRamExecution.ts
 /workspace/resource-generator/gang/application-properties.ts
 /workspace/resource-generator/gang/ascension-member.daemon.ts
@@ -154,7 +157,6 @@
 /workspace/socle/Logger.ts
 /workspace/socle/model/LogLevel.ts
 /workspace/socle/model/LogLevelLitteral.ts
-/workspace/socle/TerminalLogger.ts
 /workspace/socle/utils/execution.ts
 /workspace/socle/utils/file.ts
 /workspace/socle/utils/logging.ts
