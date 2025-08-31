@@ -52,7 +52,7 @@ class Main extends Headhunter<string> {
     }
 
     protected async work(targets: string[]): Promise<any> {
-        this.logger.log(`Start`);
+        this.logger.log(`🪙 Start`);
         const workStartTime = new Date();
         await this.getTargets();
         this.logger.log(`Best to buy : ${Log.target(this.stockSymbol)}`);
@@ -64,7 +64,7 @@ class Main extends Headhunter<string> {
         const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime());
         this.logger.log(Log.INFO("Time to profit",  Log.time(workDuration)));
         this.logger.log(Log.INFO("Production", `${Log.money(this.ns, profit / workDuration.getTime()*1000)} / s`));
-        this.logger.log(`End`);
+        this.logger.log(`🪙 End`);
     }
 
     async getTargets(): Promise<string[]> {

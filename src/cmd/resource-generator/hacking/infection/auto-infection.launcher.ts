@@ -23,5 +23,5 @@ function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    Log.initTailTitle(ns, 'Infection', 'Launcher');
+    Log.initTailTitle(ns, '🦠 Infection', 'Launcher');
 }

@@ -22,12 +22,8 @@ export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
             serversRepository.refresh(upgrade.hostname);
         }
     } else if (upgrade.upgradeType === UpgradeType.SERVER) {
-        ns.print('Achat de serveur');
-        const hostnames = ['f1rst', 'se2ond', 'th3rd', 'fourt4'];
-        const boughtServers: string[] = serversService.getOwned();
-        const nextHostname: string = hostnames
-            .filter(x => !boughtServers.includes(x))
-            .shift() as string;
+        const nextHostname: string = serversService.getNextServerName();
+        ns.print(`🛍️🕋 Achat d'un nouveau serveur : ${nextHostname}`);//💸
         ns.purchaseServer(nextHostname, upgrade.ram);
         // TODO : add upgrade.cost to server repo ?
         serversRepository.add(nextHostname);

@@ -124,7 +124,7 @@ class Main extends Headhunter<string> {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Infection', 'Scheduler');
+        Log.initTailTitle(this.ns, '🦠 Infection', 'Scheduler');
         this.ns.ui.openTail();
     }
     //#endregion Dashboard

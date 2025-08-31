@@ -1,6 +1,7 @@
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServerType } from "workspace/servers/domain/model/ServerType";
+import { APPAREIL_LOGO, PERSONNALITE_LOGO, SERVER_NAMES } from 'workspace/servers/application.properties';
 
 export class ServersService {
     private ns: NS;
@@ -15,6 +16,29 @@ export class ServersService {
         this.repository = new ServersRepository(ns);
     }
     
+    getNextServerName() {
+        const hostnames = SERVER_NAMES;
+        const boughtServers: string[] = this.getOwned();
+        const availableHostnames: string[] = hostnames
+            .filter(x => boughtServers.every(y => !y.startsWith(x)));
+        let nextHostname: string = `${boughtServers.length}`;
+        if (availableHostnames.length > 0) {
+            nextHostname = availableHostnames.shift();
+        }
+
+        const availableAppareils = APPAREIL_LOGO;
+        const appareilMax = availableAppareils.length -1;
+        const appareilMin = 0;
+        const appareilIndex = Math.random() * (appareilMax - appareilMin) + appareilMin;
+
+        const availablePersonnalites = PERSONNALITE_LOGO;
+        const personnaliteMax = availablePersonnalites.length -1;
+        const personnaliteMin = 0;
+        const personnaliteIndex = Math.random() * (personnaliteMax - personnaliteMin) + personnaliteMin;
+
+        return `${nextHostname} ${availableAppareils[appareilIndex]}${availablePersonnalites[personnaliteIndex]}`;
+    }
+
     /**
      * Retrouve le chemin de serveur pour atteindre un serveur.
      * @param hostname serveur cible
