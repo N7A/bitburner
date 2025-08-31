@@ -115,10 +115,10 @@ export class Logger {
         this.print(formatedMessage, LogLevel.TRACE);
     }
     
-    success(message: string) {
+    success(message: string, logLevel?: LogLevel) {
         const formatedMessage: string = `${LogLevelLitteral.SUCCESS} ${message}`;
         
-        this.print(formatedMessage, LogLevel.INFO);
+        this.print(formatedMessage, logLevel ?? LogLevel.INFO);
     }
     
     private print(message: string, currentLogLevel: LogLevel) {

@@ -2,6 +2,7 @@ import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { getFilepaths } from "workspace/socle/utils/file";
 import * as Referentiel from 'workspace/referentiel'
 import { Logger } from "workspace/socle/Logger";
+import { LogLevel } from "workspace/socle/model/LogLevel";
 
 /**
  * Service de connection à un repository GitHub.
@@ -52,14 +53,14 @@ export class GitHubConnector {
     ) {
         // definition du chemin de telechargement
         const sourceFile = `${this.repository.baseUrl}${sourceDirectoryPath}${file}`;
-        this.logger.info(`Downloading ${sourceFile} -> ${file}...`);
+        this.logger.trace(`Downloading ${sourceFile} -> ${file}...`);
     
         // telechargement du fichier
         if (!(await this.ns.wget(sourceFile, file, Referentiel.MAIN_HOSTNAME))) {
             this.logger.err(`${sourceFile} -> ${file} download failed`);
             this.ns.exit();
         }
-        this.logger.success(`${sourceFile} -> ${file} [downloaded]`);
+        this.logger.success(`${sourceFile} -> ${file} [downloaded]`, LogLevel.TRACE);
     }
     
     /**
