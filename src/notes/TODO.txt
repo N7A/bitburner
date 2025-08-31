@@ -16,6 +16,8 @@
 
 ## Formulas
 
+- hacking timing
+
 ## Singularity
 
 - player task

@@ -35,7 +35,7 @@ export async function main(ns: NS) {
         if (!nextUpgrade) {
             continue;
         }
-
+        
         // wait purchase to be possible
         while(moneyPiggyBankService.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
             refreshDashBoard(ns, getMoney(), interval, nextUpgrade);

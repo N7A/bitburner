@@ -1,4 +1,4 @@
-import {ExecutionOrder, ExecutionType} from 'workspace/load-balancer/model/ExecutionServer'
+import {ExecutionOrder} from 'workspace/load-balancer/model/ExecutionServer'
 import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service'
 import { ServersService } from 'workspace/servers/servers.service';
 

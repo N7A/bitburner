@@ -4,5 +4,6 @@ export enum LogLevelLitteral {
     INFO    = "INFO    >",
     DEBUG   = "DEBUG   >",
     TRACE   = "TRACE   >",
-    SUCCESS = "SUCCESS >"
+    SUCCESS = "SUCCESS >",
+    NEUTRAL = "        >"
 }

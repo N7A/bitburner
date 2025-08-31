@@ -1,4 +1,4 @@
-import { logLevel } from "workspace/common/application-properties"
+import { logDestination, logLevel } from "workspace/common/log.properties"
 import * as Log from "workspace/socle/utils/logging";
 import { LogLevel } from "workspace/socle/model/LogLevel";
 import { LogLevelLitteral } from "workspace/socle/model/LogLevelLitteral";
@@ -15,15 +15,9 @@ export class Logger {
     }
 
     log(message: string, ...args: string[]) {
-        const formatedMessage: string = `${Log.time(new Date(Date.now()))} - ${message}`.concat(...args);
+        const formatedMessage: string = `${LogLevelLitteral.NEUTRAL} ${message.concat(...args)}`;
 
-        this.history.push(formatedMessage);
-        if (this.loadingBar) {
-            this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
-            return;
-        }
-
-        this.ns.print(formatedMessage);
+        this.print(formatedMessage, LogLevel.INFO);
     }
 
     stopWaiting() {
@@ -85,12 +79,16 @@ export class Logger {
         this.ns.print(message);
     }
 
-    err(msg: string, ...args: string[]) {
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.ERROR} ${msg}`, ...args);
+    err(message: string, ...args: string[]) {
+        const formatedMessage: string = `${LogLevelLitteral.ERROR} ${message.concat(...args)}`;
+
+        this.print(formatedMessage, LogLevel.ERROR);
     }
 
-    warn(msg: string, ...args: string[]) {
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.WARN} ${msg}`, ...args);
+    warn(message: string, ...args: string[]) {
+        const formatedMessage: string = `${LogLevelLitteral.WARN} ${message.concat(...args)}`;
+
+        this.print(formatedMessage, LogLevel.WARN);
     }
 
     info(message: string, ...args: string[]) {
@@ -102,31 +100,51 @@ export class Logger {
             return;
         }
 
-        this.ns.print(formatedMessage);
+        this.print(formatedMessage, LogLevel.INFO);
     }
 
     debug(message: string) {
-        if (logLevel !== LogLevel.DEBUG) {
-            return;
-        }
-        
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.DEBUG} ${message}`);
+        const formatedMessage: string = `${LogLevelLitteral.DEBUG} ${message}`;
+
+        this.print(formatedMessage, LogLevel.DEBUG);
     }
 
-    trace(message: string) {        
-        this.ns.print(`${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.TRACE} ${message}`);
+    trace(message: string) {
+        const formatedMessage: string = `${LogLevelLitteral.TRACE} ${message}`;
+
+        this.print(formatedMessage, LogLevel.TRACE);
     }
     
-    success(message: string) {     
-        const formatedMessage: string = `${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.SUCCESS} ${message}`;
+    success(message: string) {
+        const formatedMessage: string = `${LogLevelLitteral.SUCCESS} ${message}`;
+        
+        this.print(formatedMessage, LogLevel.INFO);
+    }
+    
+    private print(message: string, currentLogLevel: LogLevel) {
+        if (currentLogLevel <= logLevel) {
+            return;
+        }
+
+        if (logDestination.get(logLevel) === 'terminal') {
+            this.printTerminal(message);
+        }
+
+        const formatedMessage = `${Log.time(new Date(Date.now()))} - ${message}`
         this.history.push(formatedMessage);
 
         if (this.loadingBar) {
             this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
             return;
         }
+        this.printDashboard(formatedMessage);
+    }
 
-        this.ns.print(formatedMessage);
+    private printDashboard(message: string) {
+        this.ns.print(`${message}`);
     }
     
+    private printTerminal(message: string) {
+        this.ns.tprintf(`${message}`);
+    }
 }
