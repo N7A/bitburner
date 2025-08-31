@@ -115,6 +115,16 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
     return orders;
 }
 
+/**
+ * Retourne la quantité de RAM nécessaire pour faire tourner les scripts cibles.
+ * 
+ * @param ns Bitburner API
+ * @param hostname serveur cible
+ * @param scripts scripts cibles
+ * @returns quantité de RAM nécessaire
+ * 
+ * @remarks RAM cost: 0.1 GB
+ */
 async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]): Promise<number|undefined> {
     const logger = new TerminalLogger(ns);
     let result: number = 0;
@@ -136,10 +146,28 @@ async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]):
     return result;
 }
 
+/**
+ * Retourne la quantité de RAM autorisé à être dépensé.
+ * 
+ * @param ns Bitburner API
+ * @param targetHost serveur cible
+ * @returns quantité de RAM autorisé
+ * 
+ * @remarks RAM cost: 0.1 GB
+ */
 function availableRam(ns: NS, targetHost: string) {
     return new RamPiggyBankService(ns).getDisponibleRam(targetHost);
 }
 
+/**
+ * Détermine le nombre de thread possible, à partir de la RAM / thread et de la RAM disponible.
+ * 
+ * @param availableRam RAM disponible
+ * @param ramNeededByThread RAM nécessaire par thread
+ * @returns nombre de thread possible
+ * 
+ * @remarks RAM cost: 0 GB
+ */
 function getNbPossibleThreads(availableRam: number, ramNeededByThread: number) {
     return Math.floor(availableRam / ramNeededByThread);
 }

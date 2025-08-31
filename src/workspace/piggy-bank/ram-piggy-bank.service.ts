@@ -3,7 +3,7 @@ import { PiggyBankRepository } from "workspace/piggy-bank/domain/piggy-bank.repo
 /**
  * Exposition des services ram piggy bank.
  * 
- * @remarks — Ram cost : 0.2 GB
+ * @remarks RAM cost: 0.2 GB
  */
 export class RamPiggyBankService {
     
@@ -18,7 +18,7 @@ export class RamPiggyBankService {
     /**
      * Retourne la quantité de RAM autorisé à être dépensé.
      * 
-     * @remarks — Ram cost : 0.1 GB
+     * @remarks RAM cost: 0.1 GB
      */
     getDisponibleRam(hostname: string): number {
         return Math.max(
@@ -30,7 +30,7 @@ export class RamPiggyBankService {
     /**
      * Retourne la quantité d'argent à garder.
      * 
-     * @remarks — Ram cost : 0.1 GB
+     * @remarks RAM cost: 0.1 GB
      */
     getReserveRam(hostname: string): number {
         return Math.max(
@@ -42,7 +42,7 @@ export class RamPiggyBankService {
     /**
      * Retourne la quantité de RAM actuellement disponible sur un serveur.
      * 
-     * @remarks — Ram cost : 0.1 GB
+     * @remarks RAM cost: 0.1 GB
      */
     private getCurrentRam(hostname: string) {
         return this.ns.getServerMaxRam(hostname) - this.ns.getServerUsedRam(hostname)
