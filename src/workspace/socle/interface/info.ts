@@ -23,6 +23,8 @@ export class Info {
         this.ns.print(Log.getStartLog());
     
         this.printData();
+
+        Log.setTailSize(this.ns);
     
         this.ns.print(Log.getEndLog());
     }
@@ -44,7 +46,7 @@ export class Info {
         this.ns.clearLog();
         
         Log.initTailTitle(this.ns, Log.target(this.target, {colorless: true}), 'info');
-        
+
         this.ns.ui.openTail();
     }
     //#endregion Dashboard

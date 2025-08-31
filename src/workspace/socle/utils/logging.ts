@@ -15,6 +15,16 @@ export function initTailTitle(ns: NS, service: string, role?: string, hostSource
     ns.ui.setTailTitle(`${sourceLabel}[${service}]${roleLabel}`, pid);
 }
 
+export function setTailSize(ns: NS) {
+    const messages: string[] = ns.getScriptLogs()
+    const maxWidth = Math.floor(this.ns.ui.windowSize()[0] * 1/3);
+    const maxHeight = Math.floor(this.ns.ui.windowSize()[1] * 1/3);
+
+    const maxRow = messages.length;
+    const maxColumn = messages.map(x => x.length).reduce((a, b) => Math.max(a, b));
+    ns.ui.resizeTail(Math.min(maxColumn * 9.5, maxWidth), Math.min(maxRow * 25.5, maxHeight));
+}
+
 /**
  * Create a Table display of the provided data
  * 
