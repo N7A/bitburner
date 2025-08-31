@@ -58,6 +58,8 @@
 /workspace/load-balancer/domain/executions.repository.ts
 /workspace/load-balancer/domain/model/ProcessRequest.ts
 /workspace/load-balancer/domain/model/ProcessRequestType.ts
+/workspace/load-balancer/execution-orders.service.ts
+/workspace/load-balancer/execution-server.selector.ts
 /workspace/load-balancer/main.ts
 /workspace/load-balancer/model/ExecutionServer.ts
 /workspace/load-balancer/model/RamResourceExecution.ts
@@ -105,6 +107,7 @@
 /workspace/resource-generator/hacking/model/PayloadExecution.ts
 /workspace/resource-generator/hacking/model/PortProgram.ts
 /workspace/resource-generator/hacking/model/SetupExecution.ts
+/workspace/resource-generator/hacking/model/SetupWeakenExecution.ts
 /workspace/resource-generator/hacking/payload/grow.daemon.ts
 /workspace/resource-generator/hacking/payload/hack.daemon.ts
 /workspace/resource-generator/hacking/payload/payload.selector.ts
