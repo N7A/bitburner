@@ -16,9 +16,9 @@ export function initTailTitle(ns: NS, service: string, role?: string, hostSource
 }
 
 export function setTailSize(ns: NS) {
-    const messages: string[] = ns.getScriptLogs()
-    const maxWidth = Math.floor(this.ns.ui.windowSize()[0] * 1/3);
-    const maxHeight = Math.floor(this.ns.ui.windowSize()[1] * 1/3);
+    const messages: string[] = ns.getScriptLogs();
+    const maxWidth = Math.floor(ns.ui.windowSize()[0] * 2/3);
+    const maxHeight = Math.floor(ns.ui.windowSize()[1] * 2/3);
 
     const maxRow = messages.length;
     const maxColumn = messages.map(x => x.length).reduce((a, b) => Math.max(a, b));

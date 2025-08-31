@@ -24,9 +24,9 @@ export class Info {
     
         this.printData();
 
-        Log.setTailSize(this.ns);
-    
         this.ns.print(Log.getEndLog());
+
+        Log.setTailSize(this.ns);
     }
     
     /**
