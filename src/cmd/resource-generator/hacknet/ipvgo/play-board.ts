@@ -78,6 +78,6 @@ const getRandomMove = (board: string[], validMoves: boolean[][]) => {
   }
 
   // Choose one of the found moves at random
-  const randomIndex = Math.floor(Math.random() * moveOptions.length);
+  const randomIndex = Math.round(Math.random() * moveOptions.length);
   return moveOptions[randomIndex] ?? [];
 };
