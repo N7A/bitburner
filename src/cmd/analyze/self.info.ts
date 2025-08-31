@@ -19,16 +19,18 @@ class PlayerInfo extends Info {
 	}
 
     printData() {
-		this.showPlayeurStats();
+		this.showPlayerStats();
 		this.ns.print('\n')
 		this.showResetInfo();
 		this.ns.print('\n')
 		this.showProductionInfo();
 		this.ns.print('\n')
 		this.showServeurs();
+		this.ns.print('\n')
+		this.showScriptFeatures();
 	}
 
-	showPlayeurStats() {
+	showPlayerStats() {
 		let player = this.ns.getPlayer();
 		let totalSharePower = this.ns.getSharePower();
 		let hackingLevel = this.ns.getHackingLevel();
@@ -38,6 +40,11 @@ class PlayerInfo extends Info {
 		this.ns.print(Log.INFO("Entropy", player.entropy));
 		this.ns.print(Log.INFO("People Killed", player.numPeopleKilled));
 		this.ns.print(Log.INFO("Karma", this.ns.heart.break().toFixed(2)));
+	}
+
+	showScriptFeatures() {
+		this.ns.print(Log.title("Script features"));
+		this.ns.print(Log.INFO("Singularity", this.ns.getResetInfo().ownedSF.has(4) || this.ns.getResetInfo().currentNode === 4));
 	}
 
 	showResetInfo() {

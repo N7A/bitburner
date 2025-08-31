@@ -12,6 +12,18 @@
 - save on repository contract fail
 - coordonner hack et stock
 - utiliser des emoji dans les logs
+- check singularity disponible worker
+
+## Formulas
+
+## Singularity
+
+- player task
+- move to bitnode
+- join faction
+- install augmentation
+- darkweb
+- upgrade home
 
 # Réflexions
 

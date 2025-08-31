@@ -44,13 +44,20 @@ export class ServersService {
      * @param hostname serveur cible
      * @returns 
      */
-    private getHostPath(hostname: string): string[] {
+    getHostPath(hostname: string): string[] {
         const data: ServerData|null = this.repository.get(hostname);
         if (!data?.parent) {
             return [hostname];
         }
 
         return [...this.getHostPath(data.parent), hostname];
+    }
+
+    isHostConnectionPossible(hostname: string): boolean {
+        return this.getHostPath(hostname).every(x => {
+            const data: ServerData|null = this.repository.get(x);
+            return data?.state.unlocked;
+        });
     }
 
     getHostPathLibelle(hostname: string): string {
