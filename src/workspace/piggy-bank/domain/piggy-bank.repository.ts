@@ -2,6 +2,7 @@ import * as Referentiel from 'workspace/referentiel'
 import { Bank } from 'workspace/piggy-bank/domain/model/Bank'
 import { RamBank } from 'workspace/piggy-bank/domain/model/RamBank';
 import { MoneyBank } from 'workspace/piggy-bank/domain/model/MoneyBank';
+import { getHash } from 'workspace/socle/utils/file';
 
 const REPOSITORY = Referentiel.REPOSITORIES_DIRECTORY + '/piggy-bank.json';
 
@@ -85,4 +86,7 @@ export class PiggyBankRepository {
         this.save(bank);
     }
     
+    getHash() {
+        return getHash(this.ns, REPOSITORY);
+    }
 }

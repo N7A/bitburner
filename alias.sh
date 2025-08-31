@@ -11,3 +11,4 @@ alias setup="run /cmd/resource-generator/hacking/payload/setup-server.sequencer.
 alias loop-hacknet="run /cmd/resource-generator/hacknet/upgrade-hacknet.scheduler.ts true"
 alias full-payload="run /cmd/resource-generator/hacking/payload/fit-payload.launcher.ts"
 alias pull="run /cmd/synchronize/pull.launcher.ts"
+alias indices="run /cmd/resource-generator/faction/indices-files.info.ts"

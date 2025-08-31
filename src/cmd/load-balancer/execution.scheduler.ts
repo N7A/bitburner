@@ -11,6 +11,7 @@ import { getRepartitions } from 'workspace/load-balancer/execution-server.select
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { PiggyBankRepository } from 'workspace/piggy-bank/domain/piggy-bank.repository';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -57,10 +58,12 @@ class ExecutionSchedulerDaemon extends Daemon {
     private executionOrdersService: ExecutionOrdersService;
     private serversService: ServersService;
     private dashboard: Dashboard;
+    private piggyBankRepository: PiggyBankRepository;
 
     constructor(ns: NS) {
         super(ns);
-
+        
+        this.piggyBankRepository = new PiggyBankRepository(ns);
         this.executionsRepository = new ExecutionsRepository(ns);
         this.executionOrdersService = new ExecutionOrdersService(ns);
         this.serversService = new ServersService(ns);
@@ -119,20 +122,20 @@ class ExecutionSchedulerDaemon extends Daemon {
         const requests: RamResourceExecution[] = this.orders;
         const ramDisponible = this.serversService.getAllExecutable()
                 .map(x => this.ns.getServerMaxRam(x))
-                //.map(x => availableRam(ns, x))
                 .reduce((a,b) => a+b);
+        const ramBank: number = this.piggyBankRepository.getHash();
 
         const getId = (request: RamResourceExecution) => request.request.type + (request.request.target ?? '');
 
         let newRequest: RamResourceExecution[];
         let newRamDisponible: number;
+        let newRamBank: number;
         
         do {
             await this.ns.sleep(500);
 
             newRamDisponible = this.serversService.getAllExecutable()
                 .map(x => this.ns.getServerMaxRam(x))
-                //.map(x => availableRam(ns, x))
                 .reduce((a,b) => a+b);
 
             // remove from orders manual killed or script KO 
@@ -145,12 +148,16 @@ class ExecutionSchedulerDaemon extends Daemon {
             }*/
             
             newRequest = this.executionOrdersService.getExecutionOrders();
+
+            newRamBank = this.piggyBankRepository.getHash();
         } while (
             // requetes inchangées
             Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
                 .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))
             // RAM inchangée
             && newRamDisponible === ramDisponible
+            // valeurs du piggy-bank inchangée
+            && newRamBank === ramBank
         )
     }
 
