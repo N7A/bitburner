@@ -1,5 +1,6 @@
 import * as Referentiel from 'workspace/referentiel'
 import * as Log from 'workspace/socle/utils/logging';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 //#region Constants
 export const SCAN_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
@@ -23,5 +24,7 @@ function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    Log.initTailTitle(ns, '🦠 Infection', 'Launcher');
+        
+    const dashboard = new Dashboard(ns, 'Infection', {icon: '🦠', role: 'Launcher'});
+    dashboard.initTailTitle();
 }

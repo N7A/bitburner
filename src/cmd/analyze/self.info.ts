@@ -37,7 +37,7 @@ class PlayerInfo extends Info {
 		this.ns.print(Log.INFO("Hacking Level", hackingLevel));
 		this.ns.print(Log.INFO("Share Power", totalSharePower));
 		this.ns.print(Log.INFO("Factions", `${player.factions}`), ` (${Log.color(player.factions.length.toString(), Log.Color.CYAN)})`);
-		this.ns.print(Log.INFO("Entropy", player.entropy));
+		//this.ns.print(Log.INFO("Entropy", player.entropy));
 		this.ns.print(Log.INFO("People Killed", player.numPeopleKilled));
 		this.ns.print(Log.INFO("Karma", this.ns.heart.break().toFixed(2)));
 	}
@@ -48,14 +48,13 @@ class PlayerInfo extends Info {
 	}
 
 	showResetInfo() {
-		this.ns.print(Log.color("Reset info", Log.Color.CYAN));
-		this.ns.print(Log.INFO('Current node', this.ns.getResetInfo().currentNode));
+		this.ns.print(Log.title("Reset info"));
 		this.ns.print(Log.INFO('Augmentations', this.ns.getResetInfo().ownedAugs.size));
 		this.ns.print(Log.INFO("Time since last augmentation", `${Log.date(this.ns, new Date(this.ns.getResetInfo().lastAugReset))}`));
 	}
 
 	showProductionInfo() {
-		this.ns.print(Log.color("Production", Log.Color.CYAN));
+		this.ns.print(Log.title("Production"));
 		this.ns.print(Log.INFO("Current script production", Log.money(this.ns, this.ns.getTotalScriptIncome()[0]), '/s'));
 		// get current node number
 		const numNodes = this.ns.hacknet.numNodes();
@@ -69,7 +68,7 @@ class PlayerInfo extends Info {
 
 	showServeurs() {
 		// TODO : detail pour chaque serveurs
-		this.ns.print(Log.color("Server", Log.Color.CYAN));
+		this.ns.print(Log.title("Server"));
 		this.ns.print(Log.color("Home", Log.Color.MAGENTA));
 		this.ns.print(Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer().ramUsed) + '/' + this.ns.formatNumber(this.ns.getServer().maxRam)));
 		this.ns.print('\n')
@@ -80,4 +79,17 @@ class PlayerInfo extends Info {
 			'/' + this.ns.formatNumber(this.ns.getServer(owned).maxRam)));
 		}
 	}
+	
+	showBitnode() {
+		this.ns.print(Log.title("Bitnode"));
+		this.ns.print(Log.INFO('Current node', this.ns.getResetInfo().currentNode));
+		
+		if (this.ns.getResetInfo().ownedSF.has(5)) {
+			const bitNodeLvl = this.ns.getResetInfo().bitNodeOptions.sourceFileOverrides.get(this.ns.getResetInfo().currentNode) 
+				?? this.ns.getResetInfo().ownedSF.get(this.ns.getResetInfo().currentNode) 
+				?? 0;
+			this.ns.print(this.ns.getBitNodeMultipliers(this.ns.getResetInfo().currentNode, bitNodeLvl));
+		}
+	}
+
 }

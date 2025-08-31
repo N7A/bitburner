@@ -10,6 +10,7 @@ import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { getRepartitions } from 'workspace/load-balancer/execution-server.selector';
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { Daemon } from 'workspace/socle/interface/daemon';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -55,6 +56,7 @@ class ExecutionSchedulerDaemon extends Daemon {
     private executionsRepository: ExecutionsRepository;
     private executionOrdersService: ExecutionOrdersService;
     private serversService: ServersService;
+    private dashboard: Dashboard;
 
     constructor(ns: NS) {
         super(ns);
@@ -62,6 +64,7 @@ class ExecutionSchedulerDaemon extends Daemon {
         this.executionsRepository = new ExecutionsRepository(ns);
         this.executionOrdersService = new ExecutionOrdersService(ns);
         this.serversService = new ServersService(ns);
+        this.dashboard = new Dashboard(ns, 'Executions', {icon: '⚖️▶️', role: 'Scheduler'});
     }
 
     async work(): Promise<any> {
@@ -199,7 +202,7 @@ class ExecutionSchedulerDaemon extends Daemon {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Executions', 'Scheduler');
+        this.dashboard.initTailTitle();
         this.ns.ui.openTail();
     }
     //#endregion Dashboard

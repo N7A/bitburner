@@ -4,6 +4,7 @@ import * as Log from 'workspace/socle/utils/logging';
 import * as Properties from 'workspace/resource-generator/hacknet/application-properties'
 import { UpgradeExecution } from 'workspace/resource-generator/hacknet/model/UpgradeExecution'
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * Runner qui gère l'achat des nodes Hacknet.
@@ -90,8 +91,10 @@ function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
+    const dashboard = new Dashboard(ns, 'Hacknet', {icon: '🕸️', role: 'manager'});//🌐
+    dashboard.initTailTitle();
     ns.ui.openTail();
-    Log.initTailTitle(ns, 'Hacknet', 'manager');
+    
     ns.ui.moveTail(1000, 50);
     
     ns.print('Waiting to purchase next upgrade...');
