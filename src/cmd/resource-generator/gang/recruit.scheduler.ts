@@ -49,10 +49,10 @@ class Main extends Headhunter<string> {
     constructor(ns: NS) {
         // waitNewTargets = true : no targets
         super(ns, true)
-        this.setupDashboard();
 
         this.memberNamesService = new MemberNamesService(ns);
         this.dashboard = new Dashboard(ns, 'Recruit', {icon: '🥊🫵', role: 'Scheduler'});
+        this.setupDashboard();
     }
 
     async work(targets: string[]): Promise<any> {

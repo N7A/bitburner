@@ -53,8 +53,8 @@ class Main extends Headhunter<string> {
     constructor(ns: NS) {
         // waitNewTargets = false : targets fix and auto discovered
         super(ns, false)
-        this.setupDashboard();
         this.dashboard = new Dashboard(ns, 'Infection', {icon: '🦠', role: 'Scheduler'});
+        this.setupDashboard();
     }
 
     async work(targets: string[]): Promise<any> {
