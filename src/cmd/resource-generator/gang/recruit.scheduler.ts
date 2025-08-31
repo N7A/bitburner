@@ -2,6 +2,7 @@ import { Headhunter } from 'workspace/socle/interface/headhunter';
 import * as Log from 'workspace/socle/utils/logging';
 import { MemberNamesService } from 'workspace/resource-generator/gang/MemberNamesService';
 import { GANG_LOGO } from 'workspace/resource-generator/gang/application-properties';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * Cartographie et enregistre les données des serveurs du réseau.
@@ -43,6 +44,7 @@ class Main extends Headhunter<string> {
     readonly EQUIP_SCRIPT = 'workspace/resource-generator/gang/equip-member.daemon.ts';
     readonly ASCENSION_SCRIPT = 'workspace/resource-generator/gang/ascension-member.daemon.ts';
     private memberNamesService: MemberNamesService;
+    private dashboard: Dashboard;
 
     constructor(ns: NS) {
         // waitNewTargets = true : no targets
@@ -50,6 +52,7 @@ class Main extends Headhunter<string> {
         this.setupDashboard();
 
         this.memberNamesService = new MemberNamesService(ns);
+        this.dashboard = new Dashboard(ns, 'Recruit', {icon: '🥊🫵', role: 'Scheduler'});
     }
 
     async work(targets: string[]): Promise<any> {
@@ -91,7 +94,7 @@ class Main extends Headhunter<string> {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Recruit', 'Scheduler');
+        this.dashboard.initTailTitle();
         this.ns.ui.openTail();
     }
     //#endregion Dashboard
