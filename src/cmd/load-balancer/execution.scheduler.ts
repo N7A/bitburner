@@ -1,17 +1,14 @@
 import {ProcessRequest} from 'workspace/load-balancer/domain/model/ProcessRequest'
-import { ProcessRequestType } from "workspace/load-balancer/domain/model/ProcessRequestType";
 import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/socle/utils/logging';
-import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'
-import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
-import { SetupExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { getRepartitions } from 'workspace/load-balancer/execution-server.selector';
+import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -20,6 +17,7 @@ export async function main(ns: NS) {
     setupDashboard(ns);
 
     const executionsRepository = new ExecutionsRepository(ns);
+    const executionOrdersService = new ExecutionOrdersService(ns);
 
     let orders: RamResourceExecution[] = [];
 
@@ -33,13 +31,13 @@ export async function main(ns: NS) {
 
         ns.print('Waiting request modification...');
         // wait until orders change
-        const currentOrders = await waitContextChange(ns, orders);
+        await waitContextChange(ns);
 
         // TODO : dont kill hack and setup
         // kill all old for recalcul repartition
         orders.map(x => x.request).forEach(x => resetRunningProcess(ns, x));
         // maj orders
-        orders = Array.from(currentOrders);
+        orders = executionOrdersService.getExecutionOrders();
 
         ns.print(Log.action('Define servers repartion'));
         // define servers repartion
@@ -124,41 +122,24 @@ function resetRunningProcess(ns: NS, request: ProcessRequest) {
  * @param ns 
  * @returns new process orders
  */
-async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Promise<RamResourceExecution[]> {
-    const executionsRepository = new ExecutionsRepository(ns);
+async function waitContextChange(ns: NS): Promise<void> {
+    const executionOrdersService = new ExecutionOrdersService(ns);
     const serversService = new ServersService(ns);
 
-    let newRequest: RamResourceExecution[] = executionsRepository.getAll()   
-            .map(order => {
-                if (order.type === ProcessRequestType.SHARE_RAM) {
-                    return new ShareRamExecution(order);
-                } else if (order.type === ProcessRequestType.HACK) {
-                    return new PayloadExecution(ns, order);
-                } else if (order.type === ProcessRequestType.SETUP_HACK) {
-                    return new SetupExecution(order);
-                }
-                return null;
-            })
-            .filter(x => x !== null)
-            .map(x => x as RamResourceExecution)
-            .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
-    
+    const requests: RamResourceExecution[] = executionOrdersService.getExecutionOrders();
     const ramDisponible = serversService.getAllExecutable()
             .map(x => ns.getServerMaxRam(x))
             //.map(x => availableRam(ns, x))
             .reduce((a,b) => a+b);
-    let newRamDisponible = ramDisponible
 
-    const getId = (request: RamResourceExecution) => request.request.type + (request.request.target ?? '')
-    while (
-        // requetes inchangées
-        Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
-            .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))
-        // RAM inchangée
-        && newRamDisponible === ramDisponible
-    ) {
+    const getId = (request: RamResourceExecution) => request.request.type + (request.request.target ?? '');
+
+    let newRequest: RamResourceExecution[];
+    let newRamDisponible: number;
+    
+    do {
         await ns.sleep(500);
-        
+
         newRamDisponible = serversService.getAllExecutable()
             .map(x => ns.getServerMaxRam(x))
             //.map(x => availableRam(ns, x))
@@ -170,37 +151,17 @@ async function waitContextChange(ns: NS, requests: RamResourceExecution[]): Prom
         if (killedOrders.length > 0) {
             killedOrders.forEach(x => ExecutionsRepository.remove(ns, x.request));
             ns.print('Execution order killed : ', killedOrders.map(x => x.request.type + ' ' + x.request.target));
-            newRequest = ExecutionsRepository.getAll(ns)
-                .map(order => {
-                    if (order.type === OrderType.SHARE_RAM) {
-                        return new ShareRamExecution(order);
-                    } else if (order.type === OrderType.HACK) {
-                        return new PayloadExecution(ns, order);
-                    } else if (order.type === OrderType.SETUP_HACK) {
-                        return new SetupExecution(order);
-                    }
-                })
-                .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
             break;
         }*/
         
-        newRequest = executionsRepository.getAll()   
-            .map(order => {
-                if (order.type === ProcessRequestType.SHARE_RAM) {
-                    return new ShareRamExecution(order);
-                } else if (order.type === ProcessRequestType.HACK) {
-                    return new PayloadExecution(ns, order);
-                } else if (order.type === ProcessRequestType.SETUP_HACK) {
-                    return new SetupExecution(order);
-                }
-                return null;
-            })
-            .filter(x => x !== null)
-            .map(x => x as RamResourceExecution)
-            .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(ns));
-    }
-
-    return newRequest;
+        newRequest = executionOrdersService.getExecutionOrders();
+    } while (
+        // requetes inchangées
+        Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
+            .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))
+        // RAM inchangée
+        && newRamDisponible === ramDisponible
+    )
 }
 
 //#region Execution
