@@ -40,6 +40,13 @@ export class Daemon {
             this.refreshDashBoard(threadStartTime, workStartTime, workEndTime);
 
             this.ns.print(Log.getEndLog());
+
+            if (
+                this.runHasLoop && !this.isTimeOut(threadStartTime) && !this.isKillConditionReached()
+                && (workEndTime.getTime() - workStartTime.getTime()) < 500
+            ) {
+                await this.ns.asleep(500 - (workEndTime.getTime() - workStartTime.getTime()));
+            }
         } while (this.runHasLoop && !this.isTimeOut(threadStartTime) && !this.isKillConditionReached())
     }
 
