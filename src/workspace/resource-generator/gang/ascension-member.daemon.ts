@@ -70,8 +70,11 @@ class AscensionMemberDaemon extends Daemon {
         const reputationLost: number = this.ns.gang.getAscensionResult(this.memberName).respect;
         // achat de l'equipement
         this.ns.gang.ascendMember(this.memberName);
-        this.ns.print(`✨🆙🎖️ ${this.memberName} ascension ! ✨`);
-        this.ns.print(`Respect perdu : ${reputationLost}`)
+        const newName = this.memberName.split('|')[0] + '|' + this.getRankIcon();
+        this.ns.gang.renameMember(this.memberName, newName);
+        this.memberName = newName;
+        this.ns.print(`✨🆙︽ ${this.memberName} ascension ! ✨`);
+        this.ns.print(`Respect perdu : ${reputationLost}`);
     }
 
     isAscensionPossible() {
@@ -102,6 +105,31 @@ class AscensionMemberDaemon extends Daemon {
         // TODO: équipement non rentabilisé (perdu après ascension)
 
         return false;
+    }
+
+    getRankIcon() {
+        if (this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult <= 0) {
+            return Rank.STAGIAIRE;
+        } else if (
+            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult > 0
+            && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 10
+        ) {
+            return Rank.JUNIOR;
+        } else if (
+            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 10
+            && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 100
+        ) {
+            return Rank.CONFIRME;
+        } else if (
+            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 100
+            && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 1000
+        ) {
+            return Rank.SENIOR;
+        } else if (
+            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 1000
+        ) {
+            return Rank.EXPERT;
+        }
     }
 
     setupDashboard() {

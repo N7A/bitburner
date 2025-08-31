@@ -61,8 +61,8 @@ class Main extends Headhunter<string> {
             // select name
             const newMember = this.memberNamesService.getNextName();
 
-            this.ns.gang.recruitMember(newMember);
-            const role = 'larbin'
+            this.ns.gang.recruitMember(newMember + '|' + Rank.STAGIAIRE.icon);
+            const role = Rank.STAGIAIRE.name.toLowerCase();
             const resumeParcour = '{parcour à alimenter}'
             this.ns.print(`✨ ${GANG_LOGO}🆕🔰 ${newMember} recruitment ! ✨`);
             this.ns.tprint(this.getMailDeBienvenue(newMember, role, resumeParcour));
