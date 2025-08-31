@@ -7,7 +7,7 @@ import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceE
 import { Logger } from 'workspace/socle/Logger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { waitEndExecution } from 'workspace/socle/utils/execution';
-import { getRepartitions } from 'workspace/load-balancer/execution-server.selector';
+import { ExecutionSelector } from 'workspace/load-balancer/execution-server.selector';
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
@@ -84,7 +84,7 @@ class ExecutionSchedulerDaemon extends Daemon {
 
         this.ns.print(Log.action('Define servers repartion'));
         // define servers repartion
-        const executions: Map<RamResourceExecution, ExecutionOrder[]> = await getRepartitions(this.ns, this.orders);
+        const executions: Map<RamResourceExecution, ExecutionOrder[]> = await new ExecutionSelector(this.ns, this.orders).getRepartitions();
 
         this.ns.print(Log.action('Executions'), ` (${executions.size})`);
         // lancement des scripts
@@ -95,6 +95,10 @@ class ExecutionSchedulerDaemon extends Daemon {
             }
             for(const executionOrder of currentExecutionOrders) {
                 const pids = await this.execute(executionOrder);
+                if (process.request.wantedThreadNumber !== undefined) {
+                    // maj thread number wanted
+                    process.request.wantedThreadNumber = Math.max(process.request.wantedThreadNumber - executionOrder.nbThread, 0);
+                }
                 
                 // TODO : setup dashboard, pour reduire au minimum la ram
                 pids.filter(x => x !==0)
@@ -105,7 +109,11 @@ class ExecutionSchedulerDaemon extends Daemon {
                 // maj pid processes
                 process.request.pid = [...(process.request.pid ?? []), ...pids];
             }
-            this.executionsRepository.save(process.request)
+            if (process.request.wantedThreadNumber !== undefined && process.request.wantedThreadNumber <= 0) {
+                this.executionsRepository.remove(process.request);
+            } else {
+                this.executionsRepository.save(process.request);
+            }
         }
     }
     
