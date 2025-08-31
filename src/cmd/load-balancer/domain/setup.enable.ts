@@ -1,12 +1,12 @@
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 export async function main(ns: NS) {
     const input: InputArg = await getInput(ns);
 
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     const executionsRepository = new ExecutionsRepository(ns);
 
     // si déjà actif

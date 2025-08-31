@@ -1,5 +1,4 @@
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
-import { TerminalLogger } from "workspace/socle/TerminalLogger";
 import { getFilepaths } from "workspace/socle/utils/file";
 import * as Referentiel from 'workspace/referentiel'
 import { Logger } from "workspace/socle/Logger";
@@ -13,7 +12,6 @@ export class GitHubConnector {
     private ns: NS;
     private repository: GitRepository;
     private logger: Logger;
-    private terminalLogger: TerminalLogger;
 
     /**
      * Service de connection à un repository GitHub.
@@ -24,7 +22,6 @@ export class GitHubConnector {
         this.ns = ns;
         this.repository = repository;
         this.logger = new Logger(ns);
-        this.terminalLogger = new TerminalLogger(ns);
     }
 
     /**
@@ -59,7 +56,7 @@ export class GitHubConnector {
     
         // telechargement du fichier
         if (!(await this.ns.wget(sourceFile, file, Referentiel.MAIN_HOSTNAME))) {
-            this.terminalLogger.err(`${sourceFile} -> ${file} download failed`);
+            this.logger.err(`${sourceFile} -> ${file} download failed`);
             this.ns.exit();
         }
         this.logger.success(`${sourceFile} -> ${file} [downloaded]`);
@@ -109,9 +106,9 @@ export class GitHubConnector {
             this.logger.refreshLoadingBar(index + 1, manifestFiles.length);
         }
         
-        this.terminalLogger.success(`${successNumber} files pulled`);
+        this.logger.success(`${successNumber} files pulled`);
         if (failNumber > 0) {
-            this.terminalLogger.err(`${failNumber} files not read`);
+            this.logger.err(`${failNumber} files not read`);
         }
     }
 
@@ -141,6 +138,6 @@ export class GitHubConnector {
         ].map(x => '/' + x)
             .filter(x => !manifestFiles.includes(x) && x.endsWith(Referentiel.SCRIPT_EXTENSION));
         filesToRemove.forEach(x => this.ns.rm(x));
-        this.terminalLogger.success(`${filesToRemove.length} files removed`);
+        this.logger.success(`${filesToRemove.length} files removed`);
     }
 }

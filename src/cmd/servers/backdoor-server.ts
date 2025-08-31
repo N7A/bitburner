@@ -1,5 +1,5 @@
 import * as Log from 'workspace/socle/utils/logging';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 import { ServersService } from 'workspace/servers/servers.service';
 
 export async function main(ns: NS, scanTarget: string) {
@@ -25,7 +25,7 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS, targetHost: string): InputArg {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     if (!targetHost) {
         if (ns.args[0] === undefined) {
             logger.err('Merci de renseigner un hostname');

@@ -2,10 +2,10 @@ import {Contract} from 'workspace/resource-generator/coding-contract/model/Contr
 import {Transaction} from 'workspace/resource-generator/coding-contract/model/Transaction';
 import * as Log from 'workspace/socle/utils/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 
 export async function main(ns: NS) {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     
     const contracts = (await getContracts(ns))
         .filter(x => [

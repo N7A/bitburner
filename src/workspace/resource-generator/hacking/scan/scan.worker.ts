@@ -1,7 +1,7 @@
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import * as Log from 'workspace/socle/utils/logging';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 
 /**
  * Scan les cibles données par le unlock.
@@ -11,7 +11,7 @@ export async function main(ns: NS, scanTarget: string) {
 
     // load input arguments
     const input: InputArg = getInput(ns, scanTarget);
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
 
     if (scanTarget === undefined) {
         setupDashboard(ns, input);
@@ -58,7 +58,7 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS, targetHost: string): InputArg {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     if (!targetHost) {
         if (ns.args[0] === undefined) {
             logger.err('Merci de renseigner un hostname');

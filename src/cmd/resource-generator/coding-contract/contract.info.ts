@@ -1,6 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 
 export async function main(ns: NS) {
     const input: InputArg = getInput(ns);
@@ -34,7 +34,7 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     if (ns.args[0] === undefined) {
         logger.err('Merci de renseigner un contrat');
         ns.exit();

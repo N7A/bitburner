@@ -1,7 +1,6 @@
 import { waitRepayTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -24,7 +23,7 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     if (ns.args[0] === undefined) {
         logger.err('Merci de renseigner un stock symbol');
         ns.exit();

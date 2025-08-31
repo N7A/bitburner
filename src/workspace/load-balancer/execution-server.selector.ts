@@ -4,7 +4,7 @@ import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-ba
 import * as Log from 'workspace/socle/utils/logging';
 import { weights } from 'workspace/load-balancer/application-properties'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service';
 
@@ -126,7 +126,7 @@ async function getExecutionRepartition(ns: NS, ramByServer: Map<string, number>,
  * @remarks RAM cost: 0.1 GB
  */
 async function getRamNeeded(ns: NS, hostname: string, scripts: ScriptRequest[]): Promise<number|undefined> {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     let result: number = 0;
     for (const script of scripts) {
         if (!ns.fileExists(script.scriptsFilepath, hostname)) {

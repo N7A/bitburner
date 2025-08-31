@@ -6,11 +6,10 @@ export const repoParams = {
         "/workspace/synchronize/application-properties.ts",
         "/workspace/synchronize/git-connector.service.ts",
         "/workspace/synchronize/model/GitRepository.ts",
-        "/workspace/socle/TerminalLogger.ts",
         "/workspace/socle/Logger.ts",
         "/workspace/socle/model/LogLevelLitteral.ts",
         "/workspace/socle/model/LogLevel.ts",
-        "/workspace/common/application-properties.ts",
+        "/workspace/common/log.properties.ts",
         "/workspace/referentiel.ts",
         "/workspace/socle/utils/file.ts"
     ]

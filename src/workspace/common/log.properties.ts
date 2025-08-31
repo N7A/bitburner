@@ -4,5 +4,6 @@ export const logLevel: LogLevel = LogLevel.DEBUG
 
 export const logDestination = new Map<LogLevel, 'terminal' | 'alert' | 'print'>([
     [LogLevel.ERROR, 'terminal'],
+    [LogLevel.WARN, 'terminal'],
     [LogLevel.INFO, 'terminal']
 ]);

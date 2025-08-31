@@ -4,12 +4,12 @@ import { ServerData } from 'workspace/servers/domain/model/ServerData'
 import { UnlockRequirements } from 'workspace/servers/domain/model/UnlockRequirements'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { main as copyToolkit } from 'workspace/resource-generator/hacking/spreading/copy-toolkit.launcher'
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 
 export async function main(ns: NS, targetHost: string) {
     // load input arguments
     const input: InputArg = getInput(ns, targetHost);
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     const serversRepository = new ServersRepository(ns);
 
     var nuked: boolean = false
@@ -17,7 +17,7 @@ export async function main(ns: NS, targetHost: string) {
 
     ns.atExit(async() => {
         if (nuked) {
-            logger.success(`${input.hostnameTarget} [nuked]`, resultMessage ? ` : ${resultMessage}` : '');
+            logger.success(`${input.hostnameTarget} [nuked]` + resultMessage ? ` : ${resultMessage}` : '');
             await handleUnlock(ns, input.hostnameTarget);
         } else {
             ns.print('WARN', ' ', `${input.hostnameTarget} nuke ${Log.color('KO', Log.Color.RED)}`, resultMessage ? ` : ${resultMessage}` : '');

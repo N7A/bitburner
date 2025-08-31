@@ -1,7 +1,7 @@
 import { gitRepositoryBaseUrl, manifestFilepath, sourceDirectoryPath } from "workspace/synchronize/application-properties";
 import { GitHubConnector } from "workspace/synchronize/git-connector.service";
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
-import { TerminalLogger } from "workspace/socle/TerminalLogger";
+import { Logger } from "workspace/socle/Logger";
 import * as Log from 'workspace/socle/utils/logging';
 
 export const repoParams: GitRepository = {
@@ -11,7 +11,7 @@ export const repoParams: GitRepository = {
 };
 
 export async function main(ns: NS) {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     const git = new GitHubConnector(ns, repoParams);
 
     setupDashboard(ns);

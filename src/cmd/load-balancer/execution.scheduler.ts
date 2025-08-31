@@ -4,7 +4,7 @@ import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/socle/utils/logging';
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { getRepartitions } from 'workspace/load-balancer/execution-server.selector';
@@ -166,7 +166,7 @@ class ExecutionSchedulerDaemon extends Daemon {
 
     //#region Execution
     async execute(executionOrder: ExecutionOrder): Promise<number[]> {
-        const logger = new TerminalLogger(this.ns);
+        const logger = new Logger(this.ns);
         let pids: number[] = []
         if (executionOrder.nbThread === 0) {
             return pids;

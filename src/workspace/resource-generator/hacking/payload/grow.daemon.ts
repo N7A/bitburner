@@ -1,6 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { Daemon } from 'workspace/socle/interface/daemon';
-import { TerminalLogger } from 'workspace/socle/TerminalLogger';
+import { Logger } from 'workspace/socle/Logger';
 
 let daemon: GrowDaemon;
 
@@ -40,7 +40,7 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
-    const logger = new TerminalLogger(ns);
+    const logger = new Logger(ns);
     if (ns.args[0] === undefined) {
         logger.err('Merci de renseigner un hostname');
         ns.exit();
