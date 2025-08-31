@@ -5,7 +5,7 @@ import { ServersService } from 'workspace/servers/servers.service';
 /**
  * Check RAM availability to priorize
  */
-// TODO : ajout possibilité de split entre plusieurs serveurs
+// TODO : use load-balancer instead
 export function getAvailableServer(ns: NS, ramNeededByThread: number, nbThread: number = 1): ExecutionOrder {
     const serversService = new ServersService(ns);
 
