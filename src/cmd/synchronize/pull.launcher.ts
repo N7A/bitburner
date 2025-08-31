@@ -2,7 +2,7 @@ import { gitRepositoryBaseUrl, manifestFilepath, sourceDirectoryPath } from "wor
 import { GitHubConnector } from "workspace/synchronize/git-connector.service";
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { Logger } from "workspace/socle/Logger";
-import * as Log from 'workspace/socle/utils/logging';
+import { Dashboard } from "workspace/socle/interface/dashboard";
 
 export const repoParams: GitRepository = {
     baseUrl: gitRepositoryBaseUrl,
@@ -30,7 +30,8 @@ function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    Log.initTailTitle(ns, 'Synchronize', 'launcher');
+    const dashboard = new Dashboard(ns, 'Synchronize', {icon: '🔄', role: 'launcher'});
+    dashboard.initTailTitle();
     
     ns.ui.openTail();
 }
