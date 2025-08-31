@@ -116,7 +116,7 @@ class ExecutionSchedulerDaemon extends Daemon {
      * @returns new process orders
      */
     private async waitContextChange(): Promise<void> {
-        const requests: RamResourceExecution[] = this.executionOrdersService.getExecutionOrders();
+        const requests: RamResourceExecution[] = this.orders;
         const ramDisponible = this.serversService.getAllExecutable()
                 .map(x => this.ns.getServerMaxRam(x))
                 //.map(x => availableRam(ns, x))
