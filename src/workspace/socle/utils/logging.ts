@@ -1,4 +1,7 @@
+// TODO: à migrer
 /**
+ * 
+ * @deprecated use workspace/socle/interface/dashboard.ts instead
  * 
  * @param ns 
  * @param service 
