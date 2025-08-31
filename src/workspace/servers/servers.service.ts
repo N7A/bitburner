@@ -36,7 +36,7 @@ export class ServersService {
         const personnaliteMin = 0;
         const personnaliteIndex = Math.round(Math.random() * (personnaliteMax - personnaliteMin) + personnaliteMin);
 
-        return `${nextHostname} ${availableAppareils[appareilIndex]}${availablePersonnalites[personnaliteIndex]}`;
+        return `${nextHostname}•${availableAppareils[appareilIndex]}${availablePersonnalites[personnaliteIndex]}`;
     }
 
     /**
