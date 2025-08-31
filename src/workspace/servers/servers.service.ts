@@ -21,7 +21,7 @@ export class ServersService {
         const boughtServers: string[] = this.getOwned();
         const availableHostnames: string[] = hostnames
             .filter(x => boughtServers.every(y => !y.startsWith(x)));
-        let nextHostname: string = `${boughtServers.length}`;
+        let nextHostname: string = `Serveur ${boughtServers.length}`;
         if (availableHostnames.length > 0) {
             nextHostname = availableHostnames.shift();
         }
