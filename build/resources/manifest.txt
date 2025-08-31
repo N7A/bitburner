@@ -136,6 +136,7 @@
 /workspace/resource-generator/stock-market/purchase-tix-api.worker.ts
 /workspace/resource-generator/stock-market/purchase-wse-account.worker.ts
 /workspace/resource-generator/stock-market/wse-upgrade.selector.ts
+/workspace/servers/application.properties.ts
 /workspace/servers/domain/model/HackData.ts
 /workspace/servers/domain/model/ServerData.ts
 /workspace/servers/domain/model/ServerState.ts
