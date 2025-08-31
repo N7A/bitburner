@@ -29,12 +29,12 @@ export class ServersService {
         const availableAppareils = APPAREIL_LOGO;
         const appareilMax = availableAppareils.length -1;
         const appareilMin = 0;
-        const appareilIndex = Math.random() * (appareilMax - appareilMin) + appareilMin;
+        const appareilIndex = Math.round(Math.random() * (appareilMax - appareilMin) + appareilMin);
 
         const availablePersonnalites = PERSONNALITE_LOGO;
         const personnaliteMax = availablePersonnalites.length -1;
         const personnaliteMin = 0;
-        const personnaliteIndex = Math.random() * (personnaliteMax - personnaliteMin) + personnaliteMin;
+        const personnaliteIndex = Math.round(Math.random() * (personnaliteMax - personnaliteMin) + personnaliteMin);
 
         return `${nextHostname} ${availableAppareils[appareilIndex]}${availablePersonnalites[personnaliteIndex]}`;
     }

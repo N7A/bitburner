@@ -12,11 +12,11 @@ export class MemberNamesService {
             .filter(x => x.length > 0);
         const groupMax = names.length -1;
         const groupMin = 0;
-        const groupIndex = Math.random() * (groupMax - groupMin) + groupMin;
+        const groupIndex = Math.round(Math.random() * (groupMax - groupMin) + groupMin);
 
         const nameMax = names[groupIndex].length -1;
         const nameMin = 0;
-        const nameIndex = Math.random() * (nameMax - nameMin) + nameMin;
+        const nameIndex = Math.round(Math.random() * (nameMax - nameMin) + nameMin);
 
         this.repository.remove(groupIndex, nameIndex);
         return names[groupIndex][nameIndex];
