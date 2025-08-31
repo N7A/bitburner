@@ -6,6 +6,7 @@ import { waitEndExecution } from 'workspace/socle/utils/execution'
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortProgram'
 import { Headhunter } from 'workspace/socle/interface/headhunter';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 //#region Constants
 export const SCAN_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
@@ -47,10 +48,13 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 class Main extends Headhunter<string> {
+    private dashboard: Dashboard;
+
     constructor(ns: NS) {
         // waitNewTargets = false : targets fix and auto discovered
         super(ns, false)
         this.setupDashboard();
+        this.dashboard = new Dashboard(ns, 'Infection', {icon: '🦠', role: 'Scheduler'});
     }
 
     async work(targets: string[]): Promise<any> {
@@ -124,7 +128,7 @@ class Main extends Headhunter<string> {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, '🦠 Infection', 'Scheduler');
+        this.dashboard.initTailTitle();
         this.ns.ui.openTail();
     }
     //#endregion Dashboard
