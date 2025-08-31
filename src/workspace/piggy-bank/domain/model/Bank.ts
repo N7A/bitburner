@@ -5,4 +5,5 @@ export type Bank = {
     moneyBank: MoneyBank;
     ramBank: RamBank;
     // TODO : add timebank ?
+    // TODO : add karmabank ? (useful pour faction)
 }

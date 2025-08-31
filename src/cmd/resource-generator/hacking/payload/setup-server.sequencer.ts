@@ -37,6 +37,7 @@ export async function main(ns: NS) {
 
     //#region Setup
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Weaken', Log.Color.CYAN)}`);
+    // TODO: add order to loadbalancer instead
     await runScriptUntilEnoughThread(ns, targetHost, hackData, ns.getScriptRam(WEAKEN_SCRIPT), weakenToMax, getWeakenNeededThreads)
     
     ns.print(`${Log.date(ns, new Date())} - `, 'SUCCESS', ' ', 'Weaken done');
