@@ -13,6 +13,7 @@
 - coordonner hack et stock
 - utiliser des emoji dans les logs
 - check singularity disponible worker
+- ajouter emoji grade au serveurs (renommer quand up)
 
 ## Formulas
 
