@@ -18,7 +18,9 @@ export async function executeUpgrade(ns: NS, upgrade: UpgradeExecution) {
         }
 
         if(ns.upgradePurchasedServer(upgrade.hostname, upgrade.ram)) {
-            ns.toast(`{${upgrade.hostname}} upgrade to (${ns.formatRam(upgrade.ram)}) RAM for ${Log.money(ns, upgrade.cost)}`, ns.enums.ToastVariant.SUCCESS, 5000);
+            const message: string = `{${upgrade.hostname}} upgrade to (${ns.formatRam(upgrade.ram)}) RAM for ${Log.money(ns, upgrade.cost)}`;
+            ns.toast(message, ns.enums.ToastVariant.SUCCESS, 5000);
+            ns.print(message);
             serversRepository.refresh(upgrade.hostname);
         }
     } else if (upgrade.upgradeType === UpgradeType.SERVER) {
