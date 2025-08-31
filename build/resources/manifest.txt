@@ -149,6 +149,7 @@
 /workspace/servers/findServer.ts
 /workspace/servers/servers.service.ts
 /workspace/socle/interface/daemon.ts
+/workspace/socle/interface/dashboard.ts
 /workspace/socle/interface/directory-repository.ts
 /workspace/socle/interface/headhunter.ts
 /workspace/socle/interface/headhunter-alert.ts
