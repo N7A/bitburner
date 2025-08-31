@@ -109,11 +109,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                 // maj pid processes
                 process.request.pid = [...(process.request.pid ?? []), ...pids];
             }
-            if (process.request.wantedThreadNumber !== undefined && process.request.wantedThreadNumber <= 0) {
-                this.executionsRepository.remove(process.request);
-            } else {
-                this.executionsRepository.save(process.request);
-            }
+            this.executionsRepository.save(process.request);
         }
     }
     
@@ -146,14 +142,19 @@ class ExecutionSchedulerDaemon extends Daemon {
                 .map(x => this.ns.getServerMaxRam(x))
                 .reduce((a,b) => a+b);
 
-            // remove from orders manual killed or script KO 
-            // TODO : alert ?
-            /*const killedOrders: RamResourceExecution[] = requests.filter(x => x.request.pid?.some(y => !ns.isRunning(y)));
+            // TODO: gestion remove from orders manual killed or script KO 
+            // TODO: alert ?
+            // this.ns.print('Execution order killed : ', killedOrders.map(x => x.request.type + ' ' + x.request.target));
+
+            // thread execution ended
+            const killedOrders: RamResourceExecution[] = requests
+                .filter(x => x.getExecutionRequest().wantedThreadNumber !== undefined)
+                .filter(x => x.request.pid?.every(y => !this.ns.isRunning(y)));
             if (killedOrders.length > 0) {
-                killedOrders.forEach(x => ExecutionsRepository.remove(ns, x.request));
-                ns.print('Execution order killed : ', killedOrders.map(x => x.request.type + ' ' + x.request.target));
+                killedOrders.filter(x => x.getExecutionRequest().wantedThreadNumber <= 0)
+                    .forEach(x => this.executionsRepository.remove(x.request));
                 break;
-            }*/
+            }
             
             newRequest = this.executionOrdersService.getExecutionOrders();
 
