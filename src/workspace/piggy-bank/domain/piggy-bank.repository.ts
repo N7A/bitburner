@@ -53,6 +53,7 @@ export class PiggyBankRepository {
         // conversion des maps en objet (nécessaire pour l'enregistrement au format JSON)
         bank.ramBank.rateToKeep = Object.fromEntries(bank.ramBank.rateToKeep as Map<string, number>);
         bank.ramBank.toReserve = Object.fromEntries(bank.ramBank.toReserve as Map<string, number>);
+        bank.ramBank.repartitionByType = Object.fromEntries(bank.ramBank.repartitionByType as Map<ProcessRequestType, number>);
         // save data
         this.ns.write(REPOSITORY, JSON.stringify(bank, null, 4), "w");
     }
