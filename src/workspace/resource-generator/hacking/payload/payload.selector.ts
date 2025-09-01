@@ -10,6 +10,7 @@ export function getBestPayloadTarget(ns: NS): string | undefined {
 
     const bestProfit = targets.sort((a, b) => hackRatio(ns, a) - hackRatio(ns, b)).pop();
     ns.tprint(`Ratio : ${hackRatio(ns, bestProfit as string)}`)
+    // TODO: prendre en compte current money
     return bestProfit;
 }
 

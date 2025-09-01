@@ -13,6 +13,7 @@ class ExecutionLauncher {
 
     setupOrchestration() {
         // TODO: run thread waiting serveur money en dessous d'un palier
+        // TODO: OU money ne fait que descendre (grow pas assez puissant)
         // TODO: add setup serveur to executions
     }
 
