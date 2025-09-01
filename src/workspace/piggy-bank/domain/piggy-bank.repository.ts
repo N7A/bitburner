@@ -33,9 +33,9 @@ export class PiggyBankRepository {
         }
         let bank: Bank = JSON.parse(this.ns.read(REPOSITORY));
         bank.ramBank = {
-            rateToKeep: new Map(Object.entries(bank.ramBank.rateToKeep)),
-            toReserve: new Map(Object.entries(bank.ramBank.toReserve)),
-            repartitionByType: new Map(Object.entries(bank.ramBank.repartitionByType))
+            rateToKeep: bank.ramBank.rateToKeep ? new Map(Object.entries(bank.ramBank.rateToKeep)): new Map(),
+            toReserve: bank.ramBank.toReserve ? new Map(Object.entries(bank.ramBank.toReserve)) : new Map(),
+            repartitionByType: bank.ramBank.repartitionByType ? new Map(Object.entries(bank.ramBank.repartitionByType)) : new Map()
         }
 
         return bank;
@@ -84,8 +84,7 @@ export class PiggyBankRepository {
                 [ProcessRequestType.SHARE_RAM, 1], 
                 [ProcessRequestType.HACK, 1], 
                 [ProcessRequestType.SETUP_HACK, 1], 
-                [ProcessRequestType.SETUP_WEAKEN, 1], 
-                [ProcessRequestType.SETUP_GROW, 1]
+                [ProcessRequestType.ONESHOT, 1]
             ])
         };
 
