@@ -98,10 +98,6 @@ export class ExecutionSelector {
         let orders: ExecutionOrder[] = [];
 
         let ramToUse = ramAuthorized;
-        const entries = Array.from(ramByServer.entries())
-            // least available ram server first
-            .sort((a,b) => a[1] - b[1]);
-
         const ramNeededByThread = await this.getRamNeeded(ns, 'home', executionRequest.scripts);
         if (ramNeededByThread === undefined) {
             return [];
@@ -114,6 +110,11 @@ export class ExecutionSelector {
         
         for (const script of executionRequest.scripts) {
             let threadWanted = maxThreadWanted;
+            
+            const entries = Array.from(ramByServer.entries())
+                // least available ram server first
+                .sort((a,b) => a[1] - b[1]);
+
             for(const entry of entries) {
                 const ramNeededByThread = await this.getRamNeeded(ns, entry[0], [script]);
                 if (ramNeededByThread === undefined) {
