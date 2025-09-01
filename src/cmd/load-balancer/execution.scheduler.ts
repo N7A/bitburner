@@ -111,7 +111,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                     })*/
                 this.ns.print(`${process.getActionLog()} ${this.ns.formatNumber(executionOrder.nbThread, 0)} threads on ${Log.source(executionOrder.sourceHostname)}`);
                 // maj pid processes
-                process.request.pid.push(pid);
+                process.request.pid = [...(process.request.pid ?? []), pid];
             }
             this.executionsRepository.save(process.request);
         }
