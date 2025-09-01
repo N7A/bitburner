@@ -14,6 +14,7 @@
 /cmd/new-start/new-start.launcher.ts
 /cmd/notification/money-amount.alert.ts
 /cmd/notification/server-unlocked.alert.ts
+/cmd/orchestration/orchestration.launcher.ts
 /cmd/resource-generator/coding-contract/all-contracts.info.ts
 /cmd/resource-generator/coding-contract/contract.info.ts
 /cmd/resource-generator/coding-contract/resolve-contracts.scheduler.ts
@@ -62,8 +63,8 @@
 /workspace/load-balancer/domain/model/ProcessRequestType.ts
 /workspace/load-balancer/execution-orders.service.ts
 /workspace/load-balancer/execution-server.selector.ts
-/workspace/load-balancer/main.ts
 /workspace/load-balancer/model/ExecutionServer.ts
+/workspace/load-balancer/model/OneShotExecution.ts
 /workspace/load-balancer/model/RamResourceExecution.ts
 /workspace/load-balancer/model/UpgradeExecution.ts
 /workspace/load-balancer/model/UpgradeType.ts
@@ -103,6 +104,7 @@
 /workspace/resource-generator/gang/equipement.selector.ts
 /workspace/resource-generator/gang/equip-member.daemon.ts
 /workspace/resource-generator/gang/MemberNamesService.ts
+/workspace/resource-generator/gang/model/Rank.ts
 /workspace/resource-generator/gang/model/TaskType.ts
 /workspace/resource-generator/gang/task.selector.ts
 /workspace/resource-generator/gang/territory-warfare.daemon.ts
@@ -110,7 +112,6 @@
 /workspace/resource-generator/hacking/model/PayloadExecution.ts
 /workspace/resource-generator/hacking/model/PortProgram.ts
 /workspace/resource-generator/hacking/model/SetupExecution.ts
-/workspace/resource-generator/hacking/model/SetupWeakenExecution.ts
 /workspace/resource-generator/hacking/payload/grow.daemon.ts
 /workspace/resource-generator/hacking/payload/hack.daemon.ts
 /workspace/resource-generator/hacking/payload/payload.selector.ts
