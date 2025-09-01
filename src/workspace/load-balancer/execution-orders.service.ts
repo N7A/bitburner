@@ -4,7 +4,7 @@ import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceE
 import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
 import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
-import { OneShotExecution } from "/workspace/load-balancer/model/OneShotExecution";
+import { OneShotExecution } from 'workspace/load-balancer/model/OneShotExecution';
 
 export class ExecutionOrdersService {
     private ns: NS;

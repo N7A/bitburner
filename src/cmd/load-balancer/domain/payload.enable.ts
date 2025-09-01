@@ -1,9 +1,8 @@
-import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
 import { Logger } from 'workspace/socle/Logger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import * as Referentiel from 'workspace/referentiel'
-import { PayloadExecution } from '/workspace/resource-generator/hacking/model/PayloadExecution';
+import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution';
 
 //#region Constants
 export const SETUP_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/setup-server.sequencer.ts';

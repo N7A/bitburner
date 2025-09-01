@@ -8,7 +8,7 @@ import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
-import { PiggyBankRepository } from '../piggy-bank/domain/piggy-bank.repository';
+import { PiggyBankRepository } from 'workspace/piggy-bank/domain/piggy-bank.repository';
 
 export class ExecutionSelector {
     private ns: NS;
