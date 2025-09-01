@@ -36,28 +36,28 @@ export class ExecutionSelector {
         
         // define repartition to fixed ram executions
         let ramDisponiblePostFixed = totalRamDisponible;
-        for(const order of this.orders.filter(x => x.getExecutionRequest().wantedThreadNumber !== undefined)) {
-            this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.target ? ' ' + order.request.target : ''}`));
+        for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber !== undefined)) {
+            this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`));
 
             const ramAuthorized = await this.getAuthorizedRam(order, totalRamDisponible);
             this.logger.info(Log.INFO('Ram authorisée', this.ns.formatRam(ramAuthorized) + '/' + this.ns.formatRam(totalRamDisponible)));
 
             ramDisponiblePostFixed -= ramAuthorized
             // recherche de la répartition possible sur les serveurs
-            const executionOrders: ExecutionOrder[] = await this.getExecutionRepartition(this.ns, ramByServer, order.getExecutionRequest(), ramAuthorized);
+            const executionOrders: ExecutionOrder[] = await this.getExecutionRepartition(this.ns, ramByServer, order.request.request, ramAuthorized);
             // TODO: if executionOrders.length <= 0 -> new ram disponible pour les autres
             executions.set(order, executionOrders);
         }
 
         // define repartition to ram resource executions
-        for(const order of this.orders.filter(x => x.getExecutionRequest().wantedThreadNumber === undefined)) {
-            this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.target ? ' ' + order.request.target : ''}`));
+        for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber === undefined)) {
+            this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`));
 
             const ramAuthorized = await this.getAuthorizedRam(order, ramDisponiblePostFixed);
             this.logger.info(Log.INFO('Ram authorisée', this.ns.formatRam(ramAuthorized) + '/' + this.ns.formatRam(ramDisponiblePostFixed)));
 
             // recherche de la répartition possible sur les serveurs
-            const executionOrders: ExecutionOrder[] = await this.getExecutionRepartition(this.ns, ramByServer, order.getExecutionRequest(), ramAuthorized);
+            const executionOrders: ExecutionOrder[] = await this.getExecutionRepartition(this.ns, ramByServer, order.request.request, ramAuthorized);
             // TODO: if executionOrders.length <= 0 -> new ram disponible pour les autres
             executions.set(order, executionOrders);
         }
@@ -70,8 +70,8 @@ export class ExecutionSelector {
         const weightPerso = this.getPersonalWeight(order.request);
 
         let ramAuthorized = weightPerso * weightType * availableRam;
-        if (order.getExecutionRequest().wantedThreadNumber) {
-            ramAuthorized = Math.min(ramAuthorized, order.getExecutionRequest().wantedThreadNumber * (await this.getRamNeeded(this.ns, 'home', order.getExecutionRequest().scripts) ?? 0))
+        if (order.request.request.wantedThreadNumber) {
+            ramAuthorized = Math.min(ramAuthorized, order.request.request.wantedThreadNumber * (await this.getRamNeeded(this.ns, 'home', order.request.request.scripts) ?? 0))
         }
         this.logger.trace(Log.INFO('Weight perso', weightPerso));
         this.logger.trace(Log.INFO('Weight type', weightType));
@@ -101,41 +101,60 @@ export class ExecutionSelector {
         const entries = Array.from(ramByServer.entries())
             // least available ram server first
             .sort((a,b) => a[1] - b[1]);
+
+        const ramNeededByThread = await this.getRamNeeded(ns, 'home', executionRequest.scripts);
+        if (ramNeededByThread === undefined) {
+            return [];
+        }
+        const maxThreadWanted = executionRequest.wantedThreadNumber ?? this.getNbPossibleThreads(ramToUse, ramNeededByThread)
+        // plus de thread possible avec la ram restante
+        if (maxThreadWanted <= 0) {
+            return [];
+        }
         
-        for(const entry of entries) {
-            const ramNeededByThread = await this.getRamNeeded(ns, entry[0], executionRequest.scripts);
-            if (ramNeededByThread === undefined) {
-                continue;
+        for (const script of executionRequest.scripts) {
+            let threadWanted = maxThreadWanted;
+            for(const entry of entries) {
+                const ramNeededByThread = await this.getRamNeeded(ns, entry[0], [script]);
+                if (ramNeededByThread === undefined) {
+                    continue;
+                }
+
+                const currentAvailableRam: number = entry[1] ?? 0;
+
+                // find possible thread number
+                const currentThreadPossible = this.getNbPossibleThreads(currentAvailableRam, ramNeededByThread);
+
+                const orderThreadNumber = Math.min(currentThreadPossible, maxThreadWanted);
+
+                if (orderThreadNumber > 0) {
+                    orders.push({
+                        sourceHostname: entry[0], 
+                        nbThread: orderThreadNumber, 
+                        request: script
+                    } as ExecutionOrder);
+
+
+                    const ramUsed: number = orderThreadNumber * ramNeededByThread
+                    // maj ram by server
+                    ramByServer.set(entry[0], currentAvailableRam - ramUsed);
+                    
+                    // maj ram needed
+                    ramToUse -= ramUsed;
+                    // maj ram wanted
+                    threadWanted -= orderThreadNumber;
+
+                    // plus de RAM dispo OU tous les threads du scipt sont commandés
+                    if (ramToUse <= 0 || threadWanted <= 0) {
+                        break;
+                    }
+                }
             }
-            const maxThreadWanted = this.getNbPossibleThreads(ramToUse, ramNeededByThread)
-            // plus de thread possible avec la ram restante
-            if (maxThreadWanted <= 0) {
+
+            // plus de RAM dispo
+            if (ramToUse <= 0) {
                 break;
             }
-
-            const currentAvailableRam: number = entry[1] ?? 0;
-
-            // find possible thread number
-            const currentThreadPossible = this.getNbPossibleThreads(currentAvailableRam, ramNeededByThread);
-
-            const nbThreadPossible = Math.min(currentThreadPossible, maxThreadWanted);
-
-            if (nbThreadPossible > 0) {
-                orders.push({
-                    sourceHostname: entry[0], 
-                    nbThread: nbThreadPossible, 
-                    request: executionRequest
-                } as ExecutionOrder);
-
-                const ramUsed: number = nbThreadPossible * ramNeededByThread
-                // maj ram by server
-                ramByServer.set(entry[0], currentAvailableRam - ramUsed);
-                // maj ram needed
-                ramToUse -= ramUsed;
-                if (ramToUse <= 0) {
-                    break;
-                }
-            } 
         }
 
         return orders;

@@ -1,7 +1,7 @@
-import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
 import { Logger } from 'workspace/socle/Logger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
+import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 
 export async function main(ns: NS) {
     const input: InputArg = await getInput(ns);
@@ -9,7 +9,9 @@ export async function main(ns: NS) {
     const logger = new Logger(ns);
     const executionsRepository = new ExecutionsRepository(ns);
 
-    executionsRepository.remove({type: ProcessRequestType.SETUP_HACK, target: input.hostnameTarget});
+    const request = SetupHackExecution.getRequest(input.hostnameTarget);
+
+    executionsRepository.remove(request);
     logger.success(`Setup ${input.hostnameTarget} [disabled]`);
 }
 

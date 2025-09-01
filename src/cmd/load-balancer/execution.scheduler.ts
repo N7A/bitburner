@@ -94,20 +94,24 @@ class ExecutionSchedulerDaemon extends Daemon {
                 continue;
             }
             for(const executionOrder of currentExecutionOrders) {
-                const pids = await this.execute(executionOrder);
-                if (process.request.nbThread !== undefined) {
+                const pid: number = await this.execute(executionOrder);
+                if (pid === 0) {
+                    continue;
+                }
+                
+                if (process.request.request.wantedThreadNumber !== undefined) {
                     // maj thread number wanted
-                    process.request.nbThread = Math.max(process.request.nbThread - executionOrder.nbThread, 0);
+                    process.request.request.wantedThreadNumber = Math.max(process.request.request.wantedThreadNumber - executionOrder.nbThread, 0);
                 }
                 
                 // TODO : setup dashboard, pour reduire au minimum la ram
-                pids.filter(x => x !==0)
+                /*pids.filter(x => x !==0)
                     .forEach(x => {
                         process.setupDashboard(this.ns, x, executionOrder.sourceHostname);
-                    })
+                    })*/
                 this.ns.print(`${process.getActionLog()} ${this.ns.formatNumber(executionOrder.nbThread, 0)} threads on ${Log.source(executionOrder.sourceHostname)}`);
                 // maj pid processes
-                process.request.pid = [...(process.request.pid ?? []), ...pids];
+                process.request.pid.push(pid);
             }
             this.executionsRepository.save(process.request);
         }
@@ -129,7 +133,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                 .reduce((a,b) => a+b);
         const ramBank: number = this.piggyBankRepository.getHash();
 
-        const getId = (request: RamResourceExecution) => request.request.type + (request.request.target ?? '');
+        const getId = (request: RamResourceExecution) => ExecutionsRepository.getHash(request.request);
 
         let newRequest: RamResourceExecution[];
         let newRamDisponible: number;
@@ -148,10 +152,10 @@ class ExecutionSchedulerDaemon extends Daemon {
 
             // thread execution ended
             const killedOrders: RamResourceExecution[] = requests
-                .filter(x => x.getExecutionRequest().wantedThreadNumber !== undefined)
+                .filter(x => x.request.request.wantedThreadNumber !== undefined)
                 .filter(x => x.request.pid?.every(y => !this.ns.isRunning(y)));
             if (killedOrders.length > 0) {
-                killedOrders.filter(x => x.getExecutionRequest().wantedThreadNumber <= 0)
+                killedOrders.filter(x => x.request.request.wantedThreadNumber <= 0)
                     .forEach(x => this.executionsRepository.remove(x.request));
                 break;
             }
@@ -184,32 +188,21 @@ class ExecutionSchedulerDaemon extends Daemon {
     }
 
     //#region Execution
-    async execute(executionOrder: ExecutionOrder): Promise<number[]> {
+    async execute(executionOrder: ExecutionOrder): Promise<number> {
         const logger = new Logger(this.ns);
-        let pids: number[] = []
         if (executionOrder.nbThread === 0) {
-            return pids;
+            return 0;
         }
 
-        for (const script of executionOrder.request.scripts) {
-            // setup
-            if (!this.ns.fileExists(script.scriptsFilepath, executionOrder.sourceHostname)) {
-                logger.warn(`Script ${script.scriptsFilepath} inexistant sur ${executionOrder.sourceHostname}`);
-                const copyPid = this.ns.run(Referentiel.HACKING_DIRECTORY + '/spreading/copy-toolkit.worker.ts', 1, executionOrder.sourceHostname);
-                
-                await waitEndExecution(this.ns, copyPid);
-            }
-
-            const executionPid: number = this.ns.exec(script.scriptsFilepath, executionOrder.sourceHostname, executionOrder.nbThread, ...script.args ?? []);
-            pids.push(executionPid);
-
-            // TODO : reflechir à comment traiter le cas
-            if (executionPid === 0) {
-                return pids;
-            }
+        // setup
+        if (!this.ns.fileExists(executionOrder.request.scriptsFilepath, executionOrder.sourceHostname)) {
+            logger.warn(`Script ${executionOrder.request.scriptsFilepath} inexistant sur ${executionOrder.sourceHostname}`);
+            const copyPid = this.ns.run(Referentiel.HACKING_DIRECTORY + '/spreading/copy-toolkit.worker.ts', 1, executionOrder.sourceHostname);
+            
+            await waitEndExecution(this.ns, copyPid);
         }
 
-        return pids;
+        return this.ns.exec(executionOrder.request.scriptsFilepath, executionOrder.sourceHostname, executionOrder.nbThread, ...executionOrder.request.args ?? []);
     }
     //#endregion Execution
 

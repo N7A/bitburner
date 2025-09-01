@@ -1,12 +1,9 @@
 import * as Referentiel from 'workspace/referentiel'
 import { ServerData } from 'workspace/servers/domain/model/ServerData'
 import { HackData } from 'workspace/servers/domain/model/HackData'
-import{getAvailableServer} from 'workspace/load-balancer/main'
-import {ExecutionOrder} from 'workspace/load-balancer/model/ExecutionServer'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import * as Log from 'workspace/socle/utils/logging';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
-import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest'
 
@@ -30,27 +27,23 @@ export async function main(ns: NS) {
 
     setupDashboard(ns, targetHost);
 
-    const executionsRepository = new ExecutionsRepository(ns);
-
     // load host data
     const data: ServerData|null = serversRepository.get(targetHost);
     const hackData: HackData = data!.hackData
 
     //#region Setup
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Weaken', Log.Color.CYAN)}`);
-    await runScriptUntilEnoughThread(ns, targetHost, hackData, ns.getScriptRam(WEAKEN_SCRIPT), weakenToMax, getWeakenNeededThreads)
+    await runScriptUntilEnoughThread(ns, targetHost, hackData, weakenToMax, getWeakenNeededThreads)
 
     ns.print(`${Log.date(ns, new Date())} - `, 'SUCCESS', ' ', 'Weaken done');
 
     const moneyThresh = hackData.moneyMax as number;
     if (moneyThresh > 0) {
         ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Grow', Log.Color.CYAN)}`);
-        await runScriptUntilEnoughThread(ns, targetHost, hackData, ns.getScriptRam(GROW_SCRIPT), growToMax, getGrowthNeededThreads)
+        await runScriptUntilEnoughThread(ns, targetHost, hackData, growToMax, getGrowthNeededThreads)
         ns.print(`${Log.date(ns, new Date())} - `, 'SUCCESS', ' ', 'Grow done');
     }
     //#endregion Setup
-
-    executionsRepository.remove({type: ProcessRequestType.SETUP_HACK, target: targetHost});
 
     ns.run(ENABLE_PAYLOAD_SCRIPT, 1, targetHost);
 
@@ -72,7 +65,6 @@ async function runScriptUntilEnoughThread(
     ns: NS, 
     targetHost: string, 
     hackData: HackData, 
-    ramCost: number, 
     work: (ns: NS, threadToLaunch: number, targetHost: string) => Promise<any>,
     getNeededThreads: (ns: NS, targetHost: string, hackData: HackData) => number
 ) {
@@ -97,7 +89,15 @@ async function runScriptUntilEnoughThread(
 async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
     const executionsRepository = new ExecutionsRepository(ns);
     
-    const processRequest: ProcessRequest = {type: ProcessRequestType.SETUP_WEAKEN, target: targetHost, weight: 1, nbThread: threadToLaunch};
+    const processRequest: ProcessRequest = {
+        type: ProcessRequestType.ONESHOT, 
+        id: targetHost, 
+        weight: 1, 
+        request: {
+            wantedThreadNumber: threadToLaunch,
+            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [this.targetHost, false]}]
+        }
+    };
     executionsRepository.add(processRequest);
 
     const repository = new ServersRepository(ns);
@@ -108,25 +108,33 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
     // on attend la fin du grow
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${GROW_SCRIPT.substring(GROW_SCRIPT.lastIndexOf('/'), GROW_SCRIPT.lastIndexOf('.ts'))}...`);
     while (executionsRepository.getAll()
-        .some(x => x.type === processRequest.type && x.target === processRequest.target)) {
+        .some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))) {
             await ns.asleep(500);
     }
 
     // TODO : run weaken in same time
-    await runScriptUntilEnoughThread(ns, targetHost, hackData, ns.getScriptRam(WEAKEN_SCRIPT), weakenToMax, getWeakenNeededThreads);
+    await runScriptUntilEnoughThread(ns, targetHost, hackData, weakenToMax, getWeakenNeededThreads);
 }
 
 async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): Promise<void> {
     const executionsRepository = new ExecutionsRepository(ns);
 
-    const processRequest: ProcessRequest = {type: ProcessRequestType.SETUP_WEAKEN, target: targetHost, weight: 1, nbThread: threadToLaunch};
+    const processRequest: ProcessRequest = {
+        type: ProcessRequestType.ONESHOT, 
+        id: targetHost, 
+        weight: 1, 
+        request: {
+            wantedThreadNumber: threadToLaunch,
+            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [this.targetHost, false]}]
+        }
+    };
     executionsRepository.add(processRequest);
     
     // wait execution end
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', 
         `Waiting ${WEAKEN_SCRIPT.substring(WEAKEN_SCRIPT.lastIndexOf('/'), WEAKEN_SCRIPT.lastIndexOf('.ts'))}...`);
     while (executionsRepository.getAll()
-        .some(x => x.type === processRequest.type && x.target === processRequest.target)) {
+        .some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))) {
             await ns.asleep(500);
     }
 }

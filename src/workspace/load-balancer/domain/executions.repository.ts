@@ -1,6 +1,7 @@
 import * as Referentiel from 'workspace/referentiel';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { JsonRepository } from 'workspace/socle/interface/json-repository';
+import { getHashFromContent } from 'workspace/socle/utils/file';
 
 export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
 
@@ -24,7 +25,7 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
 
         // remove execution
         executions = executions.filter(x => {
-            return !(x.type === execution.type && x.target === execution.target)
+            return ExecutionsRepository.getHash(execution) !== ExecutionsRepository.getHash(x)
         });
         executions.push(execution);
 
@@ -45,15 +46,25 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
         let executions: ProcessRequest[] = this.getAll();
 
         const countLine = executions.filter(execution => {
-            return (execution.type === executionToRemove.type && execution.target === executionToRemove.target)
+            return ExecutionsRepository.getHash(execution) === ExecutionsRepository.getHash(executionToRemove)
         }).length
         // remove execution
         executions = executions.filter(execution => {
-            return !(execution.type === executionToRemove.type && execution.target === executionToRemove.target)
+            return ExecutionsRepository.getHash(execution) !== ExecutionsRepository.getHash(executionToRemove)
         });
         this.ns.print(`Removed lines ${countLine}`)
 
         // save data
         this.resetWith(executions);
+    }
+    
+    static getHash(order: ProcessRequest) {
+        return getHashFromContent(JSON.stringify({
+            type: order.type,
+            id: order.id,
+            request: {
+                scripts: order.request?.scripts
+            }
+        } as ProcessRequest))
     }
 }

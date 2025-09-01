@@ -1,7 +1,7 @@
-import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
 import { Logger } from 'workspace/socle/Logger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
+import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 
 export async function main(ns: NS) {
     const input: InputArg = await getInput(ns);
@@ -9,14 +9,16 @@ export async function main(ns: NS) {
     const logger = new Logger(ns);
     const executionsRepository = new ExecutionsRepository(ns);
 
+    const request = SetupHackExecution.getRequest(input.hostnameTarget);
+
     // si déjà actif
-    if (executionsRepository.getAll().some(x => x.type === ProcessRequestType.SETUP_HACK && x.target === input.hostnameTarget)) {
+    if (executionsRepository.getAll().some(x => ExecutionsRepository.getHash(request) === ExecutionsRepository.getHash(x))) {
         logger.warn(`Setup ${input.hostnameTarget} already enabled`);
         // on ne fait rien
         return;
     }
 
-    executionsRepository.add({type: ProcessRequestType.SETUP_HACK, target: input.hostnameTarget, weight: 1});
+    executionsRepository.add(request);
     logger.success(`Setup ${input.hostnameTarget} [enabled]`);
 }
 

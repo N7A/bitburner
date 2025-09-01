@@ -1,49 +1,50 @@
 import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
-import { ServerData } from 'workspace/servers/domain/model/ServerData'
-import { HackData } from 'workspace/servers/domain/model/HackData'
-import { ServersRepository } from 'workspace/servers/domain/servers.repository';
-import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import * as Log from 'workspace/socle/utils/logging';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 
 //#region Constants
 export const SETUP_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/setup-server.sequencer.ts';
 //#endregion Constants
 
-export class SetupExecution implements RamResourceExecution {
-    private executionRequest: ExecutionRequest;
-    private targetHost: string;
+export class SetupHackExecution implements RamResourceExecution {
+    private targetHostname: string;
     request: ProcessRequest;
 
     constructor(request: ProcessRequest) {
-        this.targetHost = request.target;
+        this.targetHostname = request.id;
         this.request = request;
-    
-        this.executionRequest = {
-            wantedThreadNumber: 1,
-            scripts: [{scriptsFilepath: SETUP_SCRIPT, args: [this.targetHost]}]
-        };
-    }
-    
-    getActionLog(): string {
-        return `${Log.action('Setup')} ${this.request.target ? Log.target(this.request.target) + ' ': ''}`;
-    }
-
-    getExecutionRequest(): ExecutionRequest {
-        return this.executionRequest;
     }
 
     isExecutionUsless(ns: NS): boolean {
-        const serversRepository = new ServersRepository(ns);
+        /*const serversRepository = new ServersRepository(ns);
         // load host data
-        const data: ServerData|null = serversRepository.get(this.targetHost);
+        const data: ServerData|null = serversRepository.get(this.targetHostname);
         const hackData: HackData = data!.hackData;
-        return ns.getServer(this.targetHost).hackDifficulty <= hackData.minDifficulty
-            && ns.getServer(this.targetHost).moneyAvailable >= hackData.moneyMax
+        return ns.getServer(this.targetHostname).hackDifficulty <= hackData.minDifficulty
+            && ns.getServer(this.targetHostname).moneyAvailable >= hackData.moneyMax*/
+        return false;
+    }
+    
+    getActionLog(): string {
+        return `${Log.action('Setup')} ${this.targetHostname}`;
     }
     
     setupDashboard(ns: NS, pid: number, targetHost: string) {        
         Log.initTailTitle(ns, 'Setup', 'looper', targetHost, pid);
+    }
+
+    static getRequest(targetHostname: string): ProcessRequest {
+        return {
+            type: ProcessRequestType.SETUP_HACK, 
+            id: targetHostname, 
+            weight: 1,
+            request: {
+                wantedThreadNumber: 1,
+                scripts: [{scriptsFilepath: SETUP_SCRIPT, args: [targetHostname]}]
+            },
+            label: `${Log.action('Setup')} ${targetHostname}`
+        };
     }
 }

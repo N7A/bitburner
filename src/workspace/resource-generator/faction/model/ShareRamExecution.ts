@@ -1,28 +1,24 @@
-import * as Referentiel from 'workspace/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import * as Log from 'workspace/socle/utils/logging';
-import { ExecutionRequest } from 'workspace/load-balancer/model/ExecutionServer';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
+import * as Referentiel from 'workspace/referentiel'
+
+//#region Constants
+const SHARE_SCRIPT = Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.daemon.ts';
+//#endregion Constants
 
 export class ShareRamExecution implements RamResourceExecution {
-    private executionRequest: ExecutionRequest;
     request: ProcessRequest;
 
     constructor(request: ProcessRequest) {
         this.request = request;
-        this.executionRequest = {
-            scripts: [{scriptsFilepath: Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.daemon.ts'}]
-        }
     }
 
     getActionLog(): string {
         return Log.action('Sharing');
     }
     
-    getExecutionRequest(): ExecutionRequest {
-        return this.executionRequest;
-    }
-
     isExecutionUsless(ns: NS): boolean {
         // check if script useless
         if (ns.getPlayer().factions.length === 0) {
@@ -38,5 +34,14 @@ export class ShareRamExecution implements RamResourceExecution {
         ns.enableLog("share");
         
         Log.initTailTitle(ns, 'Share RAM', 'looper', targetHost, pid);
+    }
+
+    static getRequest(): ProcessRequest {
+        return {
+                type: ProcessRequestType.SHARE_RAM,
+                request: {
+                    scripts: [{scriptsFilepath: SHARE_SCRIPT}]
+                }
+            }
     }
 }
