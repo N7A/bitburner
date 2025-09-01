@@ -21,7 +21,7 @@ Fourni les paramètres nécessaires pour executer les workers (load-balancer pou
 
 ## .scheduler
 
-Loop infini, quand une condition est déclenché (exemple de nouvelles cibles), appel un sequencer pour traiter le nouvel état.
+Loop infini, attend un évènement (exemple de nouvelles cibles), puis appel un sequencer pour traiter le nouvel état.
 
 ## .launcher
 

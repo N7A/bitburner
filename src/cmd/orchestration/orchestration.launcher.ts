@@ -3,7 +3,7 @@ import { CMD_DIRECTORY } from "workspace/referentiel";
 /**
  * Active les scripts quand le jeu atteind l'état voulu.
  */
-class ExecutionLauncher {
+class OrchestrationLauncher {
     run() {
         // TODO: run thread waiting
         this.codingContractsOrchestration();
