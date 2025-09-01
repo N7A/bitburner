@@ -96,10 +96,10 @@ function getExpansionMove(board: string[], validMoves: boolean[][]) {
             const isNotReservedSpace = x % 2 === 1 || y % 2 === 1;
             
             // If a point to the north, south, east, or west is a friendly router
-            const isNeighborFriendly = board[x + 1][y] === 'X'
-                || board[x - 1][y] === 'X'
-                || board[x][y + 1] === 'X'
-                || board[x][y - 1] === 'X';
+            const isNeighborFriendly = board[x + 1]?.[y] === 'X'
+                || board[x - 1]?.[y] === 'X'
+                || board[x]?.[y + 1] === 'X'
+                || board[x]?.[y - 1] === 'X';
 
             if (isValidMove && isNotReservedSpace && isNeighborFriendly) {
                 moveOptions.push([x, y]);
