@@ -18,8 +18,8 @@ function getMinRamArchitecture(ns: NS, scripts: string[]) {
     ramByArchitecture.set('Multi-Daemon', getMultiDaemonRam(ns, scripts));
     
     let min: [string, number] = ramByArchitecture.entries().next().value;
-    for (const architecture of ramByArchitecture) {
-        if ((min.at(1) as number) > (architecture.at(1) as number)) {
+    for (const architecture of Array.from(ramByArchitecture.entries())) {
+        if ((min[1] as number) > (architecture[1] as number)) {
             min = architecture;
         }
     }

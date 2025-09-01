@@ -25,6 +25,11 @@ export function getFilepaths(ns: NS, hostname: string, directory: string) {
  */
 export function getHash(ns: NS, filepath: string): number {
     const contents = ns.read(filepath);
+    
+    return getHashFromContent(contents);
+}
+
+export function getHashFromContent(contents: string): number {
     let hash = 0;
     for (const char of contents) {
         hash = ((hash << 5) - hash) + char.charCodeAt(0);
