@@ -6,10 +6,10 @@ import * as Log from 'workspace/socle/utils/logging';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 //#region Constants
-export const WEAKEN_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/weaken.daemon.ts';
+export const GROW_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/grow.daemon.ts';
 //#endregion Constants
 
-export class SetupWeakenExecution implements RamResourceExecution {
+export class SetupGrowExecution implements RamResourceExecution {
     private executionRequest: ExecutionRequest;
     private targetHost: string;
     request: ProcessRequest;
@@ -23,13 +23,13 @@ export class SetupWeakenExecution implements RamResourceExecution {
     
         this.executionRequest = {
             wantedThreadNumber: nbThread,
-            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [this.targetHost, false]}]
+            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [this.targetHost, false]}]
         };
-        this.dashboard = new Dashboard(ns, 'Weaken Setup', {role: 'looper', hostSource: this.targetHost});
+        this.dashboard = new Dashboard(ns, 'Grow Setup', {role: 'looper', hostSource: this.targetHost});
     }
     
     getActionLog(): string {
-        return `${Log.action('Weaken Setup')} ${this.request.target ? Log.target(this.request.target) + ' ': ''}`;
+        return `${Log.action('Grow Setup')} ${this.request.target ? Log.target(this.request.target) + ' ': ''}`;
     }
 
     getExecutionRequest(): ExecutionRequest {

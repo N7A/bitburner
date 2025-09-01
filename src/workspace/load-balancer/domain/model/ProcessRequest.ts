@@ -2,6 +2,7 @@ import { ProcessRequestType } from "workspace/load-balancer/domain/model/Process
 
 export type ProcessRequest = {
     type: ProcessRequestType;
+    nbThread?: number;
     target?: string;
     weight?: number;
     pid?: number[];

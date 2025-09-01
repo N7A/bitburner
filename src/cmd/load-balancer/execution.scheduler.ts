@@ -88,16 +88,16 @@ class ExecutionSchedulerDaemon extends Daemon {
 
         this.ns.print(Log.action('Executions'), ` (${executions.size})`);
         // lancement des scripts
-        for (const process of executions.keys()) {
+        for (const process of Array.from(executions.keys())) {
             let currentExecutionOrders = executions.get(process)
             if (!currentExecutionOrders) {
                 continue;
             }
             for(const executionOrder of currentExecutionOrders) {
                 const pids = await this.execute(executionOrder);
-                if (process.request.wantedThreadNumber !== undefined) {
+                if (process.request.nbThread !== undefined) {
                     // maj thread number wanted
-                    process.request.wantedThreadNumber = Math.max(process.request.wantedThreadNumber - executionOrder.nbThread, 0);
+                    process.request.nbThread = Math.max(process.request.nbThread - executionOrder.nbThread, 0);
                 }
                 
                 // TODO : setup dashboard, pour reduire au minimum la ram

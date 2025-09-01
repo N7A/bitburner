@@ -8,6 +8,7 @@ import * as Log from 'workspace/socle/utils/logging';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
+import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest'
 
 //#region Constants
 const ENABLE_PAYLOAD_SCRIPT = "cmd/load-balancer/domain/payload.enable.ts";
@@ -37,9 +38,8 @@ export async function main(ns: NS) {
 
     //#region Setup
     ns.print(`${Log.date(ns, new Date())} - ${Log.color('Starting Weaken', Log.Color.CYAN)}`);
-    // TODO: add order to load-balancer instead; need spe ordertype + adaptation load-balancer
     await runScriptUntilEnoughThread(ns, targetHost, hackData, ns.getScriptRam(WEAKEN_SCRIPT), weakenToMax, getWeakenNeededThreads)
-    
+
     ns.print(`${Log.date(ns, new Date())} - `, 'SUCCESS', ' ', 'Weaken done');
 
     const moneyThresh = hackData.moneyMax as number;
@@ -68,17 +68,12 @@ function setupDashboard(ns: NS, targetHost: string) {
 	ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', 'Waiting to setup...');
 }
 
-function refreshDashBoard(ns: NS, neededGrowThread: number, possibleGrowThread: number) {
-    ns.print(Log.INFO('Needed thread', ns.formatNumber(neededGrowThread, 0)));
-    ns.print(Log.INFO('Available thread', ns.formatNumber(possibleGrowThread, 0)));
-}
-
 async function runScriptUntilEnoughThread(
     ns: NS, 
     targetHost: string, 
     hackData: HackData, 
     ramCost: number, 
-    work: (ns: NS, threadToLaunch: number, sourceHostname: string, targetHost: string) => Promise<any>,
+    work: (ns: NS, threadToLaunch: number, targetHost: string) => Promise<any>,
     getNeededThreads: (ns: NS, targetHost: string, hackData: HackData) => number
 ) {
     let neededThread: number;
@@ -88,45 +83,52 @@ async function runScriptUntilEnoughThread(
         // define needed threads
         neededThread = Math.floor(getNeededThreads(ns, targetHost, hackData));
         
-        // define server from where to execute
-        const availableServer: ExecutionOrder = getAvailableServer(ns, ramCost, neededThread);
-        refreshDashBoard(ns, neededThread, availableServer.nbThread);
+        ns.print(Log.INFO('Needed thread', ns.formatNumber(neededThread, 0)));
 
-        // define thread to launch
-        const threadToLaunch = Math.min(neededThread, availableServer.nbThread);
-        if (threadToLaunch > 0) {
+        if (neededThread > 0) {
             ns.print('----------')
             // wait execution end
-            await work(ns, threadToLaunch, availableServer.sourceHostname, targetHost);
-        } else {
-            await ns.asleep(500)
+            await work(ns, neededThread, targetHost);
         }
     } while(neededThread > 0)
     ns.print(Log.getEndLog());
 }
 
-async function growToMax(ns: NS, threadToLaunch: number, sourceHostname: string, targetHost: string) {
+async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
+    const executionsRepository = new ExecutionsRepository(ns);
+    
+    const processRequest: ProcessRequest = {type: ProcessRequestType.SETUP_WEAKEN, target: targetHost, weight: 1, nbThread: threadToLaunch};
+    executionsRepository.add(processRequest);
+
     const repository = new ServersRepository(ns);
     // load host data
     const data: ServerData|null = repository.get(targetHost);
     const hackData: HackData = data!.hackData
 
-    // execute grow with max threads possible
-    let pidExecution = ns.exec(GROW_SCRIPT, sourceHostname, threadToLaunch, targetHost, false);
     // on attend la fin du grow
-    ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${GROW_SCRIPT.substring(GROW_SCRIPT.lastIndexOf('/'), GROW_SCRIPT.lastIndexOf('.ts'))} on {${sourceHostname}}...`);
-    await waitEndExecution(ns, pidExecution);
+    ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${GROW_SCRIPT.substring(GROW_SCRIPT.lastIndexOf('/'), GROW_SCRIPT.lastIndexOf('.ts'))}...`);
+    while (executionsRepository.getAll()
+        .some(x => x.type === processRequest.type && x.target === processRequest.target)) {
+            await ns.asleep(500);
+    }
 
     // TODO : run weaken in same time
     await runScriptUntilEnoughThread(ns, targetHost, hackData, ns.getScriptRam(WEAKEN_SCRIPT), weakenToMax, getWeakenNeededThreads);
 }
 
-async function weakenToMax(ns: NS, threadToLaunch: number, sourceHostname: string, targetHost: string): Promise<void> {
-    let pidExecution = ns.exec(WEAKEN_SCRIPT, sourceHostname, threadToLaunch, targetHost, false);
+async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): Promise<void> {
+    const executionsRepository = new ExecutionsRepository(ns);
+
+    const processRequest: ProcessRequest = {type: ProcessRequestType.SETUP_WEAKEN, target: targetHost, weight: 1, nbThread: threadToLaunch};
+    executionsRepository.add(processRequest);
+    
     // wait execution end
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', 
-        `Waiting ${WEAKEN_SCRIPT.substring(WEAKEN_SCRIPT.lastIndexOf('/'), WEAKEN_SCRIPT.lastIndexOf('.ts'))} on {${sourceHostname}}...`);
-    await waitEndExecution(ns, pidExecution);
+        `Waiting ${WEAKEN_SCRIPT.substring(WEAKEN_SCRIPT.lastIndexOf('/'), WEAKEN_SCRIPT.lastIndexOf('.ts'))}...`);
+    while (executionsRepository.getAll()
+        .some(x => x.type === processRequest.type && x.target === processRequest.target)) {
+            await ns.asleep(500);
+    }
 }
 
 const getGrowthNeededThreads = (ns: NS, targetHost: string, hackData: HackData) => {

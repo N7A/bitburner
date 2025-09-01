@@ -3,6 +3,7 @@ import { Bank } from 'workspace/piggy-bank/domain/model/Bank'
 import { RamBank } from 'workspace/piggy-bank/domain/model/RamBank';
 import { MoneyBank } from 'workspace/piggy-bank/domain/model/MoneyBank';
 import { getHash } from 'workspace/socle/utils/file';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 
 const REPOSITORY = Referentiel.REPOSITORIES_DIRECTORY + '/piggy-bank.json';
 
@@ -28,12 +29,13 @@ export class PiggyBankRepository {
      */
     get(): Bank {
         if (!this.ns.fileExists(REPOSITORY)) {
-            return {moneyBank: {rateToKeep:0, toReserve: 0}, ramBank: {rateToKeep: new Map(), toReserve: new Map()}};
+            return {moneyBank: {rateToKeep:0, toReserve: 0}, ramBank: {rateToKeep: new Map(), toReserve: new Map(), repartitionByType: new Map()}};
         }
         let bank: Bank = JSON.parse(this.ns.read(REPOSITORY));
         bank.ramBank = {
             rateToKeep: new Map(Object.entries(bank.ramBank.rateToKeep)),
-            toReserve: new Map(Object.entries(bank.ramBank.toReserve))
+            toReserve: new Map(Object.entries(bank.ramBank.toReserve)),
+            repartitionByType: new Map(Object.entries(bank.ramBank.repartitionByType))
         }
 
         return bank;
@@ -77,6 +79,13 @@ export class PiggyBankRepository {
             toReserve: new Map([
                 ['home', 20], 
                 ['f1rst', 0]
+            ]),
+            repartitionByType: new Map([
+                [ProcessRequestType.SHARE_RAM, 1], 
+                [ProcessRequestType.HACK, 1], 
+                [ProcessRequestType.SETUP_HACK, 1], 
+                [ProcessRequestType.SETUP_WEAKEN, 1], 
+                [ProcessRequestType.SETUP_GROW, 1]
             ])
         };
 
@@ -86,6 +95,7 @@ export class PiggyBankRepository {
         this.save(bank);
     }
     
+    // TODO: split repo money / ram
     getHash() {
         return getHash(this.ns, REPOSITORY);
     }

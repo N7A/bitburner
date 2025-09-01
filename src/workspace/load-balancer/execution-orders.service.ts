@@ -4,6 +4,8 @@ import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceE
 import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution'
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution'
 import { SetupExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
+import { SetupWeakenExecution } from "workspace/resource-generator/hacking/model/SetupWeakenExecution";
+import { SetupGrowExecution } from "workspace/resource-generator/hacking/model/SetupGrowExecution";
 
 export class ExecutionOrdersService {
     private ns: NS;
@@ -27,6 +29,10 @@ export class ExecutionOrdersService {
                     return new PayloadExecution(this.ns, order);
                 } else if (order.type === ProcessRequestType.SETUP_HACK) {
                     return new SetupExecution(order);
+                } else if (order.type === ProcessRequestType.SETUP_WEAKEN) {
+                    return new SetupWeakenExecution(this.ns, order, order.nbThread);
+                } else if (order.type === ProcessRequestType.SETUP_GROW) {
+                    return new SetupGrowExecution(this.ns, order, order.nbThread);
                 }
                 return null;
             })

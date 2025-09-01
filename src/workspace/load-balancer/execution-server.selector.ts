@@ -2,23 +2,25 @@ import { ServersService } from 'workspace/servers/servers.service';
 import * as Referentiel from 'workspace/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/socle/utils/logging';
-import { weights } from 'workspace/load-balancer/application-properties'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import { Logger } from 'workspace/socle/Logger';
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
+import { PiggyBankRepository } from '../piggy-bank/domain/piggy-bank.repository';
 
 export class ExecutionSelector {
     private ns: NS;
     private orders: RamResourceExecution[];
     private logger: Logger;
+    private piggyBankRepository: PiggyBankRepository;
 
     constructor(ns: NS, orders: RamResourceExecution[]) {
         this.ns = ns;
         this.orders = orders;
         this.logger = new Logger(ns);
+        this.piggyBankRepository = new PiggyBankRepository(ns);
     }
 
     async getRepartitions(): Promise<Map<RamResourceExecution, ExecutionOrder[]>> {
@@ -78,15 +80,18 @@ export class ExecutionSelector {
     }
 
     private getTypeWeight(type: ProcessRequestType) {
-        return (weights.get(type) ?? 1) / Math.max(Array.from(new Set(this.orders.map(x => x.request.type)))
-                .map(x => weights.get(x) ?? 1)
+        const getWeightByType = (requestType: ProcessRequestType) => (this.piggyBankRepository.get().ramBank.repartitionByType as Map<ProcessRequestType, number>).get(requestType) ?? 1;
+        const totalWeightByType = Math.max(Array.from(new Set(this.orders.map(x => x.request.type)))
+                .map(x => getWeightByType(x))
                 .reduce((a,b) => a+b), 1);
+        return getWeightByType(type) / totalWeightByType;
     }
 
     private getPersonalWeight(request: ProcessRequest) {
-        return (request.weight ?? 1) / Math.max(this.orders.filter(x => x.request.type === request.type)
+        const totalWeight = Math.max(this.orders.filter(x => x.request.type === request.type)
                 .map(x => x.request.weight ?? 1)
                 .reduce((a,b) => a+b), 1);
+        return (request.weight ?? 1) / totalWeight;
     }
 
     private async getExecutionRepartition(ns: NS, ramByServer: Map<string, number>, executionRequest: ExecutionRequest, ramAuthorized: number): Promise<ExecutionOrder[]> {
