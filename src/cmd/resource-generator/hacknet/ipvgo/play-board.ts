@@ -138,6 +138,9 @@ function getCaptureMove(ns: NS, board: string[], validMoves: boolean[][]) {
 
     // Choose one of the found moves at random
     const randomIndex = Math.round(Math.random() * moveOptions.length);
+    if (moveOptions.length > 0) {
+        ns.print('Capture move');
+    }
     return moveOptions[randomIndex] ?? getExpansionMove(board, validMoves);
 }
 
@@ -187,5 +190,8 @@ function getDefenseMove(ns: NS, board: string[], validMoves: boolean[][]) {
 
     // Choose one of the found moves at random
     const randomIndex = Math.round(Math.random() * moveOptions.length);
+    if (moveOptions.length > 0) {
+        ns.print('Defense move');
+    }
     return moveOptions[randomIndex] ?? getCaptureMove(ns, board, validMoves);
 }
