@@ -95,7 +95,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
         weight: 1, 
         request: {
             wantedThreadNumber: threadToLaunch,
-            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [this.targetHost, false]}]
+            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, false]}]
         }
     };
     executionsRepository.add(processRequest);
@@ -125,7 +125,7 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): 
         weight: 1, 
         request: {
             wantedThreadNumber: threadToLaunch,
-            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [this.targetHost, false]}]
+            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, false]}]
         }
     };
     executionsRepository.add(processRequest);
