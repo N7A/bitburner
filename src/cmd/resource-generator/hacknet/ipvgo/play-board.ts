@@ -1,6 +1,9 @@
 export async function main(ns: NS) {
     // singleton
-    ns.kill(ns.getRunningScript('cmd/resource-generator/hacknet/ipvgo/play-board.ts').pid);
+    const script: RunningScript | null = ns.getRunningScript('cmd/resource-generator/hacknet/ipvgo/play-board.ts');
+    if (script) {
+        ns.kill(script.pid);
+    }
 
     ns.disableLog('go.makeMove');
     ns.disableLog('sleep');
