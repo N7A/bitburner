@@ -78,8 +78,8 @@ class PlayBoardDaemon extends Daemon {
         let alreadyPass: boolean = false;
         let result: {
             type: "gameOver" | "move" | "pass";
-            x: number;
-            y: number;
+            x: number | null;
+            y: number | null;
         };
         
         if (this.ns.go.getCurrentPlayer() === "White") {
@@ -101,7 +101,7 @@ class PlayBoardDaemon extends Daemon {
 
             // TODO: more move options
             // Choose a move
-            const nodeMove: Node = this.getMoveChoice(this.ns, board);
+            const nodeMove: Node | undefined = this.getMoveChoice(this.ns, board);
 
             if (nodeMove === undefined) {
                 if (alreadyPass) {
@@ -117,7 +117,17 @@ class PlayBoardDaemon extends Daemon {
             }
 
             // Log opponent's next move, once it happens
-            await this.ns.go.opponentNextTurn();
+            const opponentMove = await this.ns.go.opponentNextTurn();
+
+            if (
+                // l'adversaire pass
+                opponentMove.type === 'pass'
+                // et il n'a plus de routeur
+                && board.every(x => !x.includes(this.goOpponent))
+            ) {
+                // continuer la partie ne rapporte pas plus
+                result = await this.ns.go.passTurn();
+            }
 
             await this.ns.sleep(200);
 
@@ -147,6 +157,7 @@ class PlayBoardDaemon extends Daemon {
         const stratPriority: {function: ((availableNodes:Node[]) => Node[]), name: string}[] = [
             {function: (availableNodes: Node[]) => availableNodes.filter(x => this.isCaptureMove(ns, board, x)), name: 'Capture move'},
             {function: (availableNodes: Node[]) => availableNodes.filter(x => this.isDefenseMove(ns, board, x)), name: 'Defense move'},
+            // TODO: get max liberty in prior
             {function: (availableNodes: Node[]) => availableNodes.filter(x => x.isNeighborFriendly(board, this.getOpponent())), name: 'Reduce opponent liberties'},
             {function: (availableNodes: Node[]) => availableNodes.filter(x => this.isExpansionMove(ns, board, x)), name: 'Epansion move'},
             {function: (availableNodes: Node[]) => {
@@ -171,7 +182,12 @@ class PlayBoardDaemon extends Daemon {
 
     getAvailableNodes(strats: {function: ((availableNodes:Node[]) => Node[]), name: string}[], availableNodes: Node[]) {
         // strat suivante
-        if (strats.length <= 0) {
+        if (
+            // plus de strategie à tester
+            strats.length <= 0
+            // choix unique
+            || availableNodes.length <= 1
+        ) {
             return availableNodes;
         }
 
@@ -294,7 +310,7 @@ class Node {
                         && ns.go.analysis.getLiberties(board)[point.x]?.[point.y] === 1)
             )
             // not same move as previous
-            && ns.go.getMoveHistory()[0][this.x][this.y] !== player;
+            && ns.go.getMoveHistory().length > 0 && ns.go.getMoveHistory()[0][this.x][this.y] !== player;
     }
 
     /**
