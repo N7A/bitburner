@@ -1,5 +1,6 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import * as Log from 'workspace/socle/utils/logging';
 
 enum BoardSize {
     CINQ = 5, 
@@ -97,6 +98,7 @@ class PlayBoardDaemon extends Daemon {
         // not isAutoCapturable
         // valid
         do {
+            this.ns.print(Log.getStartLog());
             const board = this.ns.go.getBoardState();
 
             // TODO: more move options
@@ -112,6 +114,7 @@ class PlayBoardDaemon extends Daemon {
                 result = await this.ns.go.passTurn();
                 alreadyPass = true;
             } else {
+                this.ns.print(nodeMove.x, ':', nodeMove.y);
                 // Play the selected move
                 result = await this.ns.go.makeMove(nodeMove.x, nodeMove.y);
             }
@@ -123,12 +126,14 @@ class PlayBoardDaemon extends Daemon {
                 // l'adversaire pass
                 opponentMove.type === 'pass'
                 // et il n'a plus de routeur
-                && board.every(x => !x.includes(this.goOpponent))
+                && this.ns.go.getBoardState().every(x => !x.includes(this.getOpponent()))
             ) {
+                this.ns.print('No more opponent');
                 // continuer la partie ne rapporte pas plus
                 result = await this.ns.go.passTurn();
             }
 
+            this.ns.print(Log.getEndLog());
             await this.ns.sleep(200);
 
             // Keep looping as long as the opponent is playing moves
@@ -155,16 +160,23 @@ class PlayBoardDaemon extends Daemon {
 
         const validNodes: Node[] = nodes.filter(x => x.isValidMove(ns, board, this.player));
         const stratPriority: {function: ((availableNodes:Node[]) => Node[]), name: string}[] = [
-            {function: (availableNodes: Node[]) => availableNodes.filter(x => this.isCaptureMove(ns, board, x)), name: 'Capture move'},
-            {function: (availableNodes: Node[]) => availableNodes.filter(x => this.isDefenseMove(ns, board, x)), name: 'Defense move'},
+            {name: 'Not auto caturable', function: (availableNodes: Node[]) => availableNodes.filter(x => x.isAutoCapturableMove(ns, board, this.player))},
+            // TODO: get bigest network first
+            {name: 'Capture move', function: (availableNodes: Node[]) => availableNodes.filter(x => this.isCaptureMove(ns, board, x))},
+            {name: 'Defense move', function: (availableNodes: Node[]) => availableNodes.filter(x => this.isDefenseMove(ns, board, x))},
+            // TODO: prevent link network opponent
             // TODO: get max liberty in prior
-            {function: (availableNodes: Node[]) => availableNodes.filter(x => x.isNeighborFriendly(board, this.getOpponent())), name: 'Reduce opponent liberties'},
-            {function: (availableNodes: Node[]) => availableNodes.filter(x => this.isExpansionMove(ns, board, x)), name: 'Epansion move'},
-            {function: (availableNodes: Node[]) => {
+            {name: 'Reduce opponent liberties', function: (availableNodes: Node[]) => availableNodes.filter(x => x.isNeighborFriendly(board, this.getOpponent()))},
+            // TODO: add link network
+            {name: 'Epansion move', function: (availableNodes: Node[]) => availableNodes.filter(x => this.isExpansionMove(board, x))},
+            {name: 'Maximum liberty', function: (availableNodes: Node[]) => {
                 const personnalLibertyMax: number = availableNodes.map(x => x.getPersonnalLiberty(board))
                     .reduce((a,b) => Math.max(a,b));
                 return availableNodes.filter(point => point.getPersonnalLiberty(board) === personnalLibertyMax)
-            }, name: 'Maximum liberty'},
+            }},
+            // Leave some spaces to make it harder to capture our pieces.
+            // We don't want to run out of empty node connections!
+            {name: 'Give some space', function: (availableNodes: Node[]) => availableNodes.filter(point => point.x % 2 === 1 || point.y % 2 === 1)},
             // any valid move
             {function: (availableNodes: Node[]) => availableNodes, name: 'Random move'}
         ]
@@ -172,7 +184,7 @@ class PlayBoardDaemon extends Daemon {
         const availableNodes = this.getAvailableNodes(stratPriority, validNodes);
         if (availableNodes.length > 0) {
             // Choose one of the found moves at random
-            const randomIndex = Math.round(Math.random() * availableNodes.length);
+            const randomIndex = Math.round(Math.random() * (availableNodes.length-1));
             return availableNodes[randomIndex];
         }
 
@@ -180,7 +192,7 @@ class PlayBoardDaemon extends Daemon {
         return undefined;
     }
 
-    getAvailableNodes(strats: {function: ((availableNodes:Node[]) => Node[]), name: string}[], availableNodes: Node[]) {
+    getAvailableNodes(strats: {function: ((availableNodes:Node[]) => Node[]), name: string}[], availableNodes: Node[]): Node[] {
         // strat suivante
         if (
             // plus de strategie à tester
@@ -194,8 +206,9 @@ class PlayBoardDaemon extends Daemon {
         // application strat si possible, puis test strat suivante
         const strat = strats.shift();
         const stratNodes: Node[] = strat.function(availableNodes);
+        this.ns.print(strat.name, ' : ', stratNodes.length);
         if (stratNodes.length > 0) {
-            this.ns.print(strat.name)
+            this.ns.print('SUCCESS ', strat.name)
             return this.getAvailableNodes(strats, stratNodes);
         }
         
@@ -203,12 +216,8 @@ class PlayBoardDaemon extends Daemon {
         return this.getAvailableNodes(strats, availableNodes);
     }
 
-    private isExpansionMove(ns: NS, board: string[], node: Node) {
-        // Leave some spaces to make it harder to capture our pieces.
-        // We don't want to run out of empty node connections!
-        const isNotReservedSpace = node.x % 2 === 1 || node.y % 2 === 1;
-        
-        return isNotReservedSpace && node.isNeighborFriendly(board, this.player);
+    private isExpansionMove(board: string[], node: Node) {
+        return node.isNeighborFriendly(board, this.player);
     }
 
     private isCaptureMove(ns: NS, board: string[], node: Node) {
@@ -216,11 +225,8 @@ class PlayBoardDaemon extends Daemon {
     }
 
     private isDefenseMove(ns: NS, board: string[], node: Node) {
-        const isSaveMove = node.getAdjacent()
-            .filter(point => board[point.x]?.[point.y] === '.').length >=2
-            || node.getAdjacent()
-            .filter(point => board[point.x]?.[point.y] === this.player)
-            .some(point => ns.go.analysis.getLiberties(board)[point.x]?.[point.y] >= 3);
+        const futurNetworkLiberties = ns.go.analysis.getLiberties(node.getFutureBoard(ns, board, this.player))[node.x][node.y]; 
+        const isSaveMove = futurNetworkLiberties >= 2;
 
         return node.isInDanger(ns, board, this.player) && isSaveMove;
     }
@@ -280,6 +286,32 @@ class Node {
                 && ns.go.analysis.getLiberties(board)[point.x]?.[point.y] === 1);
     }
     
+    isAutoCaturable(ns: NS, board: string[], player: 'X' | 'O') {
+        return ns.go.analysis.getLiberties(this.getFutureBoard(ns, board, player))[this.x][this.y] === 1;
+    }
+    
+    getFutureBoard(ns: NS, board: string[], player: 'X' | 'O'): string[] {
+        const opponent = player === 'X' ? 'O' : 'X';
+        const chainIds = Array.from(new Set(this.getAdjacent()
+            // opponent
+            .filter(node => board[node.x]?.[node.y] === opponent)
+            // will be kill
+            .filter(node => ns.go.analysis.getLiberties()[node.x]?.[node.y] === 1)
+            // get chain id
+            .map(node => ns.go.analysis.getChains()[node.x]?.[node.y])));
+
+        return board.map((row, xIndex) => {
+                return Array.from(row).map((value, yIndex) => {
+                    if (xIndex === this.x && yIndex === this.y) { // move
+                        return player;
+                    } else if (chainIds.includes(ns.go.analysis.getChains()[xIndex][yIndex])) { // killed
+                        return '.';
+                    }
+                    return value;
+                }).join('')
+            });
+    }
+
     /**
      * Détermine si le placement est valide.
      * 
@@ -290,6 +322,8 @@ class Node {
      */
     isValidMove(ns: NS, board: string[], player: 'X' | 'O') {
         const opponent = player === 'X' ? 'O' : 'X';
+        const futurBoard = this.getFutureBoard(ns, board, player);
+
         // empty node
         return board[this.x]?.[this.y] === '.'
             // not suicide
@@ -310,7 +344,8 @@ class Node {
                         && ns.go.analysis.getLiberties(board)[point.x]?.[point.y] === 1)
             )
             // not same move as previous
-            && ns.go.getMoveHistory().length > 0 && ns.go.getMoveHistory()[0][this.x][this.y] !== player;
+            && !ns.go.getMoveHistory()
+                .some(previousBoard => futurBoard.every((futurRow, index) => futurRow === previousBoard[index]))
     }
 
     /**
