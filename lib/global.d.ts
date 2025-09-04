@@ -12,6 +12,7 @@ declare global {
     interface NodeStats extends bitburner.NodeStats {}
     interface ProcessInfo extends bitburner.ProcessInfo {}
     type ScriptArg = bitburner.ScriptArg
+    type RunningScript = bitburner.RunningScript
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 
