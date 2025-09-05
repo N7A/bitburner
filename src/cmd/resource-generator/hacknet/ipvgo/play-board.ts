@@ -71,74 +71,55 @@ class PlayBoardDaemon extends Daemon {
     async work(): Promise<any> {
         await this.playBoard();
 
+        this.showEndGameResult();
+
         // reset board
         this.ns.go.resetBoardState(this.goOpponent, this.boardSize);
     }
 
-    private async playBoard() {
-        let alreadyPass: boolean = false;
-        let result: {
-            type: "gameOver" | "move" | "pass";
-            x: number | null;
-            y: number | null;
-        };
-        
+    private async playBoard() {        
         if (this.ns.go.getCurrentPlayer() === "White") {
             // Log opponent's next move, once it happens
             await this.ns.go.opponentNextTurn();
         }
 
-        // biggest liberties
-        // capture opponent (&& always capturable with next move)
-        // prevent opponent link networks
-        // expend
-        // reduce liberties opponent
-        // defense
-        // capture oppenent (&& no more capturable with next move)
-        // not isAutoCapturable
-        // valid
+        const board: Board = new Board(this.ns, this.player);
+
         do {
             this.ns.print(Log.getStartLog());
-            const board = this.ns.go.getBoardState();
 
             // TODO: more move options
             // Choose a move
             const nodeMove: Node | undefined = this.getMoveChoice(this.ns, board);
 
             if (nodeMove === undefined) {
-                if (alreadyPass) {
+                if (board.alreadyPass) {
                     this.ns.print('Pass twice, quit the game.')
                     break;
                 }
-                // Pass turn if no moves are found
-                result = await this.ns.go.passTurn();
-                alreadyPass = true;
-            } else {
-                this.ns.print(nodeMove.x, ':', nodeMove.y);
-                // Play the selected move
-                result = await this.ns.go.makeMove(nodeMove.x, nodeMove.y);
             }
 
-            // Log opponent's next move, once it happens
-            const opponentMove = await this.ns.go.opponentNextTurn();
+            const opponentMove = await board.makeMove(nodeMove);
 
             if (
                 // l'adversaire pass
                 opponentMove.type === 'pass'
                 // et il n'a plus de routeur
-                && this.ns.go.getBoardState().every(x => !x.includes(this.getOpponent()))
+                && board.hasNoMoreOpponent()
             ) {
                 this.ns.print('No more opponent');
                 // continuer la partie ne rapporte pas plus
-                result = await this.ns.go.passTurn();
+                board.makeMove(undefined);
             }
 
             this.ns.print(Log.getEndLog());
             await this.ns.sleep(200);
 
             // Keep looping as long as the opponent is playing moves
-        } while (result?.type !== this.GAME_OVER);
+        } while (board.result?.type !== this.GAME_OVER);
+    }
 
+    showEndGameResult() {
         if (this.ns.go.getGameState().whiteScore < this.ns.go.getGameState().blackScore) {
             this.ns.print('🏆 Win !');
             this.ns.print(`${this.ns.formatNumber(this.ns.go.analysis.getStats().Netburners?.bonusPercent ?? 0)}%`);
@@ -149,7 +130,7 @@ class PlayBoardDaemon extends Daemon {
         }
     }
 
-    private getMoveChoice(ns: NS, board: string[]): Node | undefined {
+    private getMoveChoice(ns: NS, board: Board): Node | undefined {
         // init nodes
         const nodes: Node[] = []
         for (let y = this.boardSize-1; y >= 0; y--) {
@@ -158,21 +139,31 @@ class PlayBoardDaemon extends Daemon {
             }
         }
 
-        const validNodes: Node[] = nodes.filter(x => x.isValidMove(ns, board, this.player));
+        // get all valid moves
+        const validMoves: Node[] = nodes.filter(x => board.isValidMove(x));
         const stratPriority: {function: ((availableNodes:Node[]) => Node[]), name: string}[] = [
-            {name: 'Not auto caturable', function: (availableNodes: Node[]) => availableNodes.filter(x => x.isAutoCapturableMove(ns, board, this.player))},
+            // prevent move that make network in danger
+            {name: 'Not auto caturable', function: (availableNodes: Node[]) => availableNodes.filter(x => !board.isAutoCapturableMove(x))},
             // TODO: get bigest network first
-            {name: 'Capture move', function: (availableNodes: Node[]) => availableNodes.filter(x => this.isCaptureMove(ns, board, x))},
-            {name: 'Defense move', function: (availableNodes: Node[]) => availableNodes.filter(x => this.isDefenseMove(ns, board, x))},
-            // TODO: prevent link network opponent
+            // capture un network ennemi qui peut être défendu
+            {name: 'Capture move (defendable)', function: (availableNodes: Node[]) => {
+                return availableNodes.filter(x => board.isAttackMove(x) && !board.isAutoCapturableMove(x, this.getOpponent()))
+            }},
+            {name: 'Defense move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isDefenseMove(x))},
+            // TODO: ADD prevent link network opponent
             // TODO: get max liberty in prior
-            {name: 'Reduce opponent liberties', function: (availableNodes: Node[]) => availableNodes.filter(x => x.isNeighborFriendly(board, this.getOpponent()))},
-            // TODO: add link network
-            {name: 'Epansion move', function: (availableNodes: Node[]) => availableNodes.filter(x => this.isExpansionMove(board, x))},
+            {name: 'Reduce opponent liberties', function: (availableNodes: Node[]) => availableNodes.filter(x => x.hasFriendlyNeighbor(board.boardState, this.getOpponent()))},
+            // TODO: ADD add link network
+            {name: 'Epansion move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isExpansionMove(x))},
+            // TODO: ADD no reduce self liberties
             {name: 'Maximum liberty', function: (availableNodes: Node[]) => {
-                const personnalLibertyMax: number = availableNodes.map(x => x.getPersonnalLiberty(board))
+                const personnalLibertyMax: number = availableNodes.map(x => x.getPersonnalLiberty(board.boardState))
                     .reduce((a,b) => Math.max(a,b));
-                return availableNodes.filter(point => point.getPersonnalLiberty(board) === personnalLibertyMax)
+                return availableNodes.filter(point => point.getPersonnalLiberty(board.boardState) === personnalLibertyMax)
+            }},
+            // capture un network ennemi qui ne peut pas être défendu
+            {name: 'Capture move (undefendable)', function: (availableNodes: Node[]) => {
+                return availableNodes.filter(x => board.isAttackMove(x) && board.isAutoCapturableMove(x, this.getOpponent()))
             }},
             // Leave some spaces to make it harder to capture our pieces.
             // We don't want to run out of empty node connections!
@@ -181,7 +172,7 @@ class PlayBoardDaemon extends Daemon {
             {function: (availableNodes: Node[]) => availableNodes, name: 'Random move'}
         ]
 
-        const availableNodes = this.getAvailableNodes(stratPriority, validNodes);
+        const availableNodes = this.getAvailableNodes(stratPriority, validMoves);
         if (availableNodes.length > 0) {
             // Choose one of the found moves at random
             const randomIndex = Math.round(Math.random() * (availableNodes.length-1));
@@ -216,21 +207,6 @@ class PlayBoardDaemon extends Daemon {
         return this.getAvailableNodes(strats, availableNodes);
     }
 
-    private isExpansionMove(board: string[], node: Node) {
-        return node.isNeighborFriendly(board, this.player);
-    }
-
-    private isCaptureMove(ns: NS, board: string[], node: Node) {
-        return node.isInDanger(ns, board, this.getOpponent());
-    }
-
-    private isDefenseMove(ns: NS, board: string[], node: Node) {
-        const futurNetworkLiberties = ns.go.analysis.getLiberties(node.getFutureBoard(ns, board, this.player))[node.x][node.y]; 
-        const isSaveMove = futurNetworkLiberties >= 2;
-
-        return node.isInDanger(ns, board, this.player) && isSaveMove;
-    }
-
     //#region Dashboard
     setupDashboard() {
         this.ns.disableLog('go.makeMove');
@@ -241,6 +217,166 @@ class PlayBoardDaemon extends Daemon {
         this.ns.ui.openTail();
     }
     //#endregion Dashboard
+}
+
+class Board {
+    private ns: NS
+    private boardSize: number;
+    private player: 'X' | 'O';
+    public boardState: string[];
+    getOpponent = (player: 'X' | 'O' = this.player): 'X' | 'O' => player === 'X' ? 'O' : 'X';
+    public alreadyPass: boolean = false;
+    public result: {
+        type: "gameOver" | "move" | "pass";
+        x: number | null;
+        y: number | null;
+    };
+
+    constructor(ns: NS, player: 'X' | 'O') {
+        this.ns = ns;
+        this.player = player;
+        this.refreshState();
+    }
+    
+    async makeMove(node: Node | undefined) {
+        if (node === undefined) {
+            // Pass turn if no moves are found
+            this.ns.print('Pass');
+            this.result = await this.ns.go.passTurn();
+            this.alreadyPass = true;
+        } else {
+            this.alreadyPass = false;
+            this.ns.print(node.x, ':', node.y);
+            // Play the selected move
+            this.result = await this.ns.go.makeMove(node.x, node.y);
+        }
+
+        // Log opponent's next move, once it happens
+        const opponentMove = await this.ns.go.opponentNextTurn();
+
+        this.refreshState();
+
+        return opponentMove;
+    }
+
+    refreshState() {
+        this.boardState = this.ns.go.getBoardState();
+        this.boardSize = this.boardState.length
+    }
+
+    getFutureBoard(node: Node, player: 'X' | 'O' = this.player): string[] {
+        const chainIds = Array.from(new Set(node.getAdjacent()
+            // opponent
+            .filter(currentNode => this.boardState[currentNode.x]?.[currentNode.y] === this.getOpponent(player))
+            // will be kill
+            .filter(currentNode => this.ns.go.analysis.getLiberties()[currentNode.x]?.[currentNode.y] === 1)
+            // get chain id
+            .map(currentNode => this.ns.go.analysis.getChains()[currentNode.x]?.[currentNode.y])));
+
+        return this.boardState.map((row, xIndex) => {
+                return Array.from(row).map((value, yIndex) => {
+                    if (xIndex === node.x && yIndex === node.y) { // move
+                        return player;
+                    } else if (chainIds.includes(this.ns.go.analysis.getChains()[xIndex][yIndex])) { // killed
+                        return '.';
+                    }
+                    return value;
+                }).join('')
+            });
+    }
+
+    /**
+     * Détermine si le placement est valide.
+     * 
+     * @param node node où le placement du router va se faire
+     * @returns 
+     */
+    isValidMove(node: Node): boolean {
+        const futurBoard = this.getFutureBoard(node);
+
+        // empty node
+        return this.boardState[node.x]?.[node.y] === '.'
+            // not suicide
+            && (
+                // will have liberty
+                node.getPersonnalLiberty(this.boardState) > 0
+                || node.getAdjacent()
+                    // connect with a network
+                    .some(point => this.boardState[point.x]?.[point.y] === this.player 
+                        // not it last liberty
+                        && this.ns.go.analysis.getLiberties(this.boardState)[point.x]?.[point.y] > 1)
+                // exception
+                || node.getAdjacent()
+                    // connect with a opponent network
+                    .some(point => this.boardState[point.x]?.[point.y] === this.getOpponent() 
+                        // it will capture the opponent network
+                        && this.ns.go.analysis.getLiberties(this.boardState)[point.x]?.[point.y] === 1)
+            )
+            // not same move as previous
+            && !this.ns.go.getMoveHistory()
+                .some(previousBoard => futurBoard.every((futurRow, index) => futurRow === previousBoard[index]))
+    }
+    
+    /**
+     * Détermine si après le placement ici le network est directement capturable.
+     * 
+     * @param node node où le placement du router va se faire
+     * @returns 
+     */
+    isAutoCapturableMove(node: Node, player: 'X' | 'O' = this.player): boolean {
+        return this.ns.go.analysis.getLiberties(this.getFutureBoard(node, player))[node.x]?.[node.y] === 1;
+    }
+
+    isExpansionMove(node: Node) {
+        return node.hasFriendlyNeighbor(this.boardState, this.player);
+    }
+
+    /**
+     * Détermine si le placement capture un network.
+     * 
+     * @param node node où le placement du router va se faire
+     * @param player type de capture de network recherché
+     * @returns 
+     */
+    isCaptureMove(node: Node, player: 'X' | 'O' = this.player): boolean {
+        return node.getAdjacent()
+            .some(point => this.boardState[point.x]?.[point.y] === player 
+                && this.ns.go.analysis.getLiberties(this.boardState)[point.x]?.[point.y] === 1);
+    }
+
+    /**
+     * Détermine si le placement capture un network ennemi.
+     * 
+     * @param node node où le placement du router va se faire
+     * @returns 
+     */
+    isAttackMove(node: Node): boolean {
+        return this.isCaptureMove(node, this.getOpponent());
+    }
+
+    /**
+     * Détermine si le placement empêche la capture d'un network allié.
+     * 
+     * @param node node où le placement du router va se faire
+     * @returns 
+     */
+    isDefenseMove(node: Node): boolean {
+        return this.isCaptureMove(node) && !this.isAutoCapturableMove(node);
+    }
+
+    hasNoMoreOpponent() {
+        return !this.boardState.some(x => x.includes(this.getOpponent()))
+    }
+
+    showBoard() {
+        for(let y = this.boardSize-1; y > 0; y--) {
+            let message = '';
+            for(let x = 0; x < this.boardSize; x++) {
+                message += this.boardState[x][y] + ' '
+            }
+            this.ns.print(message);
+        }
+    }
 }
 
 class Node {
@@ -258,7 +394,7 @@ class Node {
             .filter(point => board[point.x]?.[point.y] === '.').length;
     }
     
-    isNeighborFriendly(board: string[], player: 'X' | 'O') {
+    hasFriendlyNeighbor(board: string[], player: 'X' | 'O') {
         // If a point to the north, south, east, or west is a friendly router
         return this.getAdjacent()
             .some(point => board[point.x]?.[point.y] === player);
@@ -280,205 +416,4 @@ class Node {
         ]
     }
     
-    isInDanger(ns: NS, board: string[], player: 'X' | 'O') {
-        return this.getAdjacent()
-            .some(point => board[point.x]?.[point.y] === player 
-                && ns.go.analysis.getLiberties(board)[point.x]?.[point.y] === 1);
-    }
-    
-    isAutoCaturable(ns: NS, board: string[], player: 'X' | 'O') {
-        return ns.go.analysis.getLiberties(this.getFutureBoard(ns, board, player))[this.x][this.y] === 1;
-    }
-    
-    getFutureBoard(ns: NS, board: string[], player: 'X' | 'O'): string[] {
-        const opponent = player === 'X' ? 'O' : 'X';
-        const chainIds = Array.from(new Set(this.getAdjacent()
-            // opponent
-            .filter(node => board[node.x]?.[node.y] === opponent)
-            // will be kill
-            .filter(node => ns.go.analysis.getLiberties()[node.x]?.[node.y] === 1)
-            // get chain id
-            .map(node => ns.go.analysis.getChains()[node.x]?.[node.y])));
-
-        return board.map((row, xIndex) => {
-                return Array.from(row).map((value, yIndex) => {
-                    if (xIndex === this.x && yIndex === this.y) { // move
-                        return player;
-                    } else if (chainIds.includes(ns.go.analysis.getChains()[xIndex][yIndex])) { // killed
-                        return '.';
-                    }
-                    return value;
-                }).join('')
-            });
-    }
-
-    /**
-     * Détermine si le placement est valide.
-     * 
-     * @param ns 
-     * @param board 
-     * @param player 
-     * @returns 
-     */
-    isValidMove(ns: NS, board: string[], player: 'X' | 'O') {
-        const opponent = player === 'X' ? 'O' : 'X';
-        const futurBoard = this.getFutureBoard(ns, board, player);
-
-        // empty node
-        return board[this.x]?.[this.y] === '.'
-            // not suicide
-            && (
-                // will have liberty
-                this.getAdjacent()
-                    .some(point => board[point.x]?.[point.y] === '.')
-                || this.getAdjacent()
-                    // connect with a network
-                    .some(point => board[point.x]?.[point.y] === player 
-                        // not it last liberty
-                        && ns.go.analysis.getLiberties(board)[point.x]?.[point.y] > 1)
-                // exception
-                || this.getAdjacent()
-                    // connect with a opponent network
-                    .some(point => board[point.x]?.[point.y] === opponent 
-                        // it will capture the opponent network
-                        && ns.go.analysis.getLiberties(board)[point.x]?.[point.y] === 1)
-            )
-            // not same move as previous
-            && !ns.go.getMoveHistory()
-                .some(previousBoard => futurBoard.every((futurRow, index) => futurRow === previousBoard[index]))
-    }
-
-    /**
-     * Détermine si après le placement ici le network est directement capturable.
-     * 
-     * @param ns 
-     * @param board 
-     * @param player 
-     * @returns 
-     */
-    isAutoCapturableMove(ns: NS, board: string[], player: 'X' | 'O') {
-        return this.getAdjacent()
-            .filter(point => board[point.x]?.[point.y] === '.').length === 1
-            && (
-                board[this.x]?.[this.y] === '.' 
-                && this.getAdjacent().every(point => point.isInDanger(ns, board, player))
-                || this.getAdjacent().every(point => board[point.x]?.[point.y] !== player)
-            );
-    }
-}
-
-/**
- * Choose one of the empty points on the board at random to play
- */
-const getRandomMove = (size: number, validMoves: boolean[][]) => {
-  const moveOptions = [];
-
-  // Look through all the points on the board
-  for (let x = 0; x < size; x++) {
-    for (let y = 0; y < size; y++) {
-      // Make sure the point is a valid move
-      const isValidMove = validMoves[x][y] === true;
-      // Leave some spaces to make it harder to capture our pieces.
-      // We don't want to run out of empty node connections!
-      const isNotReservedSpace = x % 2 === 1 || y % 2 === 1;
-
-      if (isValidMove && isNotReservedSpace) {
-        moveOptions.push([x, y]);
-      }
-    }
-  }
-
-  // Choose one of the found moves at random
-  const randomIndex = Math.round(Math.random() * moveOptions.length);
-  return moveOptions[randomIndex] ?? [];
-};
-
-function getExpansionMove(board: string[], validMoves: boolean[][]) {
-    const moveOptions = [];
-    const size = board[0].length;
-
-    // Look through all the points on the board
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            // Make sure the point is a valid move
-            const isValidMove = validMoves[x][y] === true;
-            // Leave some spaces to make it harder to capture our pieces.
-            // We don't want to run out of empty node connections!
-            const isNotReservedSpace = x % 2 === 1 || y % 2 === 1;
-            
-            // If a point to the north, south, east, or west is a friendly router
-            const isNeighborFriendly = board[x + 1]?.[y] === 'X'
-                || board[x - 1]?.[y] === 'X'
-                || board[x]?.[y + 1] === 'X'
-                || board[x]?.[y - 1] === 'X';
-
-            if (isValidMove && isNotReservedSpace && isNeighborFriendly) {
-                moveOptions.push([x, y]);
-            }
-        }
-    }
-
-    // Choose one of the found moves at random
-    const randomIndex = Math.round(Math.random() * moveOptions.length);
-    return moveOptions[randomIndex] ?? getRandomMove(board[0].length, validMoves);
-}
-
-function getCaptureMove(ns: NS, board: string[], validMoves: boolean[][]) {
-    const moveOptions = [];
-    const size = board[0].length;
-
-    // Look through all the points on the board
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            // Make sure the point is a valid move
-            const isValidMove = validMoves[x][y] === true;
-            
-            const isOppenentInDanger = new Node(x, y).isInDanger(ns, board, 'O');
-
-            if (isValidMove && isOppenentInDanger) {
-                moveOptions.push([x, y]);
-            }
-        }
-    }
-
-    // Choose one of the found moves at random
-    const randomIndex = Math.round(Math.random() * moveOptions.length);
-    if (moveOptions.length > 0) {
-        ns.print('Capture move');
-    }
-    return moveOptions[randomIndex] ?? getExpansionMove(board, validMoves);
-}
-
-function getDefenseMove(ns: NS, board: string[], validMoves: boolean[][]) {      
-    const moveOptions = [];
-    const size = board[0].length;
-
-    // Look through all the points on the board
-    for (let x = 0; x < size; x++) {
-        for (let y = 0; y < size; y++) {
-            const node = new Node(x, y);
-            // Make sure the point is a valid move
-            const isValidMove = validMoves[x][y] === true;
-            
-            // If a point to the north, south, east, or west is a friendly router
-            const isPlayerInDanger = node.isInDanger(ns, board, 'X');
-
-            const isSaveMove = node.getAdjacent()
-                .filter(point => board[point.x]?.[point.y] === '.').length >=2
-                || node.getAdjacent()
-                .filter(point => board[point.x]?.[point.y] === 'X')
-                .some(point => ns.go.analysis.getLiberties(board)[point.x]?.[point.y] >= 3);
-
-            if (isValidMove && isPlayerInDanger && isSaveMove) {
-                moveOptions.push([x, y]);
-            }
-        }
-    }
-
-    // Choose one of the found moves at random
-    const randomIndex = Math.round(Math.random() * moveOptions.length);
-    if (moveOptions.length > 0) {
-        ns.print('Defense move');
-    }
-    return moveOptions[randomIndex] ?? getCaptureMove(ns, board, validMoves);
 }
