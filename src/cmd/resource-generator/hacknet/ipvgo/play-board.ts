@@ -145,15 +145,18 @@ class PlayBoardDaemon extends Daemon {
             // prevent move that make network in danger
             {name: 'Not auto caturable', function: (availableNodes: Node[]) => availableNodes.filter(x => !board.isAutoCapturableMove(x))},
             // TODO: get bigest network first
+            // TODO: if capture && defense possible => compare lost
             // capture un network ennemi qui peut être défendu
             {name: 'Capture move (defendable)', function: (availableNodes: Node[]) => {
                 return availableNodes.filter(x => board.isAttackMove(x) && !board.isAutoCapturableMove(x, this.getOpponent()))
             }},
             {name: 'Defense move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isDefenseMove(x))},
             // TODO: ADD prevent link network opponent
-            // TODO: get max liberty in prior
+            // TODO: get min(futur liberties) in prior
             {name: 'Reduce opponent liberties', function: (availableNodes: Node[]) => availableNodes.filter(x => x.hasFriendlyNeighbor(board.boardState, this.getOpponent()))},
             // TODO: ADD add link network
+            // TODO: if Reduce && expension possible => compare lost
+            // TODO: get max(futur liberties) in prior || min(current liberties) then max(futur liberties) ?
             {name: 'Epansion move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isExpansionMove(x))},
             // TODO: ADD no reduce self liberties
             {name: 'Maximum liberty', function: (availableNodes: Node[]) => {
