@@ -6,6 +6,8 @@ Bitburner est un jeu incrémentiel basé sur la programmation. Écrivez des scri
 
 Le jeu peut être joué sur https://danielyxie.github.io/bitburner ou installé via [Steam](https://store.steampowered.com/app/1812820/Bitburner/).
 
+Documentation du framework du jeu disponible ici : https://github.com/bitburner-official/bitburner-src/blob/v2.8.1/markdown/bitburner.ns.md
+
 ---
 
 Ce dépôt contient les scripts que j'utilise pour jouer dans Bitburner.
