@@ -132,12 +132,7 @@ class PlayBoardDaemon extends Daemon {
 
     private getMoveChoice(ns: NS, board: Board): Node | undefined {
         // init nodes
-        const nodes: Node[] = []
-        for (let y = this.boardSize-1; y >= 0; y--) {
-            for (let x = 0; x < this.boardSize; x++) {
-                nodes.push(new Node(x, y));
-            }
-        }
+        const nodes: Node[] = board.getNodes();
 
         // get all valid moves
         const validMoves: Node[] = nodes.filter(x => board.isValidMove(x));
@@ -151,10 +146,10 @@ class PlayBoardDaemon extends Daemon {
                 return availableNodes.filter(x => board.isAttackMove(x) && !board.isAutoCapturableMove(x, this.getOpponent()))
             }},
             {name: 'Defense move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isDefenseMove(x))},
-            // TODO: ADD prevent link network opponent
+            {name: 'Prevent opponent link', function: () => availableNodes.filter(x => board.isLinkMove(x, this.getOpponent()))},
             // TODO: get min(futur liberties) in prior
             {name: 'Reduce opponent liberties', function: (availableNodes: Node[]) => availableNodes.filter(x => x.hasFriendlyNeighbor(board.boardState, this.getOpponent()))},
-            // TODO: ADD add link network
+            {name: 'Link network', function: () => availableNodes.filter(x => board.isLinkMove(x))},
             // TODO: if Reduce && expension possible => compare lost
             // TODO: get max(futur liberties) in prior || min(current liberties) then max(futur liberties) ?
             {name: 'Epansion move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isExpansionMove(x))},
@@ -267,6 +262,39 @@ class Board {
         this.boardSize = this.boardState.length
     }
 
+    getNodes() {
+        const nodes: Node[] = []
+            for (let y = this.boardSize-1; y >= 0; y--) {
+                for (let x = 0; x < this.boardSize; x++) {
+                    nodes.push(new Node(x, y));
+                }
+            }
+        return nodes
+    }
+
+    getValue(node: Node) {
+        return this.boardState[node.x][node.y];
+    }
+
+    getChain(node: Node, alreadyIn: Node[] = [node]): Node[] {
+        const friends = node.getAdjacent()
+            // filtrage de ceux déjà pris en compte
+            .filter(currentNode => !alreadyIn.some(x => x.equals(currentNode)))
+            // keep uniquement ceux dans le même camp
+            .filter(currentNode => this.getValue(node) === this.getValue(currentNode));
+        
+        return [node, ...friends.flatMap(x => this.getChain(x, [...alreadyIn, ...friends]))];
+    }
+
+    getLiberties(node: Node) {
+        return Board.unique(
+            this.getChain(node)
+                .flatMap(x => x.getAdjacent())
+                // get free nodes
+                .filter(x => this.getValue(x) === '.')
+            ).length;
+    }
+
     getFutureBoard(node: Node, player: 'X' | 'O' = this.player): string[] {
         const chainIds = Array.from(new Set(node.getAdjacent()
             // opponent
@@ -285,6 +313,23 @@ class Board {
                     }
                     return value;
                 }).join('')
+            });
+    }
+
+    static unique(nodes: Node[]) {
+        return Array.from(new Set(nodes.map(node => JSON.stringify(node))))
+            .map(json => JSON.parse(json));
+    }
+    
+    isLinkMove(node: Node, player: 'X' | 'O' = this.player) {
+        const allies = node.getAdjacent()
+            .filter(point => this.getValue(point) === player);
+        
+        // les alliés n’appartiennent pas à la même chaîne
+        return allies.map(ally => this.getChain(ally))
+            .some(chain => {
+                return allies.filter(ally => chain.some(currentNode => ally.equals(currentNode)))
+                    .length < allies.length
             });
     }
 
@@ -372,7 +417,7 @@ class Board {
     }
 
     showBoard() {
-        for(let y = this.boardSize-1; y > 0; y--) {
+        for(let y = this.boardSize-1; y >= 0; y--) {
             let message = '';
             for(let x = 0; x < this.boardSize; x++) {
                 message += this.boardState[x][y] + ' '
@@ -419,4 +464,8 @@ class Node {
         ]
     }
     
+
+    equals(node: Node) {
+        return this.x === node.x && this.y === node.y;
+    }
 }
