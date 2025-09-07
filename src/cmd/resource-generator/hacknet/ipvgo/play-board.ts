@@ -77,20 +77,34 @@ class PlayBoardDaemon extends Daemon {
         this.ns.go.resetBoardState(this.goOpponent, this.boardSize);
     }
 
-    private async playBoard() {        
-        if (this.ns.go.getCurrentPlayer() === "White") {
-            // Log opponent's next move, once it happens
-            await this.ns.go.opponentNextTurn();
-        }
-
+    private async playBoard() {
         const board: Board = new Board(this.ns, this.player);
 
+        let opponentPass: boolean;
+        if (this.ns.go.getCurrentPlayer() === "White") {
+            // Log opponent's next move, once it happens
+            opponentPass = (await this.ns.go.opponentNextTurn()).type === 'pass';
+        } else {
+            opponentPass = this.ns.go.getGameState().previousMove === null;
+        }
+            
+        if (
+            // l'adversaire pass
+            opponentPass
+            // et il n'a plus de routeur
+            && this.isGameEndable(board)
+        ) {
+            this.ns.print('No more opponent');
+            // continuer la partie ne rapporte pas plus
+            await board.makeMove(undefined);
+        }
+        
         do {
             this.ns.print(Log.getStartLog());
 
             // TODO: more move options
             // Choose a move
-            const nodeMove: Node | undefined = this.getMoveChoice(this.ns, board);
+            const nodeMove: Node | undefined = this.getMoveChoice(board);
 
             if (nodeMove === undefined) {
                 if (board.alreadyPass) {
@@ -104,12 +118,11 @@ class PlayBoardDaemon extends Daemon {
             if (
                 // l'adversaire pass
                 opponentMove.type === 'pass'
-                // et il n'a plus de routeur
-                && board.hasNoMoreOpponent()
+                && this.isGameEndable(board)
             ) {
                 this.ns.print('No more opponent');
                 // continuer la partie ne rapporte pas plus
-                board.makeMove(undefined);
+                await board.makeMove(undefined);
             }
 
             this.ns.print(Log.getEndLog());
@@ -130,7 +143,19 @@ class PlayBoardDaemon extends Daemon {
         }
     }
 
-    private getMoveChoice(ns: NS, board: Board): Node | undefined {
+    private isGameEndable(board: Board): boolean {
+        // init nodes
+        const nodes: Node[] = board.getNodes();
+
+        // get all valid moves
+        const validMoves: Node[] = nodes.filter(x => board.isValidMove(x));
+        // il n'a plus de routeur
+        return board.hasNoMoreOpponent() 
+            // il n'y a pas de capture future possible
+            || validMoves.filter(x => x.hasFriendlyNeighbor(board.boardState, this.getOpponent())).length === 0;
+    }
+
+    private getMoveChoice(board: Board): Node | undefined {
         // init nodes
         const nodes: Node[] = board.getNodes();
 
@@ -146,10 +171,10 @@ class PlayBoardDaemon extends Daemon {
                 return availableNodes.filter(x => board.isAttackMove(x) && !board.isAutoCapturableMove(x, this.getOpponent()))
             }},
             {name: 'Defense move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isDefenseMove(x))},
-            {name: 'Prevent opponent link', function: () => availableNodes.filter(x => board.isLinkMove(x, this.getOpponent()))},
+            {name: 'Prevent opponent link', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isLinkMove(x, this.getOpponent()))},
             // TODO: get min(futur liberties) in prior
             {name: 'Reduce opponent liberties', function: (availableNodes: Node[]) => availableNodes.filter(x => x.hasFriendlyNeighbor(board.boardState, this.getOpponent()))},
-            {name: 'Link network', function: () => availableNodes.filter(x => board.isLinkMove(x))},
+            {name: 'Link network', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isLinkMove(x))},
             // TODO: if Reduce && expension possible => compare lost
             // TODO: get max(futur liberties) in prior || min(current liberties) then max(futur liberties) ?
             {name: 'Epansion move', function: (availableNodes: Node[]) => availableNodes.filter(x => board.isExpansionMove(x))},
@@ -273,7 +298,7 @@ class Board {
     }
 
     getValue(node: Node) {
-        return this.boardState[node.x][node.y];
+        return this.boardState[node.x]?.[node.y];
     }
 
     getChain(node: Node, alreadyIn: Node[] = [node]): Node[] {
@@ -372,7 +397,13 @@ class Board {
      * @returns 
      */
     isAutoCapturableMove(node: Node, player: 'X' | 'O' = this.player): boolean {
-        return this.ns.go.analysis.getLiberties(this.getFutureBoard(node, player))[node.x]?.[node.y] === 1;
+        const opponentFutur = new Board(this.ns, this.getOpponent());
+        opponentFutur.boardState = this.getFutureBoard(node, player);
+        
+        return opponentFutur.getLiberties(node) === 1
+            // re-picable
+            && node.getAdjacent().filter(x => this.getValue(x) === this.getOpponent())
+                .every(x => this.getLiberties(x) !== 2);
     }
 
     isExpansionMove(node: Node) {
