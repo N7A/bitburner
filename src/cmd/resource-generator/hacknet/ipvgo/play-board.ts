@@ -311,7 +311,7 @@ class Board {
         return [node, ...friends.flatMap(x => this.getChain(x, [...alreadyIn, ...friends]))];
     }
 
-    getLiberties(node: Node) {
+    getLibertiesNumber(node: Node) {
         return Board.unique(
             this.getChain(node)
                 .flatMap(x => x.getAdjacent())
@@ -325,7 +325,7 @@ class Board {
             // opponent
             .filter(currentNode => this.getValue(currentNode) === this.getOpponent(player))
             // will be kill
-            .filter(currentNode => this.getLiberties(currentNode) === 1)
+            .filter(currentNode => this.getLibertiesNumber(currentNode) === 1)
             // get all node chained
             .flatMap(currentNode => this.getChain(currentNode))));
 
@@ -377,13 +377,13 @@ class Board {
                     // connect with a network
                     .some(point => this.getValue(point) === this.player 
                         // not it last liberty
-                        && this.getLiberties(point) > 1)
+                        && this.getLibertiesNumber(point) > 1)
                 // exception
                 || node.getAdjacent()
                     // connect with a opponent network
                     .some(point => this.getValue(point) === this.getOpponent() 
                         // it will capture the opponent network
-                        && this.getLiberties(point) === 1)
+                        && this.getLibertiesNumber(point) === 1)
             )
             // not same move as previous
             && !this.ns.go.getMoveHistory()
@@ -400,10 +400,10 @@ class Board {
         const opponentFutur = new Board(this.ns, this.getOpponent());
         opponentFutur.boardState = this.getFutureBoard(node, player);
         
-        return opponentFutur.getLiberties(node) === 1
+        return opponentFutur.getLibertiesNumber(node) === 1
             // re-picable
             && node.getAdjacent().filter(x => this.getValue(x) === this.getOpponent())
-                .every(x => this.getLiberties(x) !== 2);
+                .every(x => this.getLibertiesNumber(x) !== 2);
     }
 
     isExpansionMove(node: Node) {
@@ -420,7 +420,7 @@ class Board {
     isCaptureMove(node: Node, player: 'X' | 'O' = this.player): boolean {
         return node.getAdjacent()
             .some(point => this.getValue(point) === player 
-                && this.getLiberties(point) === 1);
+                && this.getLibertiesNumber(point) === 1);
     }
 
     /**
