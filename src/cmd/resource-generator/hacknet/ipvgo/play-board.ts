@@ -321,19 +321,19 @@ class Board {
     }
 
     getFutureBoard(node: Node, player: 'X' | 'O' = this.player): string[] {
-        const chainIds = Array.from(new Set(node.getAdjacent()
+        const chainedNode = Array.from(new Set(node.getAdjacent()
             // opponent
-            .filter(currentNode => this.boardState[currentNode.x]?.[currentNode.y] === this.getOpponent(player))
+            .filter(currentNode => this.getValue(currentNode) === this.getOpponent(player))
             // will be kill
-            .filter(currentNode => this.ns.go.analysis.getLiberties()[currentNode.x]?.[currentNode.y] === 1)
-            // get chain id
-            .map(currentNode => this.ns.go.analysis.getChains()[currentNode.x]?.[currentNode.y])));
+            .filter(currentNode => this.getLiberties(currentNode) === 1)
+            // get all node chained
+            .flatMap(currentNode => this.getChain(currentNode))));
 
         return this.boardState.map((row, xIndex) => {
                 return Array.from(row).map((value, yIndex) => {
                     if (xIndex === node.x && yIndex === node.y) { // move
                         return player;
-                    } else if (chainIds.includes(this.ns.go.analysis.getChains()[xIndex][yIndex])) { // killed
+                    } else if (chainedNode.some(currentNode => new Node(xIndex, yIndex).equals(currentNode))) { // killed
                         return '.';
                     }
                     return value;
@@ -375,15 +375,15 @@ class Board {
                 node.getPersonnalLiberty(this.boardState) > 0
                 || node.getAdjacent()
                     // connect with a network
-                    .some(point => this.boardState[point.x]?.[point.y] === this.player 
+                    .some(point => this.getValue(point) === this.player 
                         // not it last liberty
-                        && this.ns.go.analysis.getLiberties(this.boardState)[point.x]?.[point.y] > 1)
+                        && this.getLiberties(point) > 1)
                 // exception
                 || node.getAdjacent()
                     // connect with a opponent network
-                    .some(point => this.boardState[point.x]?.[point.y] === this.getOpponent() 
+                    .some(point => this.getValue(point) === this.getOpponent() 
                         // it will capture the opponent network
-                        && this.ns.go.analysis.getLiberties(this.boardState)[point.x]?.[point.y] === 1)
+                        && this.getLiberties(point) === 1)
             )
             // not same move as previous
             && !this.ns.go.getMoveHistory()
@@ -419,8 +419,8 @@ class Board {
      */
     isCaptureMove(node: Node, player: 'X' | 'O' = this.player): boolean {
         return node.getAdjacent()
-            .some(point => this.boardState[point.x]?.[point.y] === player 
-                && this.ns.go.analysis.getLiberties(this.boardState)[point.x]?.[point.y] === 1);
+            .some(point => this.getValue(point) === player 
+                && this.getLiberties(point) === 1);
     }
 
     /**
