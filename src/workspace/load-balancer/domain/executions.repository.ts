@@ -20,6 +20,8 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
      * @remarks Ram cost : 0.1 GB
      */
     save(execution: ProcessRequest) {
+        this.logger.trace(`To save : ${JSON.stringify(execution, null, 4)}`);
+        
         // get last version of executions
         let executions: ProcessRequest[] = this.getAll();
 
@@ -42,17 +44,22 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
      * @remarks Ram cost : 0.1 GB
      */
     remove(executionToRemove: ProcessRequest) {
+        this.logger.trace(`To remove : ${JSON.stringify(executionToRemove, null, 4)}`);
+
         // get last version of executions
         let executions: ProcessRequest[] = this.getAll();
 
-        const countLine = executions.filter(execution => {
+        const removed = executions.filter(execution => {
             return ExecutionsRepository.getHash(execution) === ExecutionsRepository.getHash(executionToRemove)
-        }).length
+        })
+        this.logger.trace(`Removed : ${JSON.stringify(removed, null, 4)}`)
+
         // remove execution
         executions = executions.filter(execution => {
             return ExecutionsRepository.getHash(execution) !== ExecutionsRepository.getHash(executionToRemove)
         });
-        this.ns.print(`Removed lines ${countLine}`)
+        
+        this.logger.trace(`Removed lines ${removed.length}`)
 
         // save data
         this.resetWith(executions);

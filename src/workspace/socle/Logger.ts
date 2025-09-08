@@ -121,6 +121,7 @@ export class Logger {
         this.print(formatedMessage, logLevel ?? LogLevel.INFO);
     }
     
+    // TODO: get currentLogLevel from home server
     private print(message: string, currentLogLevel: LogLevel) {
         if (currentLogLevel <= logLevel.terminal) {
             this.printTerminal(message);
