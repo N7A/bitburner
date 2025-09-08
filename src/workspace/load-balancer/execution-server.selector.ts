@@ -37,7 +37,7 @@ export class ExecutionSelector {
         // define repartition to fixed ram executions
         let ramDisponiblePostFixed = totalRamDisponible;
         for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber !== undefined)) {
-            this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`));
+            this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.type : ''}`));
 
             const ramAuthorized = await this.getAuthorizedRam(order, totalRamDisponible);
             this.logger.info(Log.INFO('Ram authorisée', this.ns.formatRam(ramAuthorized) + '/' + this.ns.formatRam(totalRamDisponible)));

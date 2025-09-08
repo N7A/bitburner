@@ -182,9 +182,17 @@ class ExecutionSchedulerDaemon extends Daemon {
     private resetRunningProcess(request: ProcessRequest) {
         // kill all process
         request.pid?.filter(x => x !== undefined).forEach(x => this.ns.kill(x));
+        
+        // ignore si plus en base
+        if (!this.executionsRepository.getAll().some(x => {
+            return ExecutionsRepository.getHash(request) === ExecutionsRepository.getHash(x)
+        })) {
+            return;
+        }
+        
         // reset all repository pid
         request.pid = [];
-        this.executionsRepository.save(request)
+        this.executionsRepository.save(request);
     }
 
     //#region Execution

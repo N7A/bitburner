@@ -20,7 +20,7 @@ export class ExecutionOrdersService {
     }
     
     getExecutionOrders() {
-        return this.repository.getAll()   
+        return this.repository.getAll()
             .map(order => {
                 if (order.type === ProcessRequestType.SHARE_RAM) {
                     return new ShareRamExecution(order);
