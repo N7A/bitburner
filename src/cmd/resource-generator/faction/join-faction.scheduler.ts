@@ -47,6 +47,9 @@ class Main extends Headhunter<string> {
 
     protected async getTargets(): Promise<string[]> {
         return this.ns.singularity.checkFactionInvitations()
+            // faction have not owned augmentation
+            .filter(faction => this.ns.singularity.getAugmentationsFromFaction(faction)
+                .some(x => !this.ns.singularity.getOwnedAugmentations(true).includes(x)))
             .filter(x => this.ns.singularity.getFactionEnemies(x).length <= 0);
     }
 
