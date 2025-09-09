@@ -12,6 +12,11 @@ import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { PiggyBankRepository } from 'workspace/piggy-bank/domain/piggy-bank.repository';
+import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
+import { ShareRamExecution } from 'workspace/resource-generator/faction/model/ShareRamExecution';
+import { OneShotExecution } from 'workspace/load-balancer/model/OneShotExecution';
+import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution';
+import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -53,6 +58,7 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 class ExecutionSchedulerDaemon extends Daemon {
+	private logger: Logger
     private orders: RamResourceExecution[] = [];
     private executionOrdersService: ExecutionOrdersService;
     private serversService: ServersService;
@@ -62,6 +68,7 @@ class ExecutionSchedulerDaemon extends Daemon {
     constructor(ns: NS) {
         super(ns);
         
+		this.logger = new Logger(ns);
         this.piggyBankRepository = new PiggyBankRepository(ns);
         this.executionOrdersService = new ExecutionOrdersService(ns);
         this.serversService = new ServersService(ns);
@@ -70,7 +77,7 @@ class ExecutionSchedulerDaemon extends Daemon {
 
     async work(): Promise<any> {
         //ns.clearLog();
-        this.ns.print('Waiting request modification...');
+        this.logger.log('Waiting request modification...');
         // wait until orders change
         await this.waitContextChange();
 
@@ -78,13 +85,13 @@ class ExecutionSchedulerDaemon extends Daemon {
         // kill all old for recalcul repartition
         await this.resetAllRunningProcess();
         // maj orders
-        this.orders = this.executionOrdersService.getExecutionOrders();
+        this.orders = await this.getExecutionOrders();
 
-        this.ns.print(Log.action('Define servers repartion'));
+        this.logger.log(Log.action('Define servers repartion'));
         // define servers repartion
         const executions: Map<RamResourceExecution, ExecutionOrder[]> = await new ExecutionSelector(this.ns, this.orders).getRepartitions();
 
-        this.ns.print(Log.action('Executions'), ` (${executions.size})`);
+        this.logger.log(Log.action('Executions'), ` (${executions.size})`);
         // lancement des scripts
         for (const process of Array.from(executions.keys())) {
             let currentExecutionOrders = executions.get(process)
@@ -107,7 +114,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                     .forEach(x => {
                         process.setupDashboard(this.ns, x, executionOrder.sourceHostname);
                     })*/
-                this.ns.print(`${process.getActionLog()} ${this.ns.formatNumber(executionOrder.nbThread, 0)} threads on ${Log.source(executionOrder.sourceHostname)}`);
+                this.logger.log(`${process.getActionLog()} ${this.ns.formatNumber(executionOrder.nbThread, 0)} threads on ${Log.source(executionOrder.sourceHostname)}`);
                 // maj pid processes
                 process.request.pid = [...(process.request.pid ?? []), pid];
             }
@@ -160,7 +167,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                 break;
             }
             
-            newRequest = this.executionOrdersService.getExecutionOrders();
+            newRequest = await this.getExecutionOrders();
 
             newRamBank = this.piggyBankRepository.getHash();
         } while (
@@ -174,6 +181,25 @@ class ExecutionSchedulerDaemon extends Daemon {
         )
     }
 
+    async getExecutionOrders() {
+        return (await this.executionOrdersService.getAll())
+            .map(order => {
+                if (order.type === ProcessRequestType.SHARE_RAM) {
+                    return new ShareRamExecution(order);
+                } else if (order.type === ProcessRequestType.HACK) {
+                    return new PayloadExecution(this.ns, order);
+                } else if (order.type === ProcessRequestType.SETUP_HACK) {
+                    return new SetupHackExecution(order);
+                } else if (order.type === ProcessRequestType.ONESHOT) {
+                    return new OneShotExecution(this.ns, order);
+                }
+                return null;
+            })
+            .filter(x => x !== null)
+            .map(x => x as RamResourceExecution)
+            .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(this.ns));
+    }
+    
     /**
      * Kill all process linked with process request, then clear pid on repository.
      * @param ns 
@@ -197,14 +223,13 @@ class ExecutionSchedulerDaemon extends Daemon {
 
     //#region Execution
     async execute(executionOrder: ExecutionOrder): Promise<number> {
-        const logger = new Logger(this.ns);
         if (executionOrder.nbThread === 0) {
             return 0;
         }
 
         // setup
         if (!this.ns.fileExists(executionOrder.request.scriptsFilepath, executionOrder.sourceHostname)) {
-            logger.warn(`Script ${executionOrder.request.scriptsFilepath} inexistant sur ${executionOrder.sourceHostname}`);
+            this.logger.warn(`Script ${executionOrder.request.scriptsFilepath} inexistant sur ${executionOrder.sourceHostname}`);
             const copyPid = this.ns.run(Referentiel.HACKING_DIRECTORY + '/spreading/copy-toolkit.worker.ts', 1, executionOrder.sourceHostname);
             
             await waitEndExecution(this.ns, copyPid);

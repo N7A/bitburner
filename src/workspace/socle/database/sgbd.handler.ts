@@ -2,7 +2,8 @@ import { Daemon } from 'workspace/socle/interface/daemon';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { CommitRequest } from "workspace/socle/database/model/CommitRequest";
 import { CommitType } from "workspace/socle/database/model/CommitType";
-import { Repository } from "/workspace/socle/database/model/Repository";
+import { Repository } from "workspace/socle/database/model/Repository";
+import { Broker } from 'workspace/socle/utils/broker';
 
 export async function main(ns: NS) {
     const daemon = new SgbdDaemon(ns);

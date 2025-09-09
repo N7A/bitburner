@@ -3,7 +3,7 @@ import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequ
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import * as Log from 'workspace/socle/utils/logging';
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
-import { SetupHackExecution } from './SetupExecution';
+import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 import { ServerData } from 'workspace/servers/domain/model/ServerData'
 import { HackData } from 'workspace/servers/domain/model/HackData'
 import * as Referentiel from 'workspace/referentiel'
