@@ -50,10 +50,6 @@
 /cmd/synchronize/synchronize-workspace.ts
 /lab/FileTest.ts
 /lab/oui.ts
-/lab/repo-broker/commit-handler.ts
-/lab/repo-broker/model/CommitRequest.ts
-/lab/repo-broker/model/CommitType.ts
-/lab/repo-broker/service.ts
 /lab/test.ts
 /workspace/common/log.properties.ts
 /workspace/load-balancer/analyse.ts
@@ -149,6 +145,10 @@
 /workspace/servers/domain/servers.repository.ts
 /workspace/servers/findServer.ts
 /workspace/servers/servers.service.ts
+/workspace/socle/database/model/CommitRequest.ts
+/workspace/socle/database/model/CommitType.ts
+/workspace/socle/database/model/Repository.ts
+/workspace/socle/database/sgbd.handler.ts
 /workspace/socle/interface/daemon.ts
 /workspace/socle/interface/dashboard.ts
 /workspace/socle/interface/directory-repository.ts
@@ -159,6 +159,7 @@
 /workspace/socle/Logger.ts
 /workspace/socle/model/LogLevel.ts
 /workspace/socle/model/LogLevelLitteral.ts
+/workspace/socle/utils/broker.ts
 /workspace/socle/utils/execution.ts
 /workspace/socle/utils/file.ts
 /workspace/socle/utils/logging.ts
