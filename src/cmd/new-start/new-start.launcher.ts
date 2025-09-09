@@ -1,9 +1,9 @@
 import * as Referentiel from 'workspace/referentiel'
-import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import * as Log from 'workspace/socle/utils/logging';
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domain/GangDirective.repository';
+import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
@@ -23,14 +23,14 @@ class NewStart {
 
     private ns: NS;
     private serversRepository: ServersRepository;
-    private executionsRepository: ExecutionsRepository;
+    private executionOrdersService: ExecutionOrdersService;
     private moneyPiggyBankService: MoneyPiggyBankService;
     private gangDirectiveRepository: GangDirectiveRepository;
 
     constructor(ns: NS) {
         this.ns = ns;
         this.serversRepository = new ServersRepository(ns);
-        this.executionsRepository = new ExecutionsRepository(ns);
+        this.executionOrdersService = new ExecutionOrdersService(ns);
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
         this.gangDirectiveRepository = new GangDirectiveRepository(ns);
     }
@@ -54,7 +54,7 @@ class NewStart {
 
         // reset des bases de données
         this.serversRepository.reset();
-        this.executionsRepository.reset();
+        this.executionOrdersService.reset();
         this.gangDirectiveRepository.reset();
     }
 

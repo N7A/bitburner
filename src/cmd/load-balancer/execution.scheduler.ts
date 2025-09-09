@@ -19,8 +19,8 @@ export async function main(ns: NS) {
 
     const daemon: ExecutionSchedulerDaemon = new ExecutionSchedulerDaemon(ns);
     
-    ns.atExit(() => {
-        daemon.resetAllRunningProcess();
+    ns.atExit(async () => {
+        await daemon.resetAllRunningProcess();
     });
     
     daemon.setupDashboard();
@@ -54,7 +54,6 @@ function getInput(ns: NS): InputArg {
 
 class ExecutionSchedulerDaemon extends Daemon {
     private orders: RamResourceExecution[] = [];
-    private executionsRepository: ExecutionsRepository;
     private executionOrdersService: ExecutionOrdersService;
     private serversService: ServersService;
     private dashboard: Dashboard;
@@ -64,7 +63,6 @@ class ExecutionSchedulerDaemon extends Daemon {
         super(ns);
         
         this.piggyBankRepository = new PiggyBankRepository(ns);
-        this.executionsRepository = new ExecutionsRepository(ns);
         this.executionOrdersService = new ExecutionOrdersService(ns);
         this.serversService = new ServersService(ns);
         this.dashboard = new Dashboard(ns, 'Executions', {icon: '⚖️▶️', role: 'Scheduler'});
@@ -78,7 +76,7 @@ class ExecutionSchedulerDaemon extends Daemon {
 
         // TODO : dont kill hack and setup
         // kill all old for recalcul repartition
-        this.resetAllRunningProcess();
+        await this.resetAllRunningProcess();
         // maj orders
         this.orders = this.executionOrdersService.getExecutionOrders();
 
@@ -113,12 +111,14 @@ class ExecutionSchedulerDaemon extends Daemon {
                 // maj pid processes
                 process.request.pid = [...(process.request.pid ?? []), pid];
             }
-            this.executionsRepository.save(process.request);
+            this.executionOrdersService.save(process.request);
         }
     }
     
-    resetAllRunningProcess() {
-        this.orders.map(x => x.request).forEach(x => this.resetRunningProcess(x));
+    async resetAllRunningProcess() {
+        for (const request of this.orders.map(x => x.request)) {
+            await this.resetRunningProcess(request);
+        }
     }
     
     /**
@@ -156,7 +156,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                 .filter(x => x.request.pid?.every(y => !this.ns.isRunning(y)));
             if (killedOrders.length > 0) {
                 killedOrders.filter(x => x.request.request.wantedThreadNumber <= 0)
-                    .forEach(x => this.executionsRepository.remove(x.request));
+                    .forEach(x => this.executionOrdersService.remove(x.request));
                 break;
             }
             
@@ -179,12 +179,12 @@ class ExecutionSchedulerDaemon extends Daemon {
      * @param ns 
      * @param request process request to reset
      */
-    private resetRunningProcess(request: ProcessRequest) {
+    private async resetRunningProcess(request: ProcessRequest) {
         // kill all process
         request.pid?.filter(x => x !== undefined).forEach(x => this.ns.kill(x));
         
         // ignore si plus en base
-        if (!this.executionsRepository.getAll().some(x => {
+        if (!(await this.executionOrdersService.getAll()).some(x => {
             return ExecutionsRepository.getHash(request) === ExecutionsRepository.getHash(x)
         })) {
             return;
@@ -192,7 +192,7 @@ class ExecutionSchedulerDaemon extends Daemon {
         
         // reset all repository pid
         request.pid = [];
-        this.executionsRepository.save(request);
+        this.executionOrdersService.save(request);
     }
 
     //#region Execution

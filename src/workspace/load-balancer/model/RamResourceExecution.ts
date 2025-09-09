@@ -3,7 +3,7 @@ import { ProcessRequest } from "workspace/load-balancer/domain/model/ProcessRequ
 // TODO : rename daemon execution ?
 export interface RamResourceExecution {
     request: ProcessRequest;
-    isExecutionUsless(ns: NS): boolean;
+    isExecutionUsless(ns: NS): Promise<boolean>;
     getActionLog(): string;
     setupDashboard(ns: NS, pid: number, targetHost: string): void;
     // TODO : getRamByThread

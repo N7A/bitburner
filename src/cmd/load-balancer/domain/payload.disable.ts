@@ -1,17 +1,17 @@
 import { Logger } from 'workspace/socle/Logger';
-import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution';
+import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 
 export async function main(ns: NS) {
     const input: InputArg = await getInput(ns);
 
     const logger = new Logger(ns);
-    const executionsRepository = new ExecutionsRepository(ns);
+    const executionOrdersService = new ExecutionOrdersService(ns);
 
     const request = PayloadExecution.getRequest(ns, input.hostnameTarget);
 
-    executionsRepository.remove(request);
+    executionOrdersService.remove(request);
     logger.success(`Hack ${input.hostnameTarget} [disabled]`);
 }
 

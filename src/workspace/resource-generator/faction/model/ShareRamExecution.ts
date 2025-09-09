@@ -19,7 +19,7 @@ export class ShareRamExecution implements RamResourceExecution {
         return Log.action('Sharing');
     }
     
-    isExecutionUsless(ns: NS): boolean {
+    async isExecutionUsless(ns: NS): Promise<boolean> {
         // check if script useless
         if (ns.getPlayer().factions.length === 0) {
             ns.print("WARN", " ", "Aucune faction rejointe, partage de RAM inutile");

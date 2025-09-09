@@ -19,7 +19,7 @@ export class OneShotExecution implements RamResourceExecution{
         return `${Log.action(this.request.label)} ${this.request.id ? Log.target(this.request.id) + ' ': ''}`;
     }
 
-    isExecutionUsless(): boolean {
+    async isExecutionUsless(): Promise<boolean> {
         return false;
     }
     

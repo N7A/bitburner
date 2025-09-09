@@ -17,7 +17,7 @@ export class SetupHackExecution implements RamResourceExecution {
         this.request = request;
     }
 
-    isExecutionUsless(ns: NS): boolean {
+    async isExecutionUsless(ns: NS): Promise<boolean> {
         /*const serversRepository = new ServersRepository(ns);
         // load host data
         const data: ServerData|null = serversRepository.get(this.targetHostname);

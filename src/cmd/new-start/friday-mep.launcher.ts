@@ -1,5 +1,5 @@
 import * as Referentiel from 'workspace/referentiel'
-import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
+import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { ServersService } from 'workspace/servers/servers.service';
 
 /**
@@ -20,12 +20,12 @@ class FridayMep {
 
     private ns: NS;
     private serversService: ServersService;
-    private executionsRepository: ExecutionsRepository;
+    private executionOrdersService: ExecutionOrdersService;
 
     constructor(ns: NS) {
         this.ns = ns;
         this.serversService = new ServersService(ns);
-        this.executionsRepository = new ExecutionsRepository(ns);
+        this.executionOrdersService = new ExecutionOrdersService(ns);
     }
 
     run() {
@@ -39,7 +39,7 @@ class FridayMep {
 
     private resetRepositories() {
         // reset des bases de données
-        this.executionsRepository.reset();
+        this.executionOrdersService.reset();
     }
 
     private startScripts() {

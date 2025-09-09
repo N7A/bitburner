@@ -4,8 +4,9 @@ import { HackData } from 'workspace/servers/domain/model/HackData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import * as Log from 'workspace/socle/utils/logging';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
-import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
+import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest'
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository';
 
 //#region Constants
 const ENABLE_PAYLOAD_SCRIPT = "cmd/load-balancer/domain/payload.enable.ts";
@@ -87,7 +88,7 @@ async function runScriptUntilEnoughThread(
 }
 
 async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
-    const executionsRepository = new ExecutionsRepository(ns);
+    const executionOrdersService = new ExecutionOrdersService(ns);
     
     const processRequest: ProcessRequest = {
         type: ProcessRequestType.ONESHOT, 
@@ -98,7 +99,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
             scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, false]}]
         }
     };
-    executionsRepository.add(processRequest);
+    executionOrdersService.add(processRequest);
 
     const repository = new ServersRepository(ns);
     // load host data
@@ -107,7 +108,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
 
     // on attend la fin du grow
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${GROW_SCRIPT.substring(GROW_SCRIPT.lastIndexOf('/'), GROW_SCRIPT.lastIndexOf('.ts'))}...`);
-    while (executionsRepository.getAll()
+    while ((await executionOrdersService.getAll())
         .some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))) {
             await ns.asleep(500);
     }
@@ -117,7 +118,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
 }
 
 async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): Promise<void> {
-    const executionsRepository = new ExecutionsRepository(ns);
+    const executionOrdersService = new ExecutionOrdersService(ns);
 
     const processRequest: ProcessRequest = {
         type: ProcessRequestType.ONESHOT, 
@@ -128,12 +129,12 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): 
             scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, false]}]
         }
     };
-    executionsRepository.add(processRequest);
+    executionOrdersService.add(processRequest);
     
     // wait execution end
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', 
         `Waiting ${WEAKEN_SCRIPT.substring(WEAKEN_SCRIPT.lastIndexOf('/'), WEAKEN_SCRIPT.lastIndexOf('.ts'))}...`);
-    while (executionsRepository.getAll()
+    while ((await executionOrdersService.getAll())
         .some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))) {
             await ns.asleep(500);
     }

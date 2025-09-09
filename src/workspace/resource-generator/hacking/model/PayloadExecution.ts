@@ -2,12 +2,13 @@ import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceE
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import * as Log from 'workspace/socle/utils/logging';
-import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
+import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { SetupHackExecution } from './SetupExecution';
 import { ServerData } from 'workspace/servers/domain/model/ServerData'
 import { HackData } from 'workspace/servers/domain/model/HackData'
 import * as Referentiel from 'workspace/referentiel'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository';
 
 export class PayloadExecution implements RamResourceExecution {
     //#region Constants
@@ -18,20 +19,22 @@ export class PayloadExecution implements RamResourceExecution {
 
     private targetHostname: string;
     request: ProcessRequest;
+    private executionOrdersService: ExecutionOrdersService;
 
     constructor(ns: NS, request: ProcessRequest) {
         this.request = request;
         this.targetHostname = request.id;
+        this.executionOrdersService = new ExecutionOrdersService(ns);
     }
 
-    isExecutionUsless(ns: NS): boolean {
+    async isExecutionUsless(ns: NS): Promise<boolean> {
         // TODO : check if payload already running
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.daemon.ts', targetHost)
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.daemon.ts', 'home', targetHost)
-        const executionsRepository = new ExecutionsRepository(ns);
 
         const setupRequest = SetupHackExecution.getRequest(this.targetHostname);
-        return executionsRepository.getAll().some(x => ExecutionsRepository.getHash(setupRequest) === ExecutionsRepository.getHash(x)) 
+        return (await this.executionOrdersService.getAll())
+            .some(x => ExecutionsRepository.getHash(setupRequest) === ExecutionsRepository.getHash(x)) 
         /*|| (ns.getServer(this.targetHost).moneyAvailable ?? 0) <= (ns.getServer(this.targetHost).moneyMax ?? 0) * 0.5*/;
     }
     

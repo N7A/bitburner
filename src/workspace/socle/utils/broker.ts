@@ -4,9 +4,7 @@ class Broker {
             await ns.asleep(500);
         }
     
-        if (!ns.isRunning(handlerScript)) {
-            ns.run(handlerScript);
-        }
+        ns.exec(handlerScript, 'home', {preventDuplicates: true});
     }
     
     static async getResponse(ns: NS, port: number): Promise<any> {
