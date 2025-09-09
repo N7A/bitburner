@@ -18,7 +18,7 @@ const COMMIT_HANDLER_SCRIPT = "workspace/socle/database/sgbd.handler.ts";
 export class SgbdDaemon extends Daemon {
     //#region Constants
     static readonly REQUEST_PORT = 1;
-    static readonly RESPONSE_PORT = 1;
+    static readonly RESPONSE_PORT = 2;
     //#endregion Constants
 
     private executionsRepository: ExecutionsRepository;
