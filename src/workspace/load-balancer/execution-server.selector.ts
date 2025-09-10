@@ -36,6 +36,7 @@ export class ExecutionSelector {
         
         // define repartition to fixed ram executions
         let ramDisponiblePostFixed = totalRamDisponible;
+        // TODO: sort order par priorité
         for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber !== undefined)) {
             this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.type : ''}`));
 
@@ -46,6 +47,7 @@ export class ExecutionSelector {
             // recherche de la répartition possible sur les serveurs
             const executionOrders: ExecutionOrder[] = await this.getExecutionRepartition(this.ns, ramByServer, order.request.request, ramAuthorized);
             // TODO: if executionOrders.length <= 0 -> new ram disponible pour les autres
+            // TODO: => recalcul des ram authorized sans cet order + notif ?
             executions.set(order, executionOrders);
         }
 
