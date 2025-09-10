@@ -182,7 +182,9 @@ class ExecutionSchedulerDaemon extends Daemon {
     }
 
     async getExecutionOrders() {
-        return (await this.executionOrdersService.getAll())
+        const executions: ProcessRequest[] = await this.executionOrdersService.getAll();
+
+        const executionsOrder = executions
             .map(order => {
                 if (order.type === ProcessRequestType.SHARE_RAM) {
                     return new ShareRamExecution(order);
@@ -196,8 +198,16 @@ class ExecutionSchedulerDaemon extends Daemon {
                 return null;
             })
             .filter(x => x !== null)
-            .map(x => x as RamResourceExecution)
-            .filter((executionOrder: RamResourceExecution) => !executionOrder?.isExecutionUsless(this.ns));
+            .map(x => x as RamResourceExecution);
+
+        let result = [];
+        for (const executionOrder of executionsOrder) {
+            const isUseful = !(await executionOrder?.isExecutionUsless(this.ns));
+            if (isUseful) {
+                result.push(executionOrder)
+            }
+        }
+        return result
     }
     
     /**
