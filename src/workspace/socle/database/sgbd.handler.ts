@@ -56,9 +56,7 @@ export class SgbdDaemon extends Daemon {
     }
 
     private async pushResponse(response: any) {
-        while(!this.ns.tryWritePort(SgbdDaemon.RESPONSE_PORT, response)) {
-            await this.ns.asleep(500);
-        }
+        await Broker.pushData(this.ns, SgbdDaemon.RESPONSE_PORT, response);
     }
     
     static async pushData(ns: NS, commitRequest: CommitRequest) {
