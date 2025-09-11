@@ -25,7 +25,6 @@
 - move to bitnode
 - join faction
 - install augmentation
-- darkweb
 - upgrade home
 
 # Réflexions

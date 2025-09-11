@@ -1,4 +1,3 @@
-import { getPortPrograms } from 'workspace/resource-generator/hacking/model/PortProgram';
 import { DarkwebUpgrade } from 'workspace/resource-generator/hacking/unlock/model/DarkwebUpgrade';
 
 /**
@@ -16,7 +15,6 @@ export async function selectUpgrade(ns: NS): Promise<DarkwebUpgrade | null> {
     return null;
 }
 
-// TODO : extract purchase on script run to reduice ram
 function getAllUpgrades(ns: NS): DarkwebUpgrade[] {
     return [
         {
@@ -25,14 +23,12 @@ function getAllUpgrades(ns: NS): DarkwebUpgrade[] {
             cost: 200 * 1000, 
             purchase: '/workspace/resource-generator/hacking/unlock/purchase-tor.worker.ts'
         },
-        ...getPortPrograms(ns).map(x => {
-            return {
-                name: x.filename,
-                isPurchased: () => ns.fileExists(x.filename, 'home'), 
-                cost: ns.singularity.getDarkwebProgramCost(x.filename),
-                purchase: `/workspace/resource-generator/hacking/unlock/purchase-program.worker.ts`
-            }
-        })
+        {
+            name: 'Formulas.exe',
+            isPurchased: () => ns.fileExists('Formulas.exe', 'home'), 
+            cost: ns.singularity.getDarkwebProgramCost('Formulas.exe'),
+            purchase: `/workspace/resource-generator/hacking/unlock/purchase-program.worker.ts`
+        }
     ]
 
 }
