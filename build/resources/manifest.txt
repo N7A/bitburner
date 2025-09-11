@@ -18,6 +18,7 @@
 /cmd/resource-generator/coding-contract/all-contracts.info.ts
 /cmd/resource-generator/coding-contract/contract.info.ts
 /cmd/resource-generator/coding-contract/resolve-contracts.scheduler.ts
+/cmd/resource-generator/faction/get-backup-bonus.scheduler.ts
 /cmd/resource-generator/faction/indices-files.info.ts
 /cmd/resource-generator/faction/join-faction.scheduler.ts
 /cmd/resource-generator/faction/share-ram.daemon.ts
@@ -35,6 +36,7 @@
 /cmd/resource-generator/hacking/payload/setup-server.sequencer.ts
 /cmd/resource-generator/hacking/scan/scan.scheduler.ts
 /cmd/resource-generator/hacking/spreading/spread-all.ts
+/cmd/resource-generator/hacking/unlock/darkweb-upgrade.scheduler.ts
 /cmd/resource-generator/hacknet/ipvgo/play-board.ts
 /cmd/resource-generator/hacknet/upgrade-hacknet.scheduler.ts
 /cmd/resource-generator/stock-market/buy-stock.scheduler.ts
@@ -67,6 +69,7 @@
 /workspace/load-balancer/upgrade-servers.selector.ts
 /workspace/load-balancer/upgrade-servers.worker.ts
 /workspace/notification/alert.ts
+/workspace/orchestration/darkweb-upgrade.selector.ts
 /workspace/piggy-bank/domain/model/Bank.ts
 /workspace/piggy-bank/domain/model/MoneyBank.ts
 /workspace/piggy-bank/domain/model/RamBank.ts
@@ -90,6 +93,7 @@
 /workspace/resource-generator/coding-contract/sanitize-parentheses-in-expression.resolve.ts
 /workspace/resource-generator/coding-contract/total-ways-to-sum.ts
 /workspace/resource-generator/faction/model/augmentation-selector.ts
+/workspace/resource-generator/faction/model/faction-selector.ts
 /workspace/resource-generator/faction/model/ShareRamExecution.ts
 /workspace/resource-generator/gang/application-properties.ts
 /workspace/resource-generator/gang/ascension-member.daemon.ts
@@ -119,7 +123,11 @@
 /workspace/resource-generator/hacking/spreading/clear-toolkit.worker.ts
 /workspace/resource-generator/hacking/spreading/copy-toolkit.launcher.ts
 /workspace/resource-generator/hacking/spreading/copy-toolkit.worker.ts
+/workspace/resource-generator/hacking/unlock/darkweb-upgrade.selector.ts
+/workspace/resource-generator/hacking/unlock/model/DarkwebUpgrade.ts
 /workspace/resource-generator/hacking/unlock/open-ports.worker.ts
+/workspace/resource-generator/hacking/unlock/purchase-program.worker.ts
+/workspace/resource-generator/hacking/unlock/purchase-tor.worker.ts
 /workspace/resource-generator/hacking/unlock/unlock.launcher.ts
 /workspace/resource-generator/hacking/unlock/unlock.selector.ts
 /workspace/resource-generator/hacking/unlock/unlock.worker.ts
