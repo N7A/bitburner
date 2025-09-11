@@ -156,6 +156,11 @@ export function time(date: Date) {
     return hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0') + ":" + second.toString().padStart(2, '0')
 }
 
+export function duration(date: Date) {
+    const mappedDate = new Date(date.getTime()-1000 * 60 * 60)
+    return time(mappedDate)
+}
+
 /**
  * @param fieldName nom du champ
  * @param value valeur du champ

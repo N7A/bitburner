@@ -130,7 +130,7 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
 
     const currentGain = ns.getMoneySources().sinceInstall.hacknet + ns.getMoneySources().sinceInstall.hacknet_expenses;
     if (currentGain < 0) {
-        ns.print(Log.INFO(`Auto-repay time`, `${Log.time(new Date(getAutoRepayTime(ns)))}`));
+        ns.print(Log.INFO(`Auto-repay time`, `${Log.duration(new Date(getAutoRepayTime(ns)))}`));
     }
     if (nextUpgrade) {
         ns.print(Log.INFO('Next upgrade type', nextUpgrade.upgradeType));

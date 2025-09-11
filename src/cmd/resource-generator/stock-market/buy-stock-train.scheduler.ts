@@ -56,7 +56,7 @@ class Main extends Headhunter<string> {
         const profit = await sellWorker.sell();
         const workEndTime = new Date();
         const workDuration = new Date(workEndTime.getTime() - workStartTime.getTime());
-        this.logger.log(Log.INFO("Time to profit",  Log.time(workDuration)));
+        this.logger.log(Log.INFO("Time to profit",  Log.duration(workDuration)));
         this.logger.log(Log.INFO("Production", `${Log.money(this.ns, profit / workDuration.getTime()*1000)} / s`));
         this.logger.log(`End`);
     }

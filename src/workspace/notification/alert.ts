@@ -21,7 +21,7 @@ export class Alert {
 
         this.ns.alert(
             this.getAlertMessage()
-            + '\n\nAtteint en ' + Log.time(duration) + '\n'
+            + '\n\nAtteint en ' + Log.duration(duration) + '\n'
             + '(Demandé à ' + Log.date(this.ns, startTime) + ')'
         );
     }
