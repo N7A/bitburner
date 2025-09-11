@@ -1,6 +1,7 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import * as Log from 'workspace/socle/utils/logging';
 import { FactionSelector } from 'workspace/resource-generator/faction/model/faction-selector';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * @requires singularity
@@ -12,6 +13,8 @@ export async function main(ns: NS) {
 
     const daemon = new Main(ns);
     
+    daemon.setupDashboard();
+
     if (!input.runHasLoop) {
         daemon.killAfterLoop();
     }
@@ -40,10 +43,13 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 class Main extends Headhunter<string> {
+    private dashboard: Dashboard;
+
     constructor(ns: NS) {
         // waitNewTargets = true : faction invitation appear over the time
-        super(ns, true)
-        this.setupDashboard();
+        super(ns, true);
+        
+        this.dashboard = new Dashboard(ns, 'Join faction', {icon: '⚜️🤝', role: 'Scheduler'});
     }
 
     async work(targets: string[]): Promise<any> {
@@ -66,7 +72,7 @@ class Main extends Headhunter<string> {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Join faction', 'Scheduler');
+        this.dashboard.initTailTitle();
         this.ns.ui.openTail();
     }
     //#endregion Dashboard
