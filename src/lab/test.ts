@@ -1,8 +1,4 @@
-import { ServersRepository } from "workspace/servers/domain/servers.repository";
-
 export async function main(ns: NS) {
-    //ns.print(ns.hacknet.maxNumNodes())
-    //ns.print(ns.hacknet.numNodes() < ns.hacknet.maxNumNodes())
     //ns.print(ns.getRunningScript())
     //ns.print(ns.ps())
     /*ns.clearPort(1)
@@ -11,5 +7,4 @@ export async function main(ns: NS) {
     //ns.tprint(JSON.stringify(ns.getServer('home')));
     //ns.tprint(JSON.stringify(ns.getServer('f1rst')));
     
-    new ServersRepository(ns).add('f1rst');
 }
