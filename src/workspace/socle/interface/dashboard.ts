@@ -6,7 +6,7 @@ export class Dashboard {
     private role?: string;
     private hostSource?: string;
     private pid?: number;
-    private icon?: string;
+    public readonly icon?: string;
 
     constructor(
         ns: NS, 
