@@ -1,12 +1,18 @@
 import * as Log from 'workspace/socle/utils/logging';
-import { Logger } from 'workspace/socle/Logger';
+import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { ServersService } from 'workspace/servers/servers.service';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
-export async function main(ns: NS, scanTarget: string) {
+/**
+ * @requires singularity
+ * @param ns 
+ * @param scanTarget 
+ */
+export async function main(ns: NS) {
     // load input arguments
-    const input: InputArg = getInput(ns, scanTarget);
+    const input: InputArg = await getInput(ns);
     
-    const backdoorServerWorker = new BackdoorServerWorker(ns, input.targetHost);
+    const backdoorServerWorker = new BackdoorServerWorker(ns, input.targetHostname);
 
     backdoorServerWorker.setupDashboard();
 
@@ -16,7 +22,7 @@ export async function main(ns: NS, scanTarget: string) {
 //#region Input arguments
 type InputArg = {
     /** Serveur cible */
-    targetHost: string;
+    targetHostname: string;
 }
 
 /**
@@ -24,20 +30,19 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS, targetHost: string): InputArg {
-    const logger = new Logger(ns);
-    if (!targetHost) {
-        if (ns.args[0] === undefined) {
-            logger.err('Merci de renseigner un hostname');
-            ns.exit();
-        }
-        targetHost = ns.args[0] as string
+async function getInput(ns: NS): Promise<InputArg> {
+    let targetHostname: string;
+    if (ns.args[0] === undefined) {
+        const repository = new ServersRepository(ns);
+        
+        targetHostname = await ns.prompt('Merci de renseigner un hostname', { type: "select", choices: repository.getAllIds() }) as string
+    } else {
+        targetHostname = (ns.args[0] as string);
     }
-    let result: InputArg = {
-        targetHost: (targetHost ?? ns.getHostname()) as string
-    };
 
-    return result;
+    return {
+        targetHostname: targetHostname
+    };
 }
 //#endregion Input arguments
 
@@ -45,11 +50,13 @@ class BackdoorServerWorker {
     private ns: NS;
     private targetHostname: string;
     private serversService: ServersService;
+    private dashboard: Dashboard;
 
     constructor(ns: NS, targetHostname: string) {
         this.ns = ns;
         this.targetHostname = targetHostname;
         this.serversService = new ServersService(ns);
+        this.dashboard = new Dashboard(ns, `Backdoor ${Log.target(this.targetHostname, {colorless: true})}`, {icon: '🚪', role: 'Worker'});
     }
 
     async work() {
@@ -73,6 +80,6 @@ class BackdoorServerWorker {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
             
-        Log.initTailTitle(this.ns, `Backdoor ${Log.target(this.targetHostname, {colorless: true})}`, 'Worker');
+        this.dashboard.initTailTitle();
     }
 }
