@@ -1,4 +1,7 @@
-class AugmentationSelector {
+/**
+ * @requires singularity
+ */
+export class AugmentationSelector {
     
     getAllAugmentations(ns: NS) {
         return Array.from(new Set(Object.values(ns.enums.FactionName)
@@ -7,7 +10,7 @@ class AugmentationSelector {
 
     getWantedAugmentations(ns: NS) {
         return this.getAllAugmentations(ns)
-            .filter(x => !ns.getPlayer().factions.includes(x));
+            .filter(x => !ns.singularity.getOwnedAugmentations(true).includes(x));
     }
 
     getBestAugmentations(ns: NS) {

@@ -1,6 +1,11 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import * as Log from 'workspace/socle/utils/logging';
+import { FactionSelector } from 'workspace/resource-generator/faction/model/faction-selector';
 
+/**
+ * @requires singularity
+ * @param ns 
+ */
 export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
@@ -46,10 +51,7 @@ class Main extends Headhunter<string> {
     }
 
     protected async getTargets(): Promise<string[]> {
-        return this.ns.singularity.checkFactionInvitations()
-            // faction have not owned augmentation
-            .filter(faction => this.ns.singularity.getAugmentationsFromFaction(faction)
-                .some(x => !this.ns.singularity.getOwnedAugmentations(true).includes(x)))
+        return new FactionSelector().getWantedFactions(this.ns)
             .filter(x => this.ns.singularity.getFactionEnemies(x).length <= 0);
     }
 
