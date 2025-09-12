@@ -152,10 +152,12 @@ class PlayBoardDaemon extends Daemon {
         // il n'a plus de routeur
         return board.hasNoMoreOpponent() 
             // il n'y a pas de capture future possible
-            || validMoves.filter(x => x.hasFriendlyNeighbor(board.boardState, this.getOpponent())).length === 0;
+            || validMoves.filter(x => x.hasFriendlyNeighbor(board.boardState, this.getOpponent())).length === 0
+            // future moves sont auto capturables
+            ||  this.getMoves(board).every(x => board.isAutoCapturableMove(x));
     }
 
-    private getMoveChoice(board: Board): Node | undefined {
+    private getMoves(board: Board): Node[] {
         // init nodes
         const nodes: Node[] = board.getNodes();
 
@@ -195,7 +197,12 @@ class PlayBoardDaemon extends Daemon {
             {function: (availableNodes: Node[]) => availableNodes, name: 'Random move'}
         ]
 
-        const availableNodes = this.getAvailableNodes(stratPriority, validMoves);
+        return this.getAvailableNodes(stratPriority, validMoves);
+    }
+
+    private getMoveChoice(board: Board): Node | undefined {
+        const availableNodes = this.getMoves(board);
+
         if (availableNodes.length > 0) {
             // Choose one of the found moves at random
             const randomIndex = Math.round(Math.random() * (availableNodes.length-1));
