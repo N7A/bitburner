@@ -1,6 +1,5 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
-import * as Log from 'workspace/socle/utils/logging';
-import { FactionSelector } from 'workspace/resource-generator/faction/model/faction-selector';
+import { FactionSelector } from 'workspace/resource-generator/faction/model/faction.selector';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
