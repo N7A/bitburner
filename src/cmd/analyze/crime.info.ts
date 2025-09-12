@@ -42,7 +42,7 @@ class CrimeInfo extends Info {
 	}
 
     printData() {
-		this.ns.tprint(Log.title(this.crime));
+		this.ns.print(Log.title(this.crime));
 		this.showFormulasData();
 		this.ns.print('\n')
 		this.showSingularityData();
