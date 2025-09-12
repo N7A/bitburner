@@ -1,17 +1,21 @@
-import { CMD_DIRECTORY } from "workspace/referentiel";
-
 /**
  * Active les scripts quand le jeu atteind l'état voulu.
  */
 class OrchestrationLauncher {
+    private ns: NS;
+
+    constructor(ns: NS) {
+        this.ns = ns;
+    }
+
     run() {
-        // TODO: run thread waiting
+        // TODO: run thread waiting with multi PID
         this.codingContractsOrchestration();
         this.ipvgoOrchestration();
         this.stockMarketOrchestration();
     }
 
-    setupOrchestration() {
+    setupHackOrchestration() {
         // TODO: run thread waiting serveur money en dessous d'un palier
         // TODO: OU money ne fait que descendre (grow pas assez puissant)
         // TODO: add setup serveur to executions
@@ -23,8 +27,11 @@ class OrchestrationLauncher {
     }
 
     ipvgoOrchestration() {
-        // TODO: run thread waiting enough RAM
-        // TODO: add CMD_DIRECTORY + 'resource-generator/hacknet/ipvgo/play-board.ts' to executions
+        const script: string = 'workspace/bitburner/src/workspace/orchestration/ipvgo-orchestration.daemon.ts';
+        this.ns.run(script);
+    }
+
+    lootBackupBonusOrchestration() {
     }
 
     stockMarketOrchestration() {
