@@ -13,6 +13,9 @@ declare global {
     interface ProcessInfo extends bitburner.ProcessInfo {}
     type ScriptArg = bitburner.ScriptArg
     type RunningScript = bitburner.RunningScript
+    type CrimeStats = bitburner.CrimeStats
+    type CrimeType = bitburner.CrimeType
+    type MoneyRequirement = bitburner.MoneyRequirement
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 
