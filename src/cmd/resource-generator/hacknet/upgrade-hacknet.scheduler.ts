@@ -137,7 +137,7 @@ function refreshDashBoard(ns: NS, currentMoney: number, interval: number | null,
         ns.print(Log.INFO('Next upgrade ratio', ns.formatNumber(nextUpgrade.ratio)));
         ns.print(Log.INFO('Next upgrade cost', Log.money(ns, nextUpgrade.cost)));
     }
-    ns.print(Log.INFO(`Current money `, `${Log.money(ns, currentMoney)}`));
+    ns.print(Log.INFO(`Current money`, `${Log.money(ns, currentMoney)}`));
     ns.print(Log.INFO(`Available`, `${Log.money(ns, new MoneyPiggyBankService(ns).getDisponibleMoney(currentMoney))}`));
     ns.ui.resizeTail(650, Math.min(nodesToShow.length * 25 + 300, 600))
 }
