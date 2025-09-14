@@ -57,6 +57,7 @@ class Main extends Headhunter<string> {
 
     protected async getTargets(): Promise<string[]> {
         return new FactionSelector().getWantedFactions(this.ns)
+            // TODO: directive pour savoir quelles factions futur on veux pour éviter les enemies qu'on ne veux pas
             .filter(x => this.ns.singularity.getFactionEnemies(x).length <= 0);
     }
 

@@ -22,9 +22,7 @@
 
 - player task
 - move to bitnode
-- join faction
 - install augmentation (best reset time : getFactionFavorGain)
-- upgrade home
 
 # Réflexions
 

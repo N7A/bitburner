@@ -1,6 +1,7 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 let daemon: WeakenDaemon;
 
@@ -53,6 +54,7 @@ export function killAfterLoop() {
 }
 
 class WeakenDaemon extends Daemon {
+    private dashboard: Dashboard;
     private targetHost: string;
     private securityThresh: number;
 
@@ -61,6 +63,7 @@ class WeakenDaemon extends Daemon {
         
         this.targetHost = targetHost;
         this.securityThresh = securityThresh;
+        this.dashboard = new Dashboard(ns, `Weaken ${Log.target(this.targetHost, {colorless: true})}`, {icon: '📉🔒', role: 'Daemon'});
     }
 
     async work() {
@@ -80,7 +83,7 @@ class WeakenDaemon extends Daemon {
         this.ns.enableLog('weaken');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, `Weaken ${Log.target(this.targetHost, {colorless: true})}`, 'Daemon');
+        this.dashboard.initTailTitle();
     }
     //#endregion Dashboard
 }
