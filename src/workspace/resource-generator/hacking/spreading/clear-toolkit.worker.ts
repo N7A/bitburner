@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { getFilepaths } from 'workspace/socle/utils/file'
 
 //#region Constants

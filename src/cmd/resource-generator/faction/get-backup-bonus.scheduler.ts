@@ -1,5 +1,5 @@
 import { Dashboard } from 'workspace/socle/interface/dashboard';
-import { Daemon } from '/workspace/socle/interface/daemon';
+import { Daemon } from 'workspace/socle/interface/daemon';
 import { Logger } from 'workspace/socle/Logger';
 
 /**

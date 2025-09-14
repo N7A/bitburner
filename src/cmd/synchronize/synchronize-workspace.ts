@@ -1,5 +1,5 @@
 import { getHash } from 'workspace/socle/utils/file'
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 
 export async function main(ns: NS): Promise<void> {
     const hashes: Record<string,number> = {}

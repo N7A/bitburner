@@ -1,7 +1,7 @@
 import { Logger } from 'workspace/socle/Logger';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution';
 
 //#region Constants

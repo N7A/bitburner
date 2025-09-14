@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { ServerData } from 'workspace/servers/domain/model/ServerData'
 import { HackData } from 'workspace/servers/domain/model/HackData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';

@@ -1,11 +1,11 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { Bank } from 'workspace/piggy-bank/domain/model/Bank'
 import { RamBank } from 'workspace/piggy-bank/domain/model/RamBank';
 import { MoneyBank } from 'workspace/piggy-bank/domain/model/MoneyBank';
 import { getHash } from 'workspace/socle/utils/file';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 
-const REPOSITORY = Referentiel.REPOSITORIES_DIRECTORY + '/piggy-bank.json';
+const REPOSITORY = Referentiel.PIGGY_BANK_REPOSITORY;
 
 /**
  * Persiste les seuils de dépense (en argent et RAM).

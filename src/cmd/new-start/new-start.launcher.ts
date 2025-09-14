@@ -1,9 +1,11 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import * as Log from 'workspace/socle/utils/logging';
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domain/GangDirective.repository';
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
+import { GameRepository } from 'workspace/game/domain/game.repository';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
@@ -22,17 +24,21 @@ class NewStart {
     //#endregion Constants
 
     private ns: NS;
+    private dashboard: Dashboard;
     private serversRepository: ServersRepository;
     private executionOrdersService: ExecutionOrdersService;
     private moneyPiggyBankService: MoneyPiggyBankService;
     private gangDirectiveRepository: GangDirectiveRepository;
+    private gameRepository: GameRepository;
 
     constructor(ns: NS) {
         this.ns = ns;
+        this.dashboard = new Dashboard(ns, 'TODO', {icon: '📋'});
         this.serversRepository = new ServersRepository(ns);
         this.executionOrdersService = new ExecutionOrdersService(ns);
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
         this.gangDirectiveRepository = new GangDirectiveRepository(ns);
+        this.gameRepository = new GameRepository(ns);
     }
 
     run() {
@@ -56,6 +62,7 @@ class NewStart {
         this.serversRepository.reset();
         this.executionOrdersService.reset();
         this.gangDirectiveRepository.reset();
+        this.gameRepository.reset();
     }
 
     private startScripts() {
@@ -78,7 +85,7 @@ class NewStart {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'TODO');
+        this.dashboard.initTailTitle();
 
         // TODO : compléter
         this.ns.print(Log.getStartLog());

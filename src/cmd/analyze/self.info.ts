@@ -1,5 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { Info } from 'workspace/socle/interface/info';
+import { GameRepository } from 'workspace/game/domain/game.repository';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -9,9 +10,12 @@ export async function main(ns: NS) {
 }
 
 class PlayerInfo extends Info {
+	private gameRepository: GameRepository;
 
 	constructor(ns: NS) {
         super(ns, 'Self');
+
+		this.gameRepository = new GameRepository(ns);
 	}
 
     printData() {
@@ -40,7 +44,8 @@ class PlayerInfo extends Info {
 
 	showScriptFeatures() {
 		this.ns.print(Log.title("Script features"));
-		this.ns.print(Log.INFO("Singularity", this.ns.getResetInfo().ownedSF.has(4) || this.ns.getResetInfo().currentNode === 4));
+		this.ns.print(Log.INFO('Formulas API', this.gameRepository.getData().hasFormulas));
+		this.ns.print(Log.INFO("Singularity API", this.gameRepository.getData().hasSingularity));
 	}
 
 	showResetInfo() {

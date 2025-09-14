@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import * as Log from 'workspace/socle/utils/logging';
 import { getUnlockTarget } from 'workspace/resource-generator/hacking/unlock/unlock.selector'
 import { waitEndExecution } from 'workspace/socle/utils/execution'

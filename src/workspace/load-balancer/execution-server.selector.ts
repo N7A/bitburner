@@ -1,5 +1,5 @@
 import { ServersService } from 'workspace/servers/servers.service';
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import {ExecutionOrder, ExecutionRequest, ScriptRequest} from 'workspace/load-balancer/model/ExecutionServer'
 import * as Log from 'workspace/socle/utils/logging';
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';

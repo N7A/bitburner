@@ -1,6 +1,6 @@
 import { GitRepository } from "workspace/synchronize/model/GitRepository";
 import { getFilepaths } from "workspace/socle/utils/file";
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { Logger } from "workspace/socle/Logger";
 import { LogLevel } from "workspace/socle/model/LogLevel";
 

@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { GangDirective } from 'workspace/resource-generator/gang/domain/model/GangDirective';
 import { WantedLvl } from 'workspace/resource-generator/gang/domain/model/WantedLvl';
 import { TaskType } from 'workspace/resource-generator/gang/model/TaskType';

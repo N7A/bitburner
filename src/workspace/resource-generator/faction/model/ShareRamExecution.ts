@@ -2,7 +2,7 @@ import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceE
 import * as Log from 'workspace/socle/utils/logging';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType'
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 
 //#region Constants
 const SHARE_SCRIPT = Referentiel.FACTION_DIRECTORY + '/' + 'share-ram.daemon.ts';
