@@ -1,5 +1,5 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
-import { FactionSelector } from 'workspace/resource-generator/faction/model/faction.selector';
+import { FactionSelector } from 'workspace/resource-generator/faction/faction.selector';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
@@ -36,7 +36,7 @@ type InputArg = {
  */
 function getInput(ns: NS): InputArg {
     return {
-        runHasLoop: ns.args[0] ? (ns.args[0] as boolean) : false
+        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : false
     };
 }
 //#endregion Input arguments
