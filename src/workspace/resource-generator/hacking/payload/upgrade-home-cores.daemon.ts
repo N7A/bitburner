@@ -2,6 +2,10 @@ import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
 
+/**
+ * @requires singularity
+ * @param ns Bitburner API
+ */
 export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
