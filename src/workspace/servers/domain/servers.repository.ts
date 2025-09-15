@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServerType } from "workspace/servers/domain/model/ServerType";
 import { UnlockRequirements } from "workspace/servers/domain/model/UnlockRequirements";

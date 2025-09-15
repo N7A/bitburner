@@ -1,5 +1,5 @@
 import { Dashboard } from 'workspace/socle/interface/dashboard';
-import { Daemon } from '/workspace/socle/interface/daemon';
+import { Daemon } from 'workspace/socle/interface/daemon';
 import { Logger } from 'workspace/socle/Logger';
 
 /**
@@ -36,7 +36,7 @@ type InputArg = {
  */
 function getInput(ns: NS): InputArg {
     return {
-        runHasLoop: ns.args[0] ? (ns.args[0] as boolean) : false
+        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : false
     };
 }
 //#endregion Input arguments

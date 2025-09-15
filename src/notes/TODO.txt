@@ -12,7 +12,6 @@
 - save on repository contract fail
 - coordonner hack et stock
 - utiliser des emoji dans les logs
-- check singularity disponible worker
 - ajouter emoji grade au serveurs (renommer quand up)
 
 ## Formulas
@@ -23,9 +22,7 @@
 
 - player task
 - move to bitnode
-- join faction
 - install augmentation (best reset time : getFactionFavorGain)
-- upgrade home
 
 # Réflexions
 

@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceExecution';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import * as Log from 'workspace/socle/utils/logging';

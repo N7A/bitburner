@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { ServersService } from 'workspace/servers/servers.service';
 

@@ -1,5 +1,5 @@
 import { WaitAndSeeRamDaemon } from 'workspace/socle/wait-and-see.ram.daemon';
-import { CMD_DIRECTORY } from "workspace/referentiel";
+import { CMD_DIRECTORY } from 'workspace/common/referentiel';
 
 // TODO: RamResourceExecution + isExecutionUsless meilleur ?
 export async function main(ns: NS) {

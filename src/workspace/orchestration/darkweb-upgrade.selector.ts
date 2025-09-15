@@ -1,4 +1,5 @@
 import { DarkwebUpgrade } from 'workspace/resource-generator/hacking/unlock/model/DarkwebUpgrade';
+import { GameRepository } from "workspace/game/domain/game.repository";
 
 /**
  * @requires singularity
@@ -16,6 +17,8 @@ export async function selectUpgrade(ns: NS): Promise<DarkwebUpgrade | null> {
 }
 
 function getAllUpgrades(ns: NS): DarkwebUpgrade[] {
+    const repository: GameRepository = new GameRepository(ns);
+    
     return [
         {
             name: 'TOR router', 
@@ -25,7 +28,7 @@ function getAllUpgrades(ns: NS): DarkwebUpgrade[] {
         },
         {
             name: 'Formulas.exe',
-            isPurchased: () => ns.fileExists('Formulas.exe', 'home'), 
+            isPurchased: () => repository.getData().hasFormulas, 
             cost: ns.singularity.getDarkwebProgramCost('Formulas.exe'),
             purchase: `/workspace/resource-generator/hacking/unlock/purchase-program.worker.ts`
         }

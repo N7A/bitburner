@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { waitEndExecution } from 'workspace/socle/utils/execution'
 
 //#region Constants

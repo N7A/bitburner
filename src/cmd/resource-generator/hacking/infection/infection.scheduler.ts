@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { getNextTarget, getUnlockTarget } from 'workspace/resource-generator/hacking/unlock/unlock.selector'
 import {getAvailablePortProgram} from 'workspace/resource-generator/hacking/unlock/open-ports.worker'
 import * as Log from 'workspace/socle/utils/logging';

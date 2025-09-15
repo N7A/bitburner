@@ -6,7 +6,7 @@ import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders
 import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 import { ServerData } from 'workspace/servers/domain/model/ServerData'
 import { HackData } from 'workspace/servers/domain/model/HackData'
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository';
 

@@ -1,4 +1,4 @@
-import * as Referentiel from 'workspace/referentiel'
+import * as Referentiel from 'workspace/common/referentiel'
 import * as Log from 'workspace/socle/utils/logging';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 

@@ -1,5 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { Info } from 'workspace/socle/interface/info';
+import { GameRepository } from 'workspace/game/domain/game.repository';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -9,44 +10,56 @@ export async function main(ns: NS) {
 }
 
 class PlayerInfo extends Info {
+	private gameRepository: GameRepository;
 
 	constructor(ns: NS) {
         super(ns, 'Self');
+
+		this.gameRepository = new GameRepository(ns);
 	}
 
     printData() {
 		this.showPlayerStats();
 		this.ns.print('\n')
-		this.showResetInfo();
-		this.ns.print('\n')
 		this.showProductionInfo();
 		this.ns.print('\n')
 		this.showServeurs();
 		this.ns.print('\n')
+		this.showFactionsData();
+		this.ns.print('\n')
 		this.showScriptFeatures();
+		this.ns.print('\n')
+		this.showResetInfo();
+		this.ns.print('\n')
+		this.showBitnode();
 	}
 
 	showPlayerStats() {
 		let player = this.ns.getPlayer();
-		let totalSharePower = this.ns.getSharePower();
 		let hackingLevel = this.ns.getHackingLevel();
 		this.ns.print(Log.INFO("Hacking Level", hackingLevel));
-		this.ns.print(Log.INFO("Share Power", totalSharePower));
-		this.ns.print(Log.INFO("Factions", `${player.factions}`), ` (${Log.color(player.factions.length.toString(), Log.Color.CYAN)})`);
 		//this.ns.print(Log.INFO("Entropy", player.entropy));
 		this.ns.print(Log.INFO("People Killed", player.numPeopleKilled));
 		this.ns.print(Log.INFO("Karma", this.ns.heart.break().toFixed(2)));
 	}
 
+	showFactionsData() {
+		let player = this.ns.getPlayer();
+		this.ns.print(Log.title("Faction"));
+		this.ns.print(Log.INFO(`Factions (${Log.color(player.factions.length.toString(), Log.Color.CYAN)})`, `${player.factions}`));
+		this.ns.print(Log.INFO("Share Power", this.ns.getSharePower()));
+	}
+
 	showScriptFeatures() {
 		this.ns.print(Log.title("Script features"));
-		this.ns.print(Log.INFO("Singularity", this.ns.getResetInfo().ownedSF.has(4) || this.ns.getResetInfo().currentNode === 4));
+		this.ns.print(Log.INFO('Formulas API', this.gameRepository.getData().hasFormulas));
+		this.ns.print(Log.INFO("Singularity API", this.gameRepository.getData().hasSingularity));
 	}
 
 	showResetInfo() {
 		this.ns.print(Log.title("Reset info"));
+		this.ns.print(`${Log.date(this.ns, new Date(this.ns.getResetInfo().lastAugReset))} since last augmentation reset`);
 		this.ns.print(Log.INFO('Augmentations', this.ns.getResetInfo().ownedAugs.size));
-		this.ns.print(Log.INFO("Time since last augmentation", `${Log.date(this.ns, new Date(this.ns.getResetInfo().lastAugReset))}`));
 	}
 
 	showProductionInfo() {
@@ -77,14 +90,17 @@ class PlayerInfo extends Info {
 	}
 	
 	showBitnode() {
+		const currentNode: number = this.ns.getResetInfo().currentNode;
+
 		this.ns.print(Log.title("Bitnode"));
-		this.ns.print(Log.INFO('Current node', this.ns.getResetInfo().currentNode));
+		this.ns.print(Log.INFO('Current node', currentNode));
+		this.ns.print(`${Log.date(this.ns, new Date(this.ns.getResetInfo().lastNodeReset))} since last BitNode reset`);
 		
 		if (this.ns.getResetInfo().ownedSF.has(5)) {
-			const bitNodeLvl = this.ns.getResetInfo().bitNodeOptions.sourceFileOverrides.get(this.ns.getResetInfo().currentNode) 
-				?? this.ns.getResetInfo().ownedSF.get(this.ns.getResetInfo().currentNode) 
+			const bitNodeLvl = this.ns.getResetInfo().bitNodeOptions.sourceFileOverrides.get(currentNode) 
+				?? this.ns.getResetInfo().ownedSF.get(currentNode) 
 				?? 0;
-			this.ns.print(this.ns.getBitNodeMultipliers(this.ns.getResetInfo().currentNode, bitNodeLvl));
+			this.ns.print(this.ns.getBitNodeMultipliers(currentNode, bitNodeLvl));
 		}
 	}
 

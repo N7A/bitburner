@@ -1,4 +1,4 @@
-import { AugmentationSelector } from "/workspace/resource-generator/faction/model/augmentation.selector";
+import { AugmentationSelector } from "./augmentation.selector";
 
 /**
  * @requires singularity
