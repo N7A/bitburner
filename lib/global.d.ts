@@ -16,6 +16,9 @@ declare global {
     type CrimeStats = bitburner.CrimeStats
     type CrimeType = bitburner.CrimeType
     type MoneyRequirement = bitburner.MoneyRequirement
+    type CompanyName = bitburner.CompanyName
+    type CompanyPositionInfo = bitburner.CompanyPositionInfo
+    type CompanyWorkTask = bitburner.CompanyWorkTask
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 
