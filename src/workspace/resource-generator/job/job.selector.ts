@@ -34,13 +34,23 @@ function getAvailablePositions(ns: NS, company: CompanyName): CompanyPositionInf
  * @param ns 
  * @returns 
  */
+export function getBestCompanyWork(ns: NS, company: CompanyName): CompanyPositionInfo | undefined {
+    return getAvailablePositions(ns, company)
+        .sort((a,b) => a.salary - b.salary)
+        .pop();
+}
+
+/**
+ * 
+ * @requires singularity
+ * @param ns 
+ * @returns 
+ */
 export function getBestWork(ns: NS): JobOrder | undefined {
     let bestWork: JobOrder | undefined = undefined;
 
     for(const currentCompany of getCompanies(ns)) {
-        const currentBestPosition: CompanyPositionInfo | undefined = getAvailablePositions(ns, currentCompany)
-            .sort((a,b) => a.salary - b.salary)
-            .pop();
+        const currentBestPosition: CompanyPositionInfo | undefined = getBestCompanyWork(ns, currentCompany);
 
         if (currentBestPosition === undefined) {
             continue;
