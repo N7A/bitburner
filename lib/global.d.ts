@@ -19,6 +19,7 @@ declare global {
     type CompanyName = bitburner.CompanyName
     type CompanyPositionInfo = bitburner.CompanyPositionInfo
     type CompanyWorkTask = bitburner.CompanyWorkTask
+    type LocationName = bitburner.LocationName
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 
