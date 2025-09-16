@@ -94,6 +94,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
         type: ProcessRequestType.ONESHOT, 
         id: targetHost, 
         weight: 1, 
+        label: 'growToMax',
         request: {
             wantedThreadNumber: threadToLaunch,
             scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, false]}]
@@ -108,9 +109,13 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
 
     // on attend la fin du grow
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${GROW_SCRIPT.substring(GROW_SCRIPT.lastIndexOf('/'), GROW_SCRIPT.lastIndexOf('.ts'))}...`);
-    while ((await executionOrdersService.getAll())
-        .some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))) {
+    
+    let orders: ProcessRequest[] = await executionOrdersService.getAll();
+    while (
+        orders.some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))
+    ) {
             await ns.asleep(500);
+        orders = await executionOrdersService.getAll();
     }
 
     // TODO : run weaken in same time
@@ -124,6 +129,7 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): 
         type: ProcessRequestType.ONESHOT, 
         id: targetHost, 
         weight: 1, 
+        label: 'weakenToMax',
         request: {
             wantedThreadNumber: threadToLaunch,
             scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, false]}]
@@ -134,9 +140,13 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): 
     // wait execution end
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', 
         `Waiting ${WEAKEN_SCRIPT.substring(WEAKEN_SCRIPT.lastIndexOf('/'), WEAKEN_SCRIPT.lastIndexOf('.ts'))}...`);
-    while ((await executionOrdersService.getAll())
-        .some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))) {
+
+    let orders: ProcessRequest[] = await executionOrdersService.getAll();
+    while (
+        orders.some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))
+    ) {
             await ns.asleep(500);
+            orders = await executionOrdersService.getAll();
     }
 }
 
