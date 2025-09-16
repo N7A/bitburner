@@ -41,6 +41,7 @@
 /cmd/resource-generator/hacknet/ipvgo/play-board.ts
 /cmd/resource-generator/hacknet/upgrade-hacknet.scheduler.ts
 /cmd/resource-generator/infiltration/infiltration.info.ts
+/cmd/resource-generator/infiltration/infiltration.launcher.ts
 /cmd/resource-generator/stock-market/buy-stock.scheduler.ts
 /cmd/resource-generator/stock-market/buy-stock-train.scheduler.ts
 /cmd/resource-generator/stock-market/sell-stock.worker.ts
