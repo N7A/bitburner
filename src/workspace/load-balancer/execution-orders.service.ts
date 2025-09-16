@@ -16,12 +16,18 @@ export class ExecutionOrdersService {
     }
     
     async getAll(): Promise<ProcessRequest[]> {
-        SgbdDaemon.pushData(this.ns, {
-            repository: Repository.EXECUTIONS, 
-            type: CommitType.GET_ALL
-        } as CommitRequest);
+        let data: ProcessRequest[] | String;
 
-        return await SgbdDaemon.getResponse(this.ns);
+        do {
+            SgbdDaemon.pushData(this.ns, {
+                repository: Repository.EXECUTIONS, 
+                type: CommitType.GET_ALL
+            } as CommitRequest);
+            
+            data = await SgbdDaemon.getResponse(this.ns);
+        } while (data === 'NULL PORT DATA')
+        
+        return data as ProcessRequest[];
     }
     
     add(data: ProcessRequest) {
