@@ -38,8 +38,9 @@
 /cmd/resource-generator/hacking/scan/scan.scheduler.ts
 /cmd/resource-generator/hacking/spreading/spread-all.ts
 /cmd/resource-generator/hacking/unlock/darkweb-upgrade.scheduler.ts
-/cmd/resource-generator/hacknet/ipvgo/play-board.ts
+/cmd/resource-generator/hacknet/ipvgo/play-board.daemon.ts
 /cmd/resource-generator/hacknet/upgrade-hacknet.scheduler.ts
+/cmd/resource-generator/infiltration/auto-heal.daemon.ts
 /cmd/resource-generator/infiltration/infiltration.info.ts
 /cmd/resource-generator/infiltration/infiltration.launcher.ts
 /cmd/resource-generator/stock-market/buy-stock.scheduler.ts
@@ -56,6 +57,7 @@
 /lab/oui.ts
 /lab/test.ts
 /workspace/common/log.properties.ts
+/workspace/common/model/DirectiveType.ts
 /workspace/common/referentiel.ts
 /workspace/game/domain/game.repository.ts
 /workspace/game/domain/model/Game.ts
@@ -148,6 +150,8 @@
 /workspace/resource-generator/hacknet/model/UpgradeType.ts
 /workspace/resource-generator/hacknet/upgrade-hacknet.target-selector.ts
 /workspace/resource-generator/hacknet/upgrade-hacknet.worker.ts
+/workspace/resource-generator/infiltration/infiltration.selector.ts
+/workspace/resource-generator/infiltration/model/DirectiveType.ts
 /workspace/resource-generator/job/job.selector.ts
 /workspace/resource-generator/job/model/JobOrder.ts
 /workspace/resource-generator/stock-market/buy-stock.selector.ts
