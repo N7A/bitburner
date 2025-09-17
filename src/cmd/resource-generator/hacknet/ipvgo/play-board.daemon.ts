@@ -22,7 +22,7 @@ enum GoOpponent {
 
 export async function main(ns: NS) {
     // singleton
-    const script: RunningScript | null = ns.getRunningScript('cmd/resource-generator/hacknet/ipvgo/play-board.ts');
+    const script: RunningScript | null = ns.getRunningScript('cmd/resource-generator/hacknet/ipvgo/play-board.daemon.ts');
     if (script) {
         ns.kill(script.pid);
     }

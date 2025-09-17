@@ -3,7 +3,7 @@ import { CMD_DIRECTORY } from 'workspace/common/referentiel';
 
 // TODO: RamResourceExecution + isExecutionUsless meilleur ?
 export async function main(ns: NS) {
-    const SCRIPT_TO_EXECUTE: string = CMD_DIRECTORY + 'resource-generator/hacknet/ipvgo/play-board.ts';
+    const SCRIPT_TO_EXECUTE: string = CMD_DIRECTORY + 'resource-generator/hacknet/ipvgo/play-board.daemon.ts';
     // TODO: call piggy bank to add ram des autre scripts
     const ramToHave: number = this.ns.getScriptRam(SCRIPT_TO_EXECUTE, 'home');
 
@@ -13,7 +13,7 @@ export async function main(ns: NS) {
     
     await daemon.run();
     
-    // TODO: add CMD_DIRECTORY + 'resource-generator/hacknet/ipvgo/play-board.ts' to executions
+    // TODO: add CMD_DIRECTORY + 'resource-generator/hacknet/ipvgo/play-board.daemon.ts' to executions
     this.ns.run(SCRIPT_TO_EXECUTE);
 
     ns.ui.closeTail();
