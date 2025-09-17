@@ -6,7 +6,7 @@ export async function main(ns: NS) {
 	const input: InputArg = await getInput(ns);
     const info: InfiltrationInfo = new InfiltrationInfo(
 		ns, 
-		input.location === 'All' ? null : InfiltrationInfo.getLocations(ns).find(x => x.toString() === input.location)
+		input.location === '--- All ---' ? null : InfiltrationInfo.getLocations(ns).find(x => x.toString() === input.location)
 	);
 
     info.run();
@@ -25,7 +25,7 @@ type InputArg = {
 async function getInput(ns: NS): Promise<InputArg> {
     let location: string;
     if (ns.args[0] === undefined) {            
-        location = await ns.prompt('Merci de renseigner un lieu à infiltrer', { type: "select", choices: ['All', ...InfiltrationInfo.getLocations(ns)] }) as string
+        location = await ns.prompt('Merci de renseigner un lieu à infiltrer', { type: "select", choices: ['--- All ---', ...InfiltrationInfo.getLocations(ns)] }) as string
     } else {
         location = (ns.args[0] as string);
     }
