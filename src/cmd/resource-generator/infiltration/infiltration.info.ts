@@ -40,7 +40,7 @@ class InfiltrationInfo extends Info {
 	private location: LocationName;
 
 	constructor(ns: NS, location: LocationName) {
-        super(ns, location);
+        super(ns, location ?? 'All');
 		this.location = location;
 	}
 
