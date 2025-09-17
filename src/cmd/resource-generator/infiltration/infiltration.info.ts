@@ -25,7 +25,7 @@ type InputArg = {
 async function getInput(ns: NS): Promise<InputArg> {
     let location: string;
     if (ns.args[0] === undefined) {            
-        location = await ns.prompt('Merci de renseigner un montant à notifier', { type: "select", choices: ['All', ...InfiltrationInfo.getLocations(ns)] }) as string
+        location = await ns.prompt('Merci de renseigner un lieu à infiltrer', { type: "select", choices: ['All', ...InfiltrationInfo.getLocations(ns)] }) as string
     } else {
         location = (ns.args[0] as string);
     }
@@ -50,8 +50,13 @@ class InfiltrationInfo extends Info {
 				.forEach(message => this.ns.print(message));
 		} else {
 			InfiltrationInfo.getLocations(this.ns).forEach(location => {
+				this.ns.print(Log.getStartLog());
+				this.ns.print(Log.title(location));
+				this.ns.print('------------');
+
 				this.getMessages(location)
 					.forEach(message => this.ns.print(message));
+				this.ns.print(Log.getEndLog());
 			})
 		}
 	}
@@ -72,7 +77,7 @@ class InfiltrationInfo extends Info {
 
 	// TODO: use repository pour reduire la RAM
 	static getLocations(ns: NS): LocationName[] {
-		return Array.from(Object.values(ns.enums.LocationName));
+		return ns.infiltration.getPossibleLocations().map(x => x.name);
 	}
 
 }
