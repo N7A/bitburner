@@ -19,11 +19,20 @@ export class InfiltrationSelector extends Info {
     printData() {
         for (const directive of InfiltrationSelector.getOptions()) {
             this.ns.print(Log.getStartLog());
-            this.ns.print(Log.title(directive.toString()));
-
-            const location = this.getBestLocation(directive as DirectiveType);
+            this.ns.print(Log.title(directive));
+            const index = Object.keys(DirectiveType).map(x => Number(x)).filter(x => DirectiveType[x] == directive).pop()
+            if (index === undefined) {
+                continue;
+            }
+            const mappedDirective: DirectiveType = Object.values(DirectiveType)
+                .filter((v) => !isNaN(Number(v)))
+                .map(x => Number(x))
+                .filter(x => DirectiveType[x] == directive)
+                .map(x => x as DirectiveType)
+                .pop();
+            const location = this.getBestLocation(mappedDirective);
             const info = new InfiltrationInfo(this.ns, location.name);
-            info.run();
+            info.getMessages(location.name).forEach(x => this.ns.print(x));
             this.ns.print(Log.getEndLog());
         }
     }
@@ -53,11 +62,11 @@ export class InfiltrationSelector extends Info {
             .filter(location => this.ns.infiltration.getInfiltration(location.name).difficulty <= InfiltrationDifficulty.NORMAL)
             .sort((a,b) => {
                 let getGainAmount: (location: ILocation) => number;
-                if (directive === DirectiveType.FACTION_REPUTATION) {
+                if (directive == DirectiveType.FACTION_REPUTATION) {
                     getGainAmount = (location: ILocation) => this.ns.infiltration.getInfiltration(location.name).reward.tradeRep
-                } else if (directive === DirectiveType.MONEY) {
+                } else if (directive == DirectiveType.MONEY) {
                     getGainAmount = (location: ILocation) => this.ns.infiltration.getInfiltration(location.name).reward.sellCash
-                } else if (directive === DirectiveType.SOA_REPUTATION) {
+                } else if (directive == DirectiveType.SOA_REPUTATION) {
                     getGainAmount = (location: ILocation) => this.ns.infiltration.getInfiltration(location.name).reward.SoARep
                 }
 
@@ -71,8 +80,10 @@ export class InfiltrationSelector extends Info {
             .pop();
     }
     
-	static getOptions(): (string | DirectiveType)[] {
-		return Array.from(Object.values(DirectiveType));
+	static getOptions(): string[] {
+		return Array.from(Object.values(DirectiveType))
+            .filter((v) => isNaN(Number(v)))
+            .map(x => x as string);
 	}
 
 }
