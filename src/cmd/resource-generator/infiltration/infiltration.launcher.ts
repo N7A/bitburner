@@ -48,7 +48,12 @@ class Infiltration {
 
         // TODO: si pas assez d'argent pour heal l'infiltration prévue -> prompt pour valider
         // TODO: give hp lose by fail (this.ns.infiltration.getInfiltration(this.location.name).maxClearanceLevel)
-        this.ns.run('cmd/resource-generator/infiltration/auto-heal.daemon.ts');
+        this.ns.run('cmd/resource-generator/infiltration/auto-heal.daemon.ts', 1, false);
+
+        this.ns.alert(
+            `Looses before die : ${this.getMaxLosesPossible()}\n
+            Wins before gain : ${this.ns.infiltration.getInfiltration(this.location.name).maxClearanceLevel.toString()}`
+        );
     }
 
     private checkLocation() {
@@ -57,5 +62,17 @@ class Infiltration {
             this.ns.alert('Aucune infiltration sélectionné par le service.');
             this.ns.exit();
         }
+    }
+
+    getMaxLosesPossible() {
+        return Math.ceil(this.ns.getPlayer().hp.max 
+        / this.calculateDamageAfterFailingInfiltration(this.ns.infiltration.getInfiltration(this.location.name).startingSecurityLevel));
+    }
+
+    calculateDamageAfterFailingInfiltration(startingDifficulty: number): number {
+        const augmentation = 'SoA - phyzical WKS harmonizer';
+        
+        const hasWksHarmonizer = this.ns.singularity.getOwnedAugmentations().some(x => x === augmentation);
+        return startingDifficulty * 3 * (hasWksHarmonizer ? 0.5 : 1);
     }
 }

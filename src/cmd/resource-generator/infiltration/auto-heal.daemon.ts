@@ -55,6 +55,8 @@ class AutoHealDaemon extends Daemon {
     async work(): Promise<any> {
         // TODO: prise en compte piggy bank
         // TODO: si pas assez d'argent pour heal -> alert
+        // TODO: hospitalize cut game -> ? (alert impossible avec timer du jeu)
+        // TODO: => notif nombre de lose autorisé avant infiltration + hospitalize
         if (this.ns.getPlayer().hp.current < this.ns.getPlayer().hp.max) {
             this.ns.singularity.hospitalize();
         }
