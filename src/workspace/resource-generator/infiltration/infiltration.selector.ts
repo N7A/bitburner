@@ -59,7 +59,7 @@ export class InfiltrationSelector extends Info {
             // filrage de la ville
             .filter(location => city === undefined || location.city === city)
             // difficulté normal maximum
-            .filter(location => this.ns.infiltration.getInfiltration(location.name).difficulty <= InfiltrationDifficulty.NORMAL)
+            .filter(location => this.getDifficulty(location) <= InfiltrationDifficulty.NORMAL)
             .sort((a,b) => {
                 let getGainAmount: (location: ILocation) => number;
                 if (directive == DirectiveType.FACTION_REPUTATION) {
@@ -85,5 +85,18 @@ export class InfiltrationSelector extends Info {
             .filter((v) => isNaN(Number(v)))
             .map(x => x as string);
 	}
+
+    getDifficulty(location: ILocation): InfiltrationDifficulty {
+        const difficulty = this.ns.infiltration.getInfiltration(location.name).difficulty;
+        if (InfiltrationDifficulty.HARD < difficulty) {
+            return InfiltrationDifficulty.IMPOSSIBLE
+        } else if (InfiltrationDifficulty.NORMAL < difficulty && difficulty <= InfiltrationDifficulty.HARD) {
+            return InfiltrationDifficulty.HARD
+        } else if (InfiltrationDifficulty.TRIVIAL < difficulty && difficulty <= InfiltrationDifficulty.NORMAL) {
+            return InfiltrationDifficulty.NORMAL
+        } else {
+            return InfiltrationDifficulty.TRIVIAL
+        }
+    }
 
 }
