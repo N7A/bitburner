@@ -152,6 +152,7 @@
 /workspace/resource-generator/hacknet/upgrade-hacknet.worker.ts
 /workspace/resource-generator/infiltration/infiltration.selector.ts
 /workspace/resource-generator/infiltration/model/DirectiveType.ts
+/workspace/resource-generator/infiltration/model/InfiltrationDifficulty.ts
 /workspace/resource-generator/job/job.selector.ts
 /workspace/resource-generator/job/model/JobOrder.ts
 /workspace/resource-generator/stock-market/buy-stock.selector.ts
