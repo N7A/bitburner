@@ -44,6 +44,8 @@ class Infiltration {
             this.ns.singularity.goToLocation(this.location.name);
         }
 
+        this.ns.print(`Best location to infiltrate : ${this.location.name}`);
+
         // TODO: si pas assez d'argent pour heal l'infiltration prévue -> prompt pour valider
         // TODO: give hp lose by fail (this.ns.infiltration.getInfiltration(this.location.name).maxClearanceLevel)
         this.ns.run('cmd/resource-generator/infiltration/auto-heal.daemon.ts');
