@@ -1,5 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { Info } from 'workspace/socle/interface/info';
+import { InfiltrationDifficulty } from 'workspace/resource-generator/infiltration/model/InfiltrationDifficulty';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -63,7 +64,7 @@ export class InfiltrationInfo extends Info {
 
     getMessages(location: LocationName): string[] {
 		return [
-			Log.INFO("Difficulty", this.ns.infiltration.getInfiltration(location).difficulty),
+			...this.getDifficultyData(location),
 			Log.INFO("Location", this.ns.infiltration.getInfiltration(location).location.name),
 			Log.INFO("City", this.ns.infiltration.getInfiltration(location).location.city),
 			Log.INFO("maxClearanceLevel", this.ns.infiltration.getInfiltration(location).maxClearanceLevel),
@@ -75,9 +76,37 @@ export class InfiltrationInfo extends Info {
 		]
 	}
 
+	getDifficultyData(location: LocationName) {
+		const difficulty = this.getDifficulty(location).toString()
+		const mappedDifficulty: InfiltrationDifficulty = Object.values(InfiltrationDifficulty)
+			.filter((v) => !isNaN(Number(v)))
+			.map(x => Number(x))
+			.filter(x => InfiltrationDifficulty[x] == difficulty)
+			.map(x => x as InfiltrationDifficulty)
+			.pop();
+		
+		const pourcent = Math.floor(this.ns.infiltration.getInfiltration(location).difficulty * 100 / InfiltrationDifficulty.IMPOSSIBLE)
+		return [
+			Log.INFO("Difficulty", `${mappedDifficulty} (${pourcent} / 100)`)
+		]
+	}
+
 	// TODO: use repository pour reduire la RAM
 	static getLocations(ns: NS): LocationName[] {
 		return ns.infiltration.getPossibleLocations().map(x => x.name);
+	}
+
+	getDifficulty(location: LocationName): InfiltrationDifficulty {
+		const difficulty = this.ns.infiltration.getInfiltration(location).difficulty;
+		if (InfiltrationDifficulty.HARD < difficulty) {
+			return InfiltrationDifficulty.IMPOSSIBLE
+		} else if (InfiltrationDifficulty.NORMAL < difficulty && difficulty <= InfiltrationDifficulty.HARD) {
+			return InfiltrationDifficulty.HARD
+		} else if (InfiltrationDifficulty.TRIVIAL < difficulty && difficulty <= InfiltrationDifficulty.NORMAL) {
+			return InfiltrationDifficulty.NORMAL
+		} else {
+			return InfiltrationDifficulty.TRIVIAL
+		}
 	}
 
 }
