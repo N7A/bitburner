@@ -77,12 +77,9 @@ export class InfiltrationInfo extends Info {
 	}
 
 	getDifficultyData(location: LocationName) {
-		const difficulty = this.getDifficulty(location).toString()
-		const mappedDifficulty: InfiltrationDifficulty = Object.values(InfiltrationDifficulty)
-			.filter((v) => !isNaN(Number(v)))
-			.map(x => Number(x))
+		const difficulty = this.getDifficulty(location)
+		const mappedDifficulty: string = Object.keys(InfiltrationDifficulty)
 			.filter(x => InfiltrationDifficulty[x] == difficulty)
-			.map(x => x as InfiltrationDifficulty)
 			.pop();
 		
 		const pourcent = Math.floor(this.ns.infiltration.getInfiltration(location).difficulty * 100 / InfiltrationDifficulty.IMPOSSIBLE)
