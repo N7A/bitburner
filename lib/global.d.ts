@@ -22,6 +22,7 @@ declare global {
     type LocationName = bitburner.LocationName
     type ILocation = bitburner.ILocation
     type InfiltrationLocation = bitburner.InfiltrationLocation
+    type CityName = bitburner.CityName
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 

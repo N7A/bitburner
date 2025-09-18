@@ -36,7 +36,7 @@ async function getInput(ns: NS): Promise<InputArg> {
 }
 //#endregion Input parameters
 
-class InfiltrationInfo extends Info {
+export class InfiltrationInfo extends Info {
 	private location: LocationName;
 
 	constructor(ns: NS, location: LocationName) {
