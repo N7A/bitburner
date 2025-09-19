@@ -1,4 +1,6 @@
 export class Broker {
+    private static readonly NO_DATA = 'NULL PORT DATA';
+
     static async pushData(ns: NS, port: number, data: any, handlerScript?: string) {
         while(!ns.tryWritePort(port, data)) {
             await ns.asleep(250);
@@ -9,29 +11,29 @@ export class Broker {
         }
     }
     
-    static async getResponse(ns: NS, port: number): Promise<any> {
-        if (ns.peek(port) === 'NULL PORT DATA') {
+    static async waitNewData(ns: NS, port: number): Promise<any> {
+        if (ns.peek(port) === Broker.NO_DATA) {
             await ns.nextPortWrite(port);
         }
+    }
+
+    static async getResponse(ns: NS, port: number): Promise<any> {
+        await Broker.waitNewData(ns, port);
 
         return ns.readPort(port);
     }
 
     static async peekResponse(ns: NS, port: number): Promise<any> {
-        if (ns.peek(port) === 'NULL PORT DATA') {
-            await ns.nextPortWrite(port);
-        }
+        await Broker.waitNewData(ns, port);
 
         return ns.peek(port);
     }
 
     static async getAllResponses(ns: NS, port: number): Promise<any> {
-        if (ns.peek(port) === 'NULL PORT DATA') {
-            await ns.nextPortWrite(port);
-        }
+        await Broker.waitNewData(ns, port);
 
         let responses: any[] = [];
-        while(ns.peek(port) !== 'NULL PORT DATA') {
+        while(ns.peek(port) !== Broker.NO_DATA) {
             responses.push(ns.readPort(port));
         }
         

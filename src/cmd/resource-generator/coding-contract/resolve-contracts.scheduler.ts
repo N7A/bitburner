@@ -74,7 +74,7 @@ export class ResolveContracts extends Headhunter<Contract> {
 
         // persist failed contracts
         const failedContracts: FailedContract[] = await Broker.getAllResponses(this.ns, ResolveContracts.RESPONSE_PORT);
-        failedContracts.forEach(x => this.rejetsRepository.add(x.contrat.filepath, x));
+        failedContracts.filter(x => x?.contrat?.filepath).forEach(x => this.rejetsRepository.add(x.contrat.filepath, x));
     }
 
     async getTargets(): Promise<Contract[]> {
