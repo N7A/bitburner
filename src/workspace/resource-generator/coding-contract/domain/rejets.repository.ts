@@ -1,12 +1,8 @@
 import * as Referentiel from 'workspace/common/referentiel'
-import {ServerData} from 'workspace/servers/domain/model/ServerData'
-import { ServerType } from "workspace/servers/domain/model/ServerType";
-import { UnlockRequirements } from "workspace/servers/domain/model/UnlockRequirements";
-import { HackData } from "workspace/servers/domain/model/HackData";
 import { DirectoryRepository } from 'workspace/socle/interface/directory-repository';
 import { FailedContract } from 'workspace/resource-generator/coding-contract/domain/model/FailedContract';
 
-const REPOSITORY = Referentiel.SERVERS_REPOSITORY;
+const REPOSITORY = Referentiel.FAILED_CONTRACTS_REPOSITORY;
 
 /**
  * Recense les contrats dont la résolution à échoué.

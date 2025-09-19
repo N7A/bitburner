@@ -9,6 +9,7 @@ export const FACTION_DIRECTORY: string = CMD_DIRECTORY + '/resource-generator/fa
 //#region Repositories
 export const REPOSITORIES_DIRECTORY: string = 'repositories';
 export const SERVERS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/servers';
+export const FAILED_CONTRACTS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/failed-contracts';
 export const GAME_DATA_REPOSITORY_FILE: string = REPOSITORIES_DIRECTORY + '/game/production.json';
 export const GAME_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/game.json';
 export const EXECUTION_ORDERS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/executions/executions.json';
