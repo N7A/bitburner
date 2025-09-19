@@ -43,12 +43,12 @@ export class CodingContractResolver {
         return allContracts.filter(x => this.types.includes(this.ns.codingcontract.getContract(x.filepath, x.hostname).type));
     }
 
-    protected getSolution(ns: NS, codingContract: CodingContractObject): any {
+    protected getSolution(codingContract: CodingContractObject): any {
         throw new Error('Not implemented yet');
     }
 
     private resolve(contract: Contract, codingContract: CodingContractObject) {
-        let solution: any = this.getSolution(this.ns, codingContract);
+        let solution: any = this.getSolution(codingContract);
         if (solution === undefined) {
             return;
         }

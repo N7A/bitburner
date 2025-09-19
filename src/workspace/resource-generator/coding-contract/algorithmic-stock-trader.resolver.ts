@@ -1,13 +1,14 @@
 import {Transaction} from 'workspace/resource-generator/coding-contract/model/Transaction';
 import { CodingContractResolver } from 'workspace/socle/interface/coding-contract-resolver';
+import * as Log from 'workspace/socle/utils/logging';
 
 export async function main(ns: NS) {
-    const resolver: AlgorithmicStockTrader = new AlgorithmicStockTrader(ns);
+    const resolver: AlgorithmicStockTraderResolver = new AlgorithmicStockTraderResolver(ns);
     
     await resolver.run();
 }
 
-class AlgorithmicStockTrader extends CodingContractResolver {
+class AlgorithmicStockTraderResolver extends CodingContractResolver {
     constructor(ns: NS) {
         super(
             ns, 
@@ -18,11 +19,11 @@ class AlgorithmicStockTrader extends CodingContractResolver {
         );
     }
 
-    protected getSolution(ns: NS, codingContract: CodingContractObject) {
-        if (codingContract.type === ns.enums.CodingContractName.AlgorithmicStockTraderI) {
-            return this.getSolutionI(ns, codingContract);
-        } else if (codingContract.type === ns.enums.CodingContractName.AlgorithmicStockTraderIII) {
-            return this.getSolutionIII(ns , codingContract);
+    protected getSolution(codingContract: CodingContractObject) {
+        if (codingContract.type === this.ns.enums.CodingContractName.AlgorithmicStockTraderI) {
+            return this.getSolutionI(codingContract);
+        } else if (codingContract.type === this.ns.enums.CodingContractName.AlgorithmicStockTraderIII) {
+            return this.getSolutionIII(codingContract);
         }
 
         this.logger.err(`Type (${codingContract}) non pris en charge`);
@@ -33,9 +34,9 @@ class AlgorithmicStockTrader extends CodingContractResolver {
      *
      * Determine the maximum possible profit you can earn using at most one transaction (i.e. you can only buy and sell the stock once). If no profit can be made then the answer should be 0. Note that you have to buy the stock before you can sell it.
      */
-    private getSolutionI(ns: NS, contract: CodingContractObject): number {
+    private getSolutionI(contract: CodingContractObject): number {
         const data: number[] = contract.data as number[];
-        ns.print('Données : ' + data);
+        this.logger.trace(Log.INFO('Données', data));
         
         let bestProfit: number = 0;
         const transaction1 = this.getBestTransaction(data);
@@ -44,7 +45,7 @@ class AlgorithmicStockTrader extends CodingContractResolver {
         }
         bestProfit = this.getProfit(data, transaction1);
         if (bestProfit > 0) {
-            ns.print("Transaction 1 :", transaction1);
+            this.logger.trace(Log.INFO("Transaction 1", transaction1));
         }
             
         return Math.max(bestProfit, 0);
@@ -57,9 +58,9 @@ class AlgorithmicStockTrader extends CodingContractResolver {
      *
      * If no profit can be made, then the answer should be 0.
      */
-    private getSolutionIII(ns: NS, contract: CodingContractObject): number {
+    private getSolutionIII(contract: CodingContractObject): number {
         const data: number[] = contract.data as number[];
-        ns.print('Données : ' + data);
+        this.logger.trace(Log.INFO('Données', data));
         
         // TODO gerer cas ou 1 transaction est meilleur que 2 (une des transactions est négative)
         const minimalTransactionSize = 2;
@@ -82,8 +83,8 @@ class AlgorithmicStockTrader extends CodingContractResolver {
 
             let profit = transactions.map(x => this.getProfit(data, x)).reduce((x,y) => x + y);
             if (profit > bestProfit) {
-                ns.print("Transaction 1 :", transaction1);
-                ns.print("Transaction 2 :", transaction2);
+                this.logger.trace(Log.INFO("Transaction 1", transaction1));
+                this.logger.trace(Log.INFO("Transaction 2", transaction2));
                 bestProfit = profit
             }
         }

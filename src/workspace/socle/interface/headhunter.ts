@@ -35,7 +35,8 @@ export class Headhunter<T> {
 
             const workStartTime = new Date();
 
-            this.ns.print(Log.INFO('Selected targets', JSON.stringify(targets)));
+            const message = targets?.length < 10 ? JSON.stringify(targets) : `(${targets.length})`
+            this.ns.print(Log.INFO('Selected targets', message));
 
             await this.work(targets);
 
