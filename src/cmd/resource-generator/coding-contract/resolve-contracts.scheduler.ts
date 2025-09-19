@@ -49,6 +49,8 @@ class Main extends Headhunter<Contract> {
         const resolvers = getFilepaths(this.ns, 'home', RESOLVER_SCRIPT_DIRECTORY)
             .filter(x => x.endsWith('.resolve.ts'));
         for(const resolver of resolvers) {
+            // TODO: add to BDD rejet si echec
+            // TODO: remove from BDD rejet si resolu
             this.ns.run(resolver);
         }
     }

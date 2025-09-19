@@ -1,7 +1,7 @@
 export class Broker {
     static async pushData(ns: NS, port: number, data: any, handlerScript?: string) {
         while(!ns.tryWritePort(port, data)) {
-            await ns.asleep(500);
+            await ns.asleep(250);
         }
     
         if (handlerScript) {
