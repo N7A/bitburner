@@ -1,4 +1,3 @@
-/cmd/analyze/crime.info.ts
 /cmd/analyze/getCurrentTargets.ts
 /cmd/analyze/getDeeperServerKnown.ts
 /cmd/analyze/self.info.ts
@@ -19,6 +18,7 @@
 /cmd/resource-generator/coding-contract/all-contracts.info.ts
 /cmd/resource-generator/coding-contract/contract.info.ts
 /cmd/resource-generator/coding-contract/resolve-contracts.scheduler.ts
+/cmd/resource-generator/crime/crime.info.ts
 /cmd/resource-generator/faction/get-backup-bonus.scheduler.ts
 /cmd/resource-generator/faction/indices-files.info.ts
 /cmd/resource-generator/faction/join-faction.scheduler.ts
