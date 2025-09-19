@@ -5,8 +5,8 @@ export async function main(ns: NS) {
     const repository: GameRepository = new GameRepository(ns);
     
     let data: Game = {
-        hasFormulas: this.ns.fileExists('Formulas.exe', 'home'),
-        hasSingularity: this.ns.getResetInfo().ownedSF.has(4) || this.ns.getResetInfo().currentNode === 4
+        hasFormulas: ns.fileExists('Formulas.exe', 'home'),
+        hasSingularity: ns.getResetInfo().ownedSF.has(4) || ns.getResetInfo().currentNode === 4
     }
 
     repository.save(data);
