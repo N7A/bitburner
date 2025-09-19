@@ -24,6 +24,7 @@ declare global {
     type InfiltrationLocation = bitburner.InfiltrationLocation
     type CityName = bitburner.CityName
     type CodingContractObject = bitburner.CodingContractObject
+    type CodingContractName = bitburner.CodingContractName
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 

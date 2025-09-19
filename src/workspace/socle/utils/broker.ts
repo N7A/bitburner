@@ -16,5 +16,27 @@ export class Broker {
 
         return ns.readPort(port);
     }
+
+    static async peekResponse(ns: NS, port: number): Promise<any> {
+        if (ns.peek(port) === 'NULL PORT DATA') {
+            await ns.nextPortWrite(port);
+        }
+
+        return ns.peek(port);
+    }
+
+    static async getAllResponses(ns: NS, port: number): Promise<any> {
+        if (ns.peek(port) === 'NULL PORT DATA') {
+            await ns.nextPortWrite(port);
+        }
+
+        let responses: any[] = [];
+        while(ns.peek(port) !== 'NULL PORT DATA') {
+            responses.push(ns.readPort(port));
+        }
+        
+        return responses;
+    }
+    
 }
     
