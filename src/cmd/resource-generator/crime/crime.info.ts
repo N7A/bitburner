@@ -1,5 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { Info } from 'workspace/socle/interface/info';
+import { GameRepository } from 'workspace/game/domain/game.repository';
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -35,17 +36,28 @@ async function getInput(ns: NS): Promise<InputArg> {
 
 class CrimeInfo extends Info {
 	private crime: CrimeType;
+	private gameRepository: GameRepository;
 
 	constructor(ns: NS, crime: CrimeType) {
         super(ns, crime);
 		this.crime = crime;
+		this.gameRepository = new GameRepository(ns);
 	}
 
     printData() {
 		this.ns.print(Log.title(this.crime));
-		this.showFormulasData();
-		this.ns.print('\n')
-		this.showSingularityData();
+		if (this.gameRepository.getData().hasFormulas) {
+			this.showFormulasData();
+		} else {
+			this.ns.print('Get Formulas API for more data.');
+		}
+
+		if (this.gameRepository.getData().hasSingularity) {
+			this.ns.print('\n');
+			this.showSingularityData();
+		} else {
+			this.ns.print('Get Singularity for more data.');
+		}
 	}
 
 	showFormulasData() {
