@@ -41,6 +41,7 @@
 /cmd/resource-generator/hacknet/ipvgo/play-board.daemon.ts
 /cmd/resource-generator/hacknet/upgrade-hacknet.scheduler.ts
 /cmd/resource-generator/infiltration/auto-heal.daemon.ts
+/cmd/resource-generator/infiltration/infiltration.headhunter.ts
 /cmd/resource-generator/infiltration/infiltration.info.ts
 /cmd/resource-generator/infiltration/infiltration.launcher.ts
 /cmd/resource-generator/stock-market/buy-stock.scheduler.ts
@@ -86,9 +87,11 @@
 /workspace/piggy-bank/domain/piggy-bank.repository.ts
 /workspace/piggy-bank/money-piggy-bank.service.ts
 /workspace/piggy-bank/ram-piggy-bank.service.ts
-/workspace/resource-generator/coding-contract/algorithmic-stock-trader.resolve.ts
+/workspace/resource-generator/coding-contract/algorithmic-stock-trader.resolver.ts
 /workspace/resource-generator/coding-contract/array-jumping-game.resolve.ts
 /workspace/resource-generator/coding-contract/contract.selector.ts
+/workspace/resource-generator/coding-contract/domain/model/FailedContract.ts
+/workspace/resource-generator/coding-contract/domain/rejets.repository.ts
 /workspace/resource-generator/coding-contract/encryption-caesar-cipher.resolve.ts
 /workspace/resource-generator/coding-contract/encryption-II-vigenere-cipher.ts
 /workspace/resource-generator/coding-contract/find-all-valid-math-expressions.resolve.ts
@@ -175,6 +178,7 @@
 /workspace/socle/database/model/CommitType.ts
 /workspace/socle/database/model/Repository.ts
 /workspace/socle/database/sgbd.handler.ts
+/workspace/socle/interface/coding-contract-resolver.ts
 /workspace/socle/interface/daemon.ts
 /workspace/socle/interface/dashboard.ts
 /workspace/socle/interface/directory-repository.ts
