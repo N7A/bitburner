@@ -15,6 +15,7 @@ export class CodingContractResolver {
         this.ns = ns;
         this.types = types;
         this.logger = new Logger(ns);
+        this.failedContracts = [];
     }
     
     async run() {

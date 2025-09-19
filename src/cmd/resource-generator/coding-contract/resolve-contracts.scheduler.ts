@@ -5,7 +5,8 @@ import { getFilepaths } from 'workspace/socle/utils/file';
 import { Broker } from 'workspace/socle/utils/broker';
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { RejetsRepository } from 'workspace/resource-generator/coding-contract/domain/rejets.repository';
-import { FailedContract } from '/workspace/resource-generator/coding-contract/domain/model/FailedContract';
+import { FailedContract } from 'workspace/resource-generator/coding-contract/domain/model/FailedContract';
+import { Logger } from 'workspace/socle/Logger';
 
 //#region Constantes
 export const RESOLVER_SCRIPT_DIRECTORY = 'workspace/resource-generator/coding-contract';
@@ -50,15 +51,20 @@ export class ResolveContracts extends Headhunter<Contract> {
     //#endregion Constants
 
     private rejetsRepository: RejetsRepository;
+    private logger: Logger;
 
     constructor(ns: NS) {
         // waitNewTargets = true : contracts appear over the time
         super(ns, true)
 
         this.rejetsRepository = new RejetsRepository(ns);
+        this.logger = new Logger(ns);
     }
 
     async work(targets: Contract[]) {
+        this.ns.clearPort(ResolveContracts.REQUEST_PORT);
+        this.ns.clearPort(ResolveContracts.RESPONSE_PORT);
+
         // spread contracts to resolve
         await Broker.pushData(this.ns, ResolveContracts.REQUEST_PORT, targets);
 
@@ -72,6 +78,7 @@ export class ResolveContracts extends Headhunter<Contract> {
             await waitEndExecution(this.ns, this.ns.run(resolver));
         }
 
+        this.logger.trace('Persist failed contracts');
         // persist failed contracts
         const failedContracts: FailedContract[] = await Broker.getAllResponses(this.ns, ResolveContracts.RESPONSE_PORT);
         failedContracts.filter(x => x?.contrat?.filepath).forEach(x => this.rejetsRepository.add(x.contrat.filepath, x));
