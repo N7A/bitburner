@@ -3,7 +3,7 @@ import {main as getContracts} from 'workspace/resource-generator/coding-contract
 import { Contract } from 'workspace/resource-generator/coding-contract/model/Contract';
 import { getFilepaths } from 'workspace/socle/utils/file';
 import { Broker } from 'workspace/socle/utils/broker';
-import { waitEndAllExecutions } from 'workspace/socle/utils/execution';
+import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { RejetsRepository } from 'workspace/resource-generator/coding-contract/domain/rejets.repository';
 import { FailedContract } from '/workspace/resource-generator/coding-contract/domain/model/FailedContract';
 
@@ -22,7 +22,7 @@ export async function main(ns: NS) {
         daemon.killAfterLoop();
     }
     
-    daemon.run();
+    await daemon.run();
 }
 
 //#region Input arguments
@@ -59,22 +59,20 @@ export class ResolveContracts extends Headhunter<Contract> {
     }
 
     async work(targets: Contract[]) {
+        // spread contracts to resolve
         await Broker.pushData(this.ns, ResolveContracts.REQUEST_PORT, targets);
 
+        // find all resolver scripts
         const resolvers = getFilepaths(this.ns, 'home', RESOLVER_SCRIPT_DIRECTORY)
-            .filter(x => x.endsWith('.resolve.ts'));
-        let pids = [];
-
-        for(const resolver of resolvers) {
-            // TODO: add to BDD rejet si echec
-            // TODO: remove from BDD rejet si resolu
-            const pid = this.ns.run(resolver);
-            if (pid !== 0) {
-                pids.push(pid);
-            }
-        }
-        await waitEndAllExecutions(this.ns, pids)
+            .filter(x => x.endsWith('.resolver.ts'));
         
+        // execute resolutions
+        for(const resolver of resolvers) {
+            // TODO: remove from BDD rejet si resolu
+            await waitEndExecution(this.ns, this.ns.run(resolver));
+        }
+
+        // persist failed contracts
         const failedContracts: FailedContract[] = await Broker.getAllResponses(this.ns, ResolveContracts.RESPONSE_PORT);
         failedContracts.forEach(x => this.rejetsRepository.add(x.contrat.filepath, x));
     }
