@@ -1,7 +1,7 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
 import { Contract } from 'workspace/resource-generator/coding-contract/model/Contract';
-import { getFilepaths } from 'workspace/socle/utils/file';
+import { getFilepaths, getScriptName } from 'workspace/socle/utils/file';
 import { Broker } from 'workspace/socle/utils/broker';
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { RejetsRepository } from 'workspace/resource-generator/coding-contract/domain/rejets.repository';
@@ -76,6 +76,7 @@ export class ResolveContracts extends Headhunter<Contract> {
         for(const resolver of resolvers) {
             // TODO: remove from BDD rejet si resolu
             await waitEndExecution(this.ns, this.ns.run(resolver));
+            this.logger.success(`Resolver ${getScriptName(resolver)} executé [end]`)
         }
 
         this.logger.trace('Persist failed contracts');

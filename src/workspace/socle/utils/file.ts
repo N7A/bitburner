@@ -37,3 +37,7 @@ export function getHashFromContent(contents: string): number {
     }
     return hash;
 }
+
+export function getScriptName(filePath: string): string {
+    return filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.ts'))
+}
