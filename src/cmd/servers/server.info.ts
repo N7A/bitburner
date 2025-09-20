@@ -67,6 +67,8 @@ class ServerInfo extends Info {
             this.ns.print(Log.INFO('Backdoor installé', this.data.backdoorInstalled));
         } else if (!this.data.backdoorInstalled) {
             this.ns.print(Log.INFO('Deep connect command', this.service.getConnectCommand(this.data.hostname) + ' backdoor;'));
+        } else {
+            this.ns.print(Log.INFO('Deep connect command', this.service.getConnectCommand(this.data.hostname)));
         }
         this.ns.print(Log.INFO('Path', this.service.getHostPathLibelle(this.data.hostname)));
         this.ns.print('\n');

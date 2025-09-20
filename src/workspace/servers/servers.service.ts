@@ -2,6 +2,7 @@ import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServerType } from "workspace/servers/domain/model/ServerType";
 import { APPAREIL_LOGO, PERSONNALITE_LOGO, SERVER_NAMES } from 'workspace/servers/application.properties';
+import * as Log from 'workspace/socle/utils/logging';
 
 export class ServersService {
     private ns: NS;
@@ -65,8 +66,8 @@ export class ServersService {
             const data: ServerData|null = this.repository.get(x);
             const unlocked: string = data?.state.unlocked ? 'unlocked' : 'locked';
 
-            return '/' + x + `[${unlocked}]`
-        }).reduce((a, b) => a + b);
+            return '/' + x + `[${Log.color(unlocked, unlocked ? Log.Color.GREEN : Log.Color.RED)}]`;
+        }).join('\n');
     }
 
     /**
