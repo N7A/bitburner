@@ -24,6 +24,12 @@ export class CodingContractResolver {
 
         // get contracts resolvable
         const contractsToResolve = this.filterContract(allContracts);
+        // remove handled contracts
+        await Broker.pushData(
+            this.ns, 
+            ResolveContracts.REQUEST_PORT, 
+            allContracts.filter(contract => contractsToResolve.some(x => x.filepath === contract.filepath))
+        );
         
         // reset failed contracts
         this.failedContracts = [];

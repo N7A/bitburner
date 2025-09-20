@@ -66,7 +66,7 @@ export class ServersService {
             const data: ServerData|null = this.repository.get(x);
             const unlocked: string = data?.state.unlocked ? 'unlocked' : 'locked';
 
-            return '/' + x + `[${Log.color(unlocked, unlocked ? Log.Color.GREEN : Log.Color.RED)}]`;
+            return '/' + x + `[${Log.color(unlocked, data?.state.unlocked ? Log.Color.GREEN : Log.Color.RED)}]`;
         }).join('\n');
     }
 
