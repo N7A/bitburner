@@ -7,6 +7,7 @@ import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { RejetsRepository } from 'workspace/resource-generator/coding-contract/domain/rejets.repository';
 import { FailedContract } from 'workspace/resource-generator/coding-contract/domain/model/FailedContract';
 import { Logger } from 'workspace/socle/Logger';
+import * as Log from 'workspace/socle/utils/logging';
 
 //#region Constantes
 export const RESOLVER_SCRIPT_DIRECTORY = 'workspace/resource-generator/coding-contract';
@@ -83,6 +84,12 @@ export class ResolveContracts extends Headhunter<Contract> {
         // persist failed contracts
         const failedContracts: FailedContract[] = await Broker.getAllResponses(this.ns, ResolveContracts.RESPONSE_PORT);
         failedContracts.filter(x => x?.contrat?.filepath).forEach(x => this.rejetsRepository.add(x.contrat.filepath, x));
+        
+        const newContracts = await this.getTargets();
+        this.logger.info(Log.INFO('Contracts traités', targets.length - newContracts.length));
+        this.logger.info(Log.INFO('Contracts échoués', failedContracts.length));
+        const message = newContracts?.length < 10 ? JSON.stringify(newContracts, null, 4) : `(${newContracts.length})`
+        this.logger.info(Log.INFO('Contracts restants', message));
     }
 
     async getTargets(): Promise<Contract[]> {
