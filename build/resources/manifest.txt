@@ -94,6 +94,7 @@
 /workspace/resource-generator/coding-contract/domain/rejets.repository.ts
 /workspace/resource-generator/coding-contract/encryption.resolver.ts
 /workspace/resource-generator/coding-contract/find-all-valid-math-expressions.resolver.ts
+/workspace/resource-generator/coding-contract/find-largest-prime-factor.resolver.ts
 /workspace/resource-generator/coding-contract/merge-overlapping-intervals.resolver.ts
 /workspace/resource-generator/coding-contract/model/Contract.ts
 /workspace/resource-generator/coding-contract/model/GraphData.ts
