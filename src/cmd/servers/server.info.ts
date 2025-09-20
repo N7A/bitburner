@@ -57,7 +57,6 @@ class ServerInfo extends Info {
     printData() {
         this.ns.print(Log.INFO('Organisation', this.data.organizationName));
         this.ns.print('\n');
-        this.ns.print('\n');
         this.ns.print(Log.title('Nuke data'));
         this.ns.print(Log.INFO('Unlocked : ', this.data.hasAdminRights));
         if (!this.data.hasAdminRights) {
@@ -70,8 +69,8 @@ class ServerInfo extends Info {
         } else {
             this.ns.print(Log.INFO('Deep connect command', this.service.getConnectCommand(this.data.hostname)));
         }
-        this.ns.print(Log.INFO('Path', this.service.getHostPathLibelle(this.data.hostname)));
-        this.ns.print('\n');
+        this.ns.print(Log.INFO('Path', ''));
+        this.ns.print(this.service.getHostPathLibelle(this.data.hostname));
         this.ns.print('\n');
         this.ns.print(Log.title('Hack data'));
         const percentMoney = (this.data.moneyMax as number) > 0 ? ((this.data.moneyMax as number) - (this.data.moneyAvailable as number)) / (this.data.moneyMax as number) : 0;
