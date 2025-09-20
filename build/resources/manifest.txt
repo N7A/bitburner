@@ -89,12 +89,14 @@
 /workspace/piggy-bank/ram-piggy-bank.service.ts
 /workspace/resource-generator/coding-contract/algorithmic-stock-trader.resolver.ts
 /workspace/resource-generator/coding-contract/array-jumping-game.resolver.ts
+/workspace/resource-generator/coding-contract/compression.resolver.ts
 /workspace/resource-generator/coding-contract/contract.selector.ts
 /workspace/resource-generator/coding-contract/domain/model/FailedContract.ts
 /workspace/resource-generator/coding-contract/domain/rejets.repository.ts
 /workspace/resource-generator/coding-contract/encryption.resolver.ts
 /workspace/resource-generator/coding-contract/find-all-valid-math-expressions.resolver.ts
 /workspace/resource-generator/coding-contract/find-largest-prime-factor.resolver.ts
+/workspace/resource-generator/coding-contract/generate-ip-adresses.resolver.ts
 /workspace/resource-generator/coding-contract/merge-overlapping-intervals.resolver.ts
 /workspace/resource-generator/coding-contract/model/Contract.ts
 /workspace/resource-generator/coding-contract/model/GraphData.ts
