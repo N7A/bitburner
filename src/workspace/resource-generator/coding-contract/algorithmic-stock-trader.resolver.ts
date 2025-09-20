@@ -77,7 +77,8 @@ class AlgorithmicStockTraderResolver extends CodingContractResolver {
         let transaction: Transaction;
 
         do {
-            transaction = this.getGoodTransaction(data.slice(transaction.sellDay+1));
+            const currentSlice = transaction ? data.slice(transaction.sellDay+1) : data;
+            transaction = this.getGoodTransaction(currentSlice);
             if (transaction !== undefined) {
                 break;
             }
