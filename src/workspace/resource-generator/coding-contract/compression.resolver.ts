@@ -109,7 +109,7 @@ class CompressionResolver extends CodingContractResolver {
                 chunk = new RawChunk(length, data.substring(startIndex, startIndex + length));
             } else if (currentType == ChunkType.REFERENCE) {
                 // switch type
-                currentType = ChunkType.REFERENCE;
+                currentType = ChunkType.RAW;
 
                 if (length === 0) {
                     continue;

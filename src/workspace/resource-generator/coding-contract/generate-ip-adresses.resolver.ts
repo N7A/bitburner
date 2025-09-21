@@ -39,7 +39,7 @@ class GenerateIPAddressesResolver extends CodingContractResolver {
         for (let remainOctetNumber = 4; remainOctetNumber > 0; remainOctetNumber--) {
             let adressesMaj: string[][] = [];
             for (const octets of adresses) {
-                const index = octets.map(x => x.length).reduce((a,b) => a+b);
+                const index = octets.length > 0 ? octets.map(x => x.length).reduce((a,b) => a+b) : 0;
                 this.getAllValidStartOctet(data.substring(index), remainOctetNumber)
                     // on complete les adresses
                     .forEach(x => adressesMaj.push([...octets, x]));
