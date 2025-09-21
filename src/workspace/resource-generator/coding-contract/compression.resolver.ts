@@ -12,7 +12,8 @@ class CompressionResolver extends CodingContractResolver {
         super(
             ns, 
             [
-                ns.enums.CodingContractName.CompressionIRLECompression
+                ns.enums.CodingContractName.CompressionIRLECompression,
+                ns.enums.CodingContractName.CompressionIILZDecompression
             ]
         );
     }
@@ -51,7 +52,7 @@ class CompressionResolver extends CodingContractResolver {
         for (let index = 0; index < data.length; index++) {
             const element: string = data[index];
             const length: number = this.getLength(data.substring(index));
-            result = length + element;
+            result += length + element;
             index += length-1;
         }
 

@@ -45,17 +45,9 @@ class AlgorithmicStockTraderResolver extends CodingContractResolver {
         const data: number[] = contract.data as number[];
         this.logger.trace(Log.INFO('Données', data));
         
-        let bestProfit: number = 0;
-        const transaction1 = this.getBestTransaction(data);
-        if (!transaction1) {
-            return 0;
-        }
-        bestProfit = this.getProfit(data, transaction1);
-        if (bestProfit > 0) {
-            this.logger.trace(Log.INFO("Transaction 1", transaction1));
-        }
-            
-        return Math.max(bestProfit, 0);
+        let transactions: Transaction[] = this.getBestTransactions(data, 1);
+
+        return transactions.map(x => this.getProfit(data, x)).reduce((x,y) => x + y);
     }
 
     /**
@@ -73,21 +65,9 @@ class AlgorithmicStockTraderResolver extends CodingContractResolver {
         const data: number[] = contract.data as number[];
         this.logger.trace(Log.INFO('Données', data));
         
-        let bestProfit: number = 0;
-        let transaction: Transaction;
+        let transactions: Transaction[] = this.getBestTransactions(data);
 
-        do {
-            const currentSlice = transaction ? data.slice(transaction.sellDay+1) : data;
-            transaction = this.getGoodTransaction(currentSlice);
-            if (transaction !== undefined) {
-                break;
-            }
-
-            this.logger.trace(Log.INFO("Transaction", JSON.stringify(transaction)));
-            bestProfit += this.getProfit(data, transaction);
-        } while(transaction.sellDay+1 < data.length) 
-        
-        return bestProfit;
+        return transactions.map(x => this.getProfit(data, x)).reduce((x,y) => x + y);
     }
 
     /**
@@ -104,34 +84,9 @@ class AlgorithmicStockTraderResolver extends CodingContractResolver {
         const data: number[] = contract.data as number[];
         this.logger.trace(Log.INFO('Données', data));
         
-        // TODO gerer cas ou 1 transaction est meilleur que 2 (exemple une des transactions est négative)
-        const minimalTransactionSize = 2;
-        let bestProfit: number = 0;
-        for (let i=minimalTransactionSize; i < data.length - (minimalTransactionSize-1); i++) {
-            let transactions: Transaction[] = [];
-            const transaction1 = this.getBestTransaction(data.slice(0, i));
-            if (transaction1 && this.getProfit(data, transaction1) > 0) {
-                transactions.push(transaction1);
-            }
+        let transactions: Transaction[] = this.getBestTransactions(data, 2);
 
-            const nextTransactionStartDay = transaction1 ? transaction1?.sellDay+1 : i;
-            const transaction2 = this.getBestTransaction(data.slice(nextTransactionStartDay));
-            if (transaction2 && this.getProfit(data.slice(nextTransactionStartDay), transaction2) > 0) {
-                // conversion du jour depuis le slice vers le stockPrices actuel
-                transaction2.buyDay += nextTransactionStartDay
-                transaction2.sellDay += nextTransactionStartDay
-                transactions.push(transaction2);
-            }
-
-            let profit = transactions.map(x => this.getProfit(data, x)).reduce((x,y) => x + y);
-            if (profit > bestProfit) {
-                this.logger.trace(Log.INFO("Transaction 1", transaction1));
-                this.logger.trace(Log.INFO("Transaction 2", transaction2));
-                bestProfit = profit
-            }
-        }
-            
-        return Math.max(bestProfit, 0);
+        return transactions.map(x => this.getProfit(data, x)).reduce((x,y) => x + y);
     }
 
     /**
@@ -151,234 +106,116 @@ class AlgorithmicStockTraderResolver extends CodingContractResolver {
         const [maximalTransactionNumber, data]: [number, number[]] = contract.data as [number, number[]];
         this.logger.trace(Log.INFO('Données', data));
         
-        let bestProfit: number = 0;
-        for (let i=0; i < maximalTransactionNumber; i++) {
-            const transactions: Transaction[] = this.getBestTransactionV2(data, i);
+        let transactions: Transaction[] = this.getBestTransactions(data, maximalTransactionNumber);
 
-            let profit = transactions.map(x => this.getProfit(data, x)).reduce((x,y) => x + y);
-            if (profit > bestProfit) {
-                bestProfit = profit
-            } else {
-                break;
-            }
-        }
-            
-        return Math.max(bestProfit, 0);
+        return transactions.map(x => this.getProfit(data, x)).reduce((x,y) => x + y);
     }
 
-    private getGoodTransaction(stockPrices: number[]): Transaction|undefined {
-        let goodTransaction = undefined;
+    private getBestTransactions(stockPrices: number[], maximalTransactionNumber?: number): Transaction[] {
+        let transactions: Transaction[] = this.getAllTransactions(stockPrices);
 
-        // transaction impossible
-        if (stockPrices.length < 2) {
-            return goodTransaction;
-        }
-        
-        // seek for buy day
-        let buyDay = 0;
-        for (let i=1; i < stockPrices.length; i++) {
-            if (stockPrices[i] > stockPrices[buyDay]) {
-                break;
-            }
-            
-            buyDay = i
-        }
-        // seek for sell day
-        for (let i=buyDay+1; i < stockPrices.length; i++) {
-            const transaction = {
-                buyDay: buyDay,
-                sellDay: i
-            };
-            if (this.getProfit(stockPrices, transaction) > 0) {
-                return transaction;
-            }
-        }
-
-        return undefined;
-    }
-
-    private getBestTransactionV2(stockPrices: number[], maximalTransactionNumber: number): Transaction[] {
-        let transactions: Transaction[] = [];
-
-        let mostProfitTransaction: Transaction;
-        do {
-            const limitDays: LimitDays = this.getLimitDays(stockPrices, transactions);
-
-            const transactionMin = this.getTransactionMin(stockPrices, transactions, limitDays.minPriceDays);
-            const transactionMax = this.getTransactionMax(stockPrices, transactions, limitDays.maxPriceDays);
-
-            mostProfitTransaction = [transactionMin, transactionMax]
-                .filter(x => x !== undefined)
+        while(maximalTransactionNumber !== undefined && transactions.length > maximalTransactionNumber) {
+            // remove least profit transaction
+            const removedTransaction = transactions
                 .sort((a,b) => this.getProfit(stockPrices, a) - this.getProfit(stockPrices, b))
-                .pop();
-
-            if (mostProfitTransaction === undefined) {
-                break;
+                .shift();
+            
+            // find fusion via buy
+            const buyFusion = transactions
+                .filter(x => removedTransaction.buyDay < x.buyDay)
+                .sort((a,b) => a.buyDay - b.buyDay)
+                .shift();
+            let gainBuyFusion: number = 0;
+            if (buyFusion !== undefined) {
+                gainBuyFusion = stockPrices[buyFusion.buyDay] - stockPrices[removedTransaction.buyDay]
             }
                 
-            transactions.push(mostProfitTransaction);
-        } while(transactions.length < maximalTransactionNumber && mostProfitTransaction !== undefined)
+            // find fusion via sell
+            const sellFusion = transactions
+                .filter(x => x.sellDay < removedTransaction.sellDay)
+                .sort((a,b) => a.sellDay - b.sellDay)
+                .pop();
+            let gainSellFusion: number = 0;
+            if (sellFusion !== undefined) {
+                gainSellFusion = stockPrices[removedTransaction.sellDay] - stockPrices[sellFusion.sellDay]
+            }
+
+            // to best fusion
+            if (gainBuyFusion > gainSellFusion && gainBuyFusion > 0) {
+                const index = transactions.indexOf(buyFusion);
+                buyFusion.buyDay = removedTransaction.buyDay;
+                transactions.splice(index, 1, buyFusion);
+            } else if (gainSellFusion > gainBuyFusion && gainSellFusion > 0) {
+                const index = transactions.indexOf(sellFusion);
+                sellFusion.sellDay = removedTransaction.sellDay;
+                transactions.splice(index, 1, sellFusion);
+            }
+        }
         
         return transactions;
     }
 
-    private getLimitDays(stockPrices: number[], transactions: Transaction[]): LimitDays {
-        let minPrice: number = 0;
-        let maxPrice: number = 0;
-        for (let index = 0; index < stockPrices.length; index++) {
-            const element = stockPrices[index];
-            if (transactions.some(transaction => this.isTransactionInclude(transaction, index))) {
-                continue;
+    private getAllTransactions(stockPrices: number[]) {
+        let transaction: Transaction;
+        let transactions: Transaction[] = [];
+
+        let today: number = 0;
+        do {
+            const currentSlice = stockPrices.slice(today);
+            transaction = this.getGoodTransaction(currentSlice);
+            if (transaction === undefined) {
+                break;
             }
 
-            if (element < minPrice) {
-                minPrice = element;
-            }
-            if (element > maxPrice) {
-                maxPrice = element;
-            }
-        }
+            transaction = {buyDay: transaction.buyDay + today, sellDay: transaction.sellDay + today}
+            this.logger.trace(Log.INFO("Transaction", JSON.stringify(transaction)));
+            transactions.push(transaction);
+            today = transaction.sellDay+1;
+        } while(today < stockPrices.length)
 
-        return {
-            minPriceDays: stockPrices.map((value: number, index: number) => index)
-            .filter(index => stockPrices[index] === minPrice),
-            maxPriceDays: stockPrices.map((value: number, index: number) => index)
-            .filter(index => stockPrices[index] === maxPrice)
-        }
+        return transactions;
     }
 
-    private getTransactionMin(stockPrices: number[], transactions: Transaction[], minPriceDays: number[]): Transaction|undefined {
-        const startDay: number = Math.min(...minPriceDays);
-        const transactionAfterStartDay = transactions.map(x => x.buyDay)
-                // after startDay
-                .filter(day => startDay < day);
-        const endDay: number = transactionAfterStartDay.length <= 0 ? Math.min(...transactionAfterStartDay) : stockPrices.length - 1;
-
-        // aucune transaction possible
-        if (startDay === endDay) {
+    private getGoodTransaction(stockPrices: number[]): Transaction|undefined {
+        // transaction impossible
+        if (stockPrices.length < 2) {
             return undefined;
         }
-
-        // recherche du meilleur jour pour vendre
-        const sellDay: number = stockPrices
-            // get days
-            .map((value: number, index: number) => index)
-            // limit zone
-            .slice(startDay, endDay)
-            // get if profit
-            .filter(day => stockPrices[startDay] < stockPrices[day])
-            // find max price
-            .sort((a, b) => stockPrices[a] - stockPrices[b])
-            .pop();
-
-        // aucun jour pour vendre trouvé
+        
+        // seek for the best buy day
+        let buyDay: number = 0;
+        let sellDay: number;
+        for (let nextDay=1; nextDay < stockPrices.length; nextDay++) {
+            if (stockPrices[buyDay] <= stockPrices[nextDay]) {
+                sellDay = nextDay
+                break;
+            }
+            
+            buyDay = nextDay
+        }
+        
+        // transaction impossible
         if (sellDay === undefined) {
             return undefined;
         }
 
-        return {
-            // least distance with sellDay
-            buyDay: Math.max(
-                ...minPriceDays
-                    // before sellDay
-                    .filter(day => day < sellDay)
-            ),
-            sellDay: sellDay
-        }
-    }
-
-    private getTransactionMax(stockPrices: number[], transactions: Transaction[], maxPriceDays: number[]): Transaction|undefined {
-        const endDay: number = Math.max(...maxPriceDays);
-        const transactionBeforeEndDay = transactions.map(x => x.sellDay)
-                // before endDay
-                .filter(day => day < endDay);
-        const startDay: number = transactionBeforeEndDay.length <= 0 ? Math.max(...transactionBeforeEndDay) : 0;
-
-        // aucune transaction possible
-        if (startDay === endDay) {
-            return undefined;
-        }
-
-        // recherche du meilleur jour pour acheter
-        const buyDay: number = stockPrices
-            // get days
-            .map((value: number, index: number) => index)
-            // limit zone
-            .slice(startDay, endDay)
-            // get if profit
-            .filter(day => stockPrices[day] < stockPrices[endDay])
-            // find min price
-            .sort((a, b) => stockPrices[a] - stockPrices[b])
-            .shift();
-
-        // aucun jour pour acheter trouvé
-        if (buyDay === undefined) {
-            return undefined;
+        // seek for the best sell day
+        for (let nextDay=sellDay+1; nextDay < stockPrices.length; nextDay++) {
+            if (stockPrices[sellDay] > stockPrices[nextDay]) {
+                break;
+            }
+            
+            sellDay = nextDay
         }
 
         return {
             buyDay: buyDay,
-            // least distance with buyDay
-            sellDay: Math.min(
-                ...maxPriceDays
-                    // after buyDay
-                    .filter(day => buyDay < day)
-            )
-        }
-    }
-
-    private isTransactionInclude(transaction: Transaction, day: number) {
-        return transaction.buyDay <= day && day <= transaction.sellDay;
-    }
-
-    private getBestTransaction(stockPrices: number[]): Transaction|undefined {
-        let bestTransaction = undefined;
-
-        // transaction impossible
-        if (stockPrices.length < 2) {
-            return bestTransaction;
-        }
-
-        const minPriceDay = stockPrices.findIndex(x => x == Math.min(...stockPrices));
-        const maxPriceDay = stockPrices.findIndex(x => x == Math.max(...stockPrices));
-
-        if(minPriceDay > maxPriceDay) {
-            const transaction1: Transaction|undefined = this.getBestTransaction(stockPrices.slice(0, maxPriceDay+1));
-
-            const transaction2: Transaction|undefined = this.getBestTransaction(stockPrices.slice(maxPriceDay+1, minPriceDay));
-            if (transaction2) {
-                // conversion du jour depuis le slice vers le stockPrices actuel
-                transaction2.buyDay += maxPriceDay+1;
-                transaction2.sellDay += maxPriceDay+1;
-            }
-
-            const transaction3: Transaction|undefined = this.getBestTransaction(stockPrices.slice(minPriceDay));
-            if (transaction3) {
-                // conversion du jour depuis le slice vers le stockPrices actuel
-                transaction3.buyDay += minPriceDay;
-                transaction3.sellDay += minPriceDay;
-            }
-
-            const possibleTransactions: Transaction[] = [transaction1, transaction2, transaction3]
-                .filter(x => x !== undefined)
-                .map(x => x as Transaction);
-                
-            return possibleTransactions.find(x => this.getProfit(stockPrices, x) === Math.max(...possibleTransactions.map(x => this.getProfit(stockPrices, x))));
-        }
-
-        return {
-                buyDay: minPriceDay,
-                sellDay: maxPriceDay
-            }
+            sellDay: sellDay
+        };
     }
 
     private getProfit(stockPrices: number[], transaction: Transaction) {
         return stockPrices[transaction.sellDay] - stockPrices[transaction.buyDay];
     }
 
-}
-
-type LimitDays = {
-    minPriceDays: number[],
-    maxPriceDays: number[]
 }
