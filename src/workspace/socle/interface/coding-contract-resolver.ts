@@ -25,6 +25,7 @@ export class CodingContractResolver {
         // get contracts resolvable
         const contractsToResolve = this.filterContract(allContracts);
         // remove handled contracts
+        this.ns.clearPort(ResolveContracts.REQUEST_PORT);
         await Broker.pushData(
             this.ns, 
             ResolveContracts.REQUEST_PORT, 
