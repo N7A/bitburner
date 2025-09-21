@@ -92,13 +92,7 @@ export class Logger {
     }
 
     info(message: string, ...args: string[]) {
-        const formatedMessage: string = `${Log.time(new Date(Date.now()))} - ${LogLevelLitteral.INFO} ${message}`.concat(...args)
-        this.history.push(formatedMessage);
-
-        if (this.loadingBar) {
-            this.refreshLoadingBar(this.loadingBar.numberDone, this.loadingBar.numberTotal);
-            return;
-        }
+        const formatedMessage: string = `${LogLevelLitteral.INFO} ${message}`.concat(...args)
 
         this.print(formatedMessage, LogLevel.INFO);
     }
