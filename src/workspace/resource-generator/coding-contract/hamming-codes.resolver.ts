@@ -86,8 +86,8 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
         let data: string = '';
         for (let index = 1; index < encodedData.length; index++) {
             const element = encodedData[index];
-            // index correspond à une puissance de 2
-            if(Number.isInteger(Math.log2(index))) {
+            // position d'un bit de parité (correspond à une puissance de 2)
+            if (Number.isInteger(Math.log2(index))) {
                 continue;
             }
             
@@ -161,8 +161,8 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
 
         // ajout des positions des bits de parité
         while (dataToEncode.length > 0) {
-            // position d'un bit de parité
-            if (encodedData.length % 2 === 0) {
+            // position d'un bit de parité (correspond à une puissance de 2)
+            if (Number.isInteger(Math.log2(encodedData.length))) {
                 // ajout d'un bit de parté aux données encodées
                 encodedData += PARITY_WAITING;
                 continue;
@@ -178,7 +178,7 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
 
         // ajout du bit de parité global
         const globalParity = this.parityValid(encodedData) ? '0' : '1';
-        return globalParity + encodedData;
+        return globalParity + encodedData.substring(1);
     }
     
     private calculateParity(encodedData: string): string {
