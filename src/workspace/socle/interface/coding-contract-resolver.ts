@@ -29,7 +29,7 @@ export class CodingContractResolver {
         await Broker.pushData(
             this.ns, 
             ResolveContracts.REQUEST_PORT, 
-            allContracts.filter(contract => contractsToResolve.some(x => x.filepath === contract.filepath))
+            allContracts.filter(contract => contractsToResolve.every(x => x.filepath !== contract.filepath))
         );
         
         // reset failed contracts
@@ -43,6 +43,7 @@ export class CodingContractResolver {
             this.resolve(contract, codingContract);
         }
         
+        // FIX
         await Broker.pushData(this.ns, ResolveContracts.RESPONSE_PORT, this.failedContracts);
     }
 
