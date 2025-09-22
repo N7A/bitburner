@@ -59,48 +59,50 @@ class MinimumPathSumInATriangleResolver extends CodingContractResolver {
         let visited: Node[] = [];
 
         let nodeToVisit: Node = {rowIndex: 0, columnIndex: 0};
-        
-        // go down
         do {
-            visited.push(nodeToVisit);
-            currentPath.push(nodeToVisit);
-            
-            nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
-                .filter(x => !visited.includes(x))
-                .shift();
-        } while (
-            // tant qu'on peut descendre
-            nodeToVisit !== undefined
-            && (
-                // tant que best path n'est pas défini
-                !bestPath 
-                // tant que c'est meilleur que le best path
-                || (this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit)))
-        )
-
-        // nouveau chemin complet et meilleur
-        if (currentPath.length === data.length && this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath)) {
-            bestPath = currentPath;
-        }
-
-        // go up
-        do {
-            currentPath.pop();
-
-            nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
-                .filter(x => !visited.includes(x))
-                .shift();
+            // go down
+            do {
+                visited.push(nodeToVisit);
+                currentPath.push(nodeToVisit);
                 
-            if (nodeToVisit === undefined) {
-                continue;
+                nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
+                    .filter(x => !visited.includes(x))
+                    .shift();
+            } while (
+                // tant qu'on peut descendre
+                nodeToVisit !== undefined
+                && (
+                    // tant que best path n'est pas défini
+                    !bestPath 
+                    // tant que c'est meilleur que le best path
+                    || (this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit)))
+            )
+
+            // nouveau chemin complet et meilleur
+            if (!bestPath || currentPath.length === data.length && this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath)) {
+                bestPath = currentPath;
             }
+
+            // go up
+            do {
+                currentPath.pop();
+
+                nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
+                    .filter(x => !visited.includes(x))
+                    .shift();
+            } while (
+                // tant qu'on peut remonter
+                currentPath.length > 1
+                // aucune visite possible
+                && (nodeToVisit === undefined
+                // tant que c'est forcement pire que le best path
+                || this.getPathValue(data, bestPath) < this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit))
+            )
         } while (
-            // tant qu'on peut remonter
-            currentPath.length > 1
-            // tant que c'est forcement pire que le best path
-            && this.getPathValue(data, bestPath) < this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit)
+            !(currentPath.length > 1
+            // aucune visite possible
+            && (nodeToVisit === undefined))
         )
-        
 
         return this.getPathValue(data, currentPath);
     }
