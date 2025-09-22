@@ -12,16 +12,26 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
         super(
             ns, 
             [
-                ns.enums.CodingContractName.HammingCodesEncodedBinaryToInteger
+                ns.enums.CodingContractName.HammingCodesEncodedBinaryToInteger,
+                ns.enums.CodingContractName.HammingCodesIntegerToEncodedBinary
             ]
         );
     }
 
-    protected getSolution(codingContract: CodingContractObject): number {
-        const data: string = codingContract.data as string;
-        this.logger.trace(Log.INFO('Données', data));
+    protected getSolution(codingContract: CodingContractObject): number | string {
+        if (codingContract.type === this.ns.enums.CodingContractName.HammingCodesEncodedBinaryToInteger) {
+            const data: string = codingContract.data as string;
+            this.logger.trace(Log.INFO('Données', data));
 
-        return this.getSolutionI(data);
+            return this.getSolutionI(data);
+        } else if (codingContract.type === this.ns.enums.CodingContractName.HammingCodesIntegerToEncodedBinary) {
+            const data: number = codingContract.data as number;
+            this.logger.trace(Log.INFO('Données', data));
+
+            return this.getSolutionII(data);
+        }
+
+        this.logger.err(`Type (${codingContract}) non pris en charge`);
     }
 
     /**
@@ -118,4 +128,66 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
         }
         return  false;
     }
+
+    /**
+     * Description : You are given the following decimal value: 16
+     * 
+     * Convert it to a binary representation and encode it as an 'extended Hamming code'.
+     * The number should be converted to a string of '0' and '1' with no leading zeroes.
+     * A parity bit is inserted at position 0 and at every position N where N is a power of 2.
+     * Parity bits are used to make the total number of '1' bits in a given set of data even.
+     * The parity bit at position 0 considers all bits including parity bits.
+     * Each parity bit at position 2^N alternately considers 2^N bits then ignores 2^N bits, starting at position 2^N.
+     * The endianness of the parity bits is reversed compared to the endianness of the data bits:
+     * Data bits are encoded most significant bit first and the parity bits encoded least significant bit first.
+     * The parity bit at position 0 is set last.
+     * 
+     * Examples:
+     * 
+     * 8 in binary is 1000, and encodes to 11110000 (pppdpddd - where p is a parity bit and d is a data bit)
+     * 21 in binary is 10101, and encodes to 1001101011 (pppdpdddpd)
+     * 
+     * For more information on the 'rule' of encoding, refer to Wikipedia (https://wikipedia.org/wiki/Hamming_code) or the 3Blue1Brown videos on Hamming Codes. 
+     * (https://youtube.com/watch?v=X8jsijhllIA)
+     */
+    private getSolutionII(data: number) {
+        // convert decimal to binary
+        let dataToEncode: string = data.toString(2);
+
+        const PARITY_WAITING: string = '_'
+        let encodedData: string = PARITY_WAITING + PARITY_WAITING;
+
+        // ajout des positions des bits de parité
+        while (dataToEncode.length > 0) {
+            // position d'un bit de parité
+            if (encodedData.length % 2 === 0) {
+                // ajout d'un bit de parté aux données encodées
+                encodedData += PARITY_WAITING;
+                continue;
+            }
+            // ajout du premier caractère aux données encodées
+            encodedData += dataToEncode[0];
+            // suppression du premier caractère depuis les données à encoder
+            dataToEncode = dataToEncode.substring(1);
+        }
+
+        // alimentation des bits de parité
+        encodedData = this.calculateParity(encodedData);
+
+        // ajout du bit de parité global
+        const globalParity = this.parityValid(encodedData) ? '0' : '1';
+        return globalParity + encodedData;
+    }
+    
+    private calculateParity(encodedData: string): string {
+        for (let parityBitCoverage = 0; Math.pow(2, parityBitCoverage) < encodedData.length; parityBitCoverage++) {
+            // détermination de la valeur du bit de parité
+            const parityValue = this.hasError(encodedData, parityBitCoverage) ? 1 : 0;
+            // alimentation du bit de parité
+            encodedData = encodedData.substring(0, Math.pow(2, parityBitCoverage)) + parityValue + encodedData.substring(Math.pow(2, parityBitCoverage) + 1);
+        }
+
+        return encodedData;
+    }
+
 }
