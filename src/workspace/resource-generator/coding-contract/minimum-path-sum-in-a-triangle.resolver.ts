@@ -24,9 +24,9 @@ class MinimumPathSumInATriangleResolver extends CodingContractResolver {
      * 
      * [
      *             [2],
-     *            [7,8],          9|10
-     *           [2,9,8],     11|18|19|18
-     *          [6,9,4,4], 17|20|27|23|23|22
+     *            [7,8],
+     *           [2,9,8],
+     *          [6,9,4,4],
      *         [2,5,8,3,3],
      *        [7,2,9,1,5,7],
      *       [9,6,3,6,5,4,4],
@@ -54,23 +54,74 @@ class MinimumPathSumInATriangleResolver extends CodingContractResolver {
         const data: number[][] = codingContract.data as number[][];
         this.logger.trace(Log.INFO('Données', data));
 
-        let path: number[] = [];
+        let bestPath: Node[] = [];
+        let currentPath: Node[] = [];
+        let visited: Node[] = [];
 
-        let previousRow = data.shift();
+        let nodeToVisit: Node = {rowIndex: 0, columnIndex: 0};
+        
+        // go down
+        do {
+            visited.push(nodeToVisit);
+            currentPath.push(nodeToVisit);
+            
+            nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
+                .filter(x => !visited.includes(x))
+                .shift();
+        } while (
+            // tant qu'on peut descendre
+            nodeToVisit !== undefined
+            && (
+                // tant que best path n'est pas défini
+                !bestPath 
+                // tant que c'est meilleur que le best path
+                || (this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit)))
+        )
 
-        for (let index = 0; index < data.length; index++) {
-            const row = data[index];
-            for (let index = 0; index < row.length; index++) {
-                const element = row[index];
-                
-            }
-
-            path.push(previousRow[]);
-
-            previousRow = data.shift();
+        // nouveau chemin complet et meilleur
+        if (currentPath.length === data.length && this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath)) {
+            bestPath = currentPath;
         }
 
-        return path.reduce((a,b) => a+b);
+        // go up
+        do {
+            currentPath.pop();
+
+            nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
+                .filter(x => !visited.includes(x))
+                .shift();
+                
+            if (nodeToVisit === undefined) {
+                continue;
+            }
+        } while (
+            // tant qu'on peut remonter
+            currentPath.length > 1
+            // tant que c'est forcement pire que le best path
+            && this.getPathValue(data, bestPath) < this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit)
+        )
+        
+
+        return this.getPathValue(data, currentPath);
+    }
+
+    getPathValue(data: number[][], path: Node[]): number {
+        return path.map(x => this.getValue(data, x)).reduce((a,b) => a+b);
     }
     
+    getValue(data: number[][], node: Node): number {
+        return data[node.rowIndex][node.columnIndex];
+    }
+    
+    getNodes(node: Node): Node[] {
+            const left: Node = {rowIndex: node.rowIndex+1, columnIndex: node.columnIndex};
+            const right: Node = {rowIndex: node.rowIndex+1, columnIndex: node.columnIndex + 1};
+        return [left, right]
+    }
+    
+}
+
+type Node = {
+    rowIndex: number;
+    columnIndex: number;
 }
