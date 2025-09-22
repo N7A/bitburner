@@ -97,7 +97,9 @@
 /workspace/resource-generator/coding-contract/find-all-valid-math-expressions.resolver.ts
 /workspace/resource-generator/coding-contract/find-largest-prime-factor.resolver.ts
 /workspace/resource-generator/coding-contract/generate-ip-adresses.resolver.ts
+/workspace/resource-generator/coding-contract/hamming-codes.resolver.ts
 /workspace/resource-generator/coding-contract/merge-overlapping-intervals.resolver.ts
+/workspace/resource-generator/coding-contract/minimum-path-sum-in-a-triangle.resolver.ts
 /workspace/resource-generator/coding-contract/model/Contract.ts
 /workspace/resource-generator/coding-contract/model/GraphData.ts
 /workspace/resource-generator/coding-contract/model/Interval.ts
