@@ -78,14 +78,16 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
     }
 
     private parityValid(data: string): boolean {
-        return data.split('1').length-1 % 2 === 0;
+        // détermine si le nombre de '1' est pair
+        return (data.split('1').length-1) % 2 === 0;
     }
 
     private getData(encodedData: string): string {
         let data: string = '';
         for (let index = 1; index < encodedData.length; index++) {
             const element = encodedData[index];
-            if(index % 2 === 0) {
+            // index correspond à une puissance de 2
+            if(Number.isInteger(Math.log2(index))) {
                 continue;
             }
             
@@ -109,7 +111,7 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
 
         // si un seul bit en erreur c'est le bit de parité qui est faux
         // sinon la somme des bits de parité détectant une erreur donne la position
-        parityInError.length === 1 ? parityInError[0] : parityInError.reduce((a,b) => a+b);
+        return parityInError.length === 1 ? parityInError[0] : parityInError.reduce((a,b) => a+b);
     }
 
     /**
@@ -121,12 +123,12 @@ class HammingCodesEncodedBinaryToIntegerResolver extends CodingContractResolver 
      * @returns 
      */
     private hasError(encodedData: string, parityBitCoverage: number): boolean {
+        let dataToTest: string = '';
         for (let index = Math.pow(2, parityBitCoverage); index < encodedData.length; index+=Math.pow(2, parityBitCoverage+1)) {
-            if (!this.parityValid(encodedData.substring(index, Math.pow(2, parityBitCoverage)))) {
-                return true;
-            }
+            dataToTest += encodedData.substring(index, index + Math.pow(2, parityBitCoverage));
         }
-        return  false;
+
+        return  !this.parityValid(dataToTest);
     }
 
     /**
