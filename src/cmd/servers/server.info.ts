@@ -73,7 +73,7 @@ class ServerInfo extends Info {
         this.ns.print(this.service.getHostPathLibelle(this.data.hostname));
         this.ns.print('\n');
         this.ns.print(Log.title('Hack data'));
-        const percentMoney = (this.data.moneyMax as number) > 0 ? ((this.data.moneyMax as number) - (this.data.moneyAvailable as number)) / (this.data.moneyMax as number) : 0;
+        const percentMoney = (this.data.moneyMax as number) > 0 ? (this.data.moneyAvailable as number) / (this.data.moneyMax as number) : 0;
         this.ns.print(Log.INFO('Money', Log.money(this.ns, this.data.moneyAvailable as number) + ' / ' + this.ns.formatNumber(this.data.moneyMax as number)
             + ' (' + this.ns.formatPercent(percentMoney) + ')'));
         this.ns.print(Log.INFO('Security level', this.ns.formatNumber(this.data.hackDifficulty as number) + ' >>> ' + this.ns.formatNumber(this.data.minDifficulty as number)

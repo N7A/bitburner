@@ -51,12 +51,12 @@ class GenerateIPAddressesResolver extends CodingContractResolver {
     }
     
     private getAllValidStartOctet(data: string, remainOctetNumber: number): string[] {
-        const octetMinSize = Math.floor(data.length / remainOctetNumber);
-        const octetMaxSize = Math.ceil(data.length / remainOctetNumber);
+        const octetMinSize = Math.max(1, data.length - (remainOctetNumber-1)*3);
+        const octetMaxSize = Math.min(3, data.length);
 
-        let octets: string[] = [data.substring(0, octetMinSize)];
-        if (octetMinSize !== octetMaxSize) {
-            octets.push(data.substring(0, octetMaxSize))
+        let octets: string[] = [];
+        for (let index = octetMinSize; index <= octetMaxSize; index++) {
+            octets.push(data.substring(0, index));        
         }
 
         return octets.filter(x => this.isValidOctet(x));
