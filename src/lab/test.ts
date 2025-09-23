@@ -14,9 +14,13 @@ export async function main(ns: NS) {
 
     //ns.singularity.exportGame();
     
-    showCrimes(ns);
+    //showCrimes(ns);
     
     //showFactions(ns);
+
+    const data: string = '668176211';
+    ns.tprint(data);
+    //ns.tprint(getSolution(ns, data));
 }
 
 function showCrimes(ns: NS) {
