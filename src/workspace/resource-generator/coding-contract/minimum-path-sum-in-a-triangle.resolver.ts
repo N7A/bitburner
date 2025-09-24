@@ -66,21 +66,22 @@ class MinimumPathSumInATriangleResolver extends CodingContractResolver {
                 currentPath.push(nodeToVisit);
                 
                 nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
-                    .filter(x => !visited.includes(x))
+                    .filter(x => x.rowIndex < data.length && x.columnIndex < data[x.rowIndex].length)
+                    .filter(x => !visited.some(y => x.rowIndex === y.rowIndex && x.columnIndex === y.columnIndex))
                     .shift();
             } while (
                 // tant qu'on peut descendre
                 nodeToVisit !== undefined
                 && (
                     // tant que best path n'est pas défini
-                    !bestPath 
+                    bestPath.length <= 0 
                     // tant que c'est meilleur que le best path
                     || (this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit)))
             )
 
             // nouveau chemin complet et meilleur
-            if (!bestPath || currentPath.length === data.length && this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath)) {
-                bestPath = currentPath;
+            if (bestPath.length <= 0 || currentPath.length === data.length && this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath)) {
+                bestPath = [...currentPath];
             }
 
             // go up
@@ -88,7 +89,7 @@ class MinimumPathSumInATriangleResolver extends CodingContractResolver {
                 currentPath.pop();
 
                 nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
-                    .filter(x => !visited.includes(x))
+                    .filter(x => !visited.some(y => x.rowIndex === y.rowIndex && x.columnIndex === y.columnIndex))
                     .shift();
             } while (
                 // tant qu'on peut remonter
@@ -99,16 +100,16 @@ class MinimumPathSumInATriangleResolver extends CodingContractResolver {
                 || this.getPathValue(data, bestPath) < this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit))
             )
         } while (
-            !(currentPath.length > 1
+            !(currentPath.length === 1
             // aucune visite possible
             && (nodeToVisit === undefined))
         )
 
-        return this.getPathValue(data, currentPath);
+        return this.getPathValue(data, bestPath);
     }
 
     getPathValue(data: number[][], path: Node[]): number {
-        return path.map(x => this.getValue(data, x)).reduce((a,b) => a+b);
+        return path.length > 0 ? path.map(x => this.getValue(data, x)).reduce((a,b) => a+b) : 0;
     }
     
     getValue(data: number[][], node: Node): number {
