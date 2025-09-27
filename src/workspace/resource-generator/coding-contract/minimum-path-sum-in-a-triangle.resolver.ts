@@ -54,77 +54,111 @@ class MinimumPathSumInATriangleResolver extends CodingContractResolver {
         const data: number[][] = codingContract.data as number[][];
         this.logger.trace(Log.INFO('Données', data));
 
-        let bestPath: Node[] = [];
+        let bestPath: number = Number.MAX_VALUE;
         let currentPath: Node[] = [];
+        const bestValues: number[][] = (Array(data.length) as number[][]).fill([]);
+        bestValues.forEach((x, i) => {
+            bestValues[i] = (Array(data[i].length) as number[]).fill(Number.MAX_VALUE)
+        })
         let visited: Node[] = [];
 
-        let nodeToVisit: Node = {rowIndex: 0, columnIndex: 0};
+        let nodeToVisit: Node = new Node(0, 0);
         do {
+            visited = visited.filter(x => currentPath.length < 1 || x.rowIndex > currentPath[currentPath.length-1].rowIndex);
             // go down
-            do {
-                visited.push(nodeToVisit);
-                currentPath.push(nodeToVisit);
-                
-                nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
-                    .filter(x => x.rowIndex < data.length && x.columnIndex < data[x.rowIndex].length)
-                    .filter(x => !visited.some(y => x.rowIndex === y.rowIndex && x.columnIndex === y.columnIndex))
-                    .shift();
-            } while (
+            while (
                 // tant qu'on peut descendre
                 nodeToVisit !== undefined
-                && (
-                    // tant que best path n'est pas défini
-                    bestPath.length <= 0 
-                    // tant que c'est meilleur que le best path
-                    || (this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit)))
-            )
+            ) {
+                // save visit
+                currentPath.push(nodeToVisit);
+                visited.push(nodeToVisit);
+                
+                // get next to visit
+                nodeToVisit = currentPath[currentPath.length-1].getNodesAdjacentes(data)
+                    // non visité
+                    .filter(x => bestValues[x.rowIndex][x.columnIndex] === Number.MAX_VALUE)
+                    .filter(x => !visited.some(y => x.rowIndex === y.rowIndex && x.columnIndex === y.columnIndex))
+                    .filter(x => (
+                        // tant que best path n'est pas défini
+                        bestPath === undefined 
+                        // tant que c'est meilleur que le best path
+                        || (bestPath > this.getPathValue(data, currentPath) + x.getValue(data))
+                    ))
+                    .shift();
+            }
+            
+            const currentNode = currentPath[currentPath.length-1];
+            const adj = currentNode.getNodesAdjacentes(data)
+                .map(x => bestValues[x.rowIndex][x.columnIndex] !== Number.MAX_VALUE ? x.getValue(data) + bestValues[x.rowIndex][x.columnIndex] : undefined);
+            
+            // maj best path
+            if (adj.length === 0) { // no adjacent
+                bestValues[currentNode.rowIndex][currentNode.columnIndex] = 0;
+            } else if (adj.some(x => x !== undefined && this.getPathValue(data, currentPath) + x <= bestPath)) {
+                bestValues[currentNode.rowIndex][currentNode.columnIndex] = Math.min(
+                    ...adj.filter(x => x !== undefined && this.getPathValue(data, currentPath) + x <= bestPath) as number[]
+                );
+            }
 
             // nouveau chemin complet et meilleur
-            if (bestPath.length <= 0 || currentPath.length === data.length && this.getPathValue(data, bestPath) > this.getPathValue(data, currentPath)) {
-                bestPath = [...currentPath];
+            if (bestValues[currentNode.rowIndex][currentNode.columnIndex] != Number.MAX_VALUE) {
+                bestPath = Math.min(
+                    bestPath ?? Number.MAX_VALUE, 
+                    this.getPathValue(data, currentPath) + bestValues[currentNode.rowIndex][currentNode.columnIndex]
+                );
             }
 
             // go up
-            do {
-                currentPath.pop();
-
-                nodeToVisit = this.getNodes(currentPath[currentPath.length-1])
-                    .filter(x => !visited.some(y => x.rowIndex === y.rowIndex && x.columnIndex === y.columnIndex))
-                    .shift();
-            } while (
-                // tant qu'on peut remonter
-                currentPath.length > 1
-                // aucune visite possible
-                && (nodeToVisit === undefined
-                // tant que c'est forcement pire que le best path
-                || this.getPathValue(data, bestPath) < this.getPathValue(data, currentPath) + this.getValue(data, nodeToVisit))
-            )
+            currentPath.pop();
+            nodeToVisit = currentPath[currentPath.length-1].getNodesAdjacentes(data)
+                // non visité
+                .filter(x => bestValues[x.rowIndex][x.columnIndex] == Number.MAX_VALUE)
+                .filter(x => !visited.some(y => x.rowIndex === y.rowIndex && x.columnIndex === y.columnIndex))
+                .filter(x => (
+                    // tant que best path n'est pas défini
+                    bestPath === undefined 
+                    // tant que c'est meilleur que le best path
+                    || (bestPath > this.getPathValue(data, currentPath) + x.getValue(data))
+                ))
+                .shift();
         } while (
             !(currentPath.length === 1
             // aucune visite possible
             && (nodeToVisit === undefined))
         )
 
-        return this.getPathValue(data, bestPath);
+        return bestPath;
     }
 
     getPathValue(data: number[][], path: Node[]): number {
-        return path.length > 0 ? path.map(x => this.getValue(data, x)).reduce((a,b) => a+b) : 0;
-    }
-    
-    getValue(data: number[][], node: Node): number {
-        return data[node.rowIndex][node.columnIndex];
-    }
-    
-    getNodes(node: Node): Node[] {
-            const left: Node = {rowIndex: node.rowIndex+1, columnIndex: node.columnIndex};
-            const right: Node = {rowIndex: node.rowIndex+1, columnIndex: node.columnIndex + 1};
-        return [left, right]
+        return path.length > 0 ? path.map(x => x.getValue(data)).reduce((a,b) => a+b) : 0;
     }
     
 }
 
-type Node = {
-    rowIndex: number;
-    columnIndex: number;
+class Node {
+    readonly rowIndex: number;
+    readonly columnIndex: number;
+    
+    constructor(rowIndex: number, columnIndex: number) {
+        this.rowIndex = rowIndex;
+        this.columnIndex = columnIndex;
+    }
+
+    getValue(data: number[][]): number {
+        return data[this.rowIndex][this.columnIndex];
+    }
+
+    isNodeInGraph(data: number[][]): boolean {
+        return this.rowIndex < data.length && this.columnIndex < data[this.rowIndex].length;
+    }
+    
+    getNodesAdjacentes(data: number[][]): Node[] {
+            const left: Node = new Node(this.rowIndex+1, this.columnIndex);
+            const right: Node = new Node(this.rowIndex+1, this.columnIndex + 1);
+        return [left, right]// dans le graph
+                .filter(x => x.isNodeInGraph(data));
+    }
+    
 }
