@@ -29,7 +29,7 @@ export class Broker {
         return ns.peek(port);
     }
 
-    static async getAllResponses(ns: NS, port: number): Promise<any> {
+    static async getAllResponses(ns: NS, port: number): Promise<any[]> {
         await Broker.waitNewData(ns, port);
 
         let responses: any[] = [];
