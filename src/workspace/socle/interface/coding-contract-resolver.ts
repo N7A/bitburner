@@ -44,7 +44,7 @@ export class CodingContractResolver {
         }
         
         // FIX
-        await Broker.pushData(this.ns, ResolveContracts.RESPONSE_PORT, this.failedContracts);
+        await Broker.pushData(this.ns, ResolveContracts.RESPONSE_PORT, JSON.stringify(this.failedContracts));
     }
 
     private filterContract(allContracts: Contract[]) {
