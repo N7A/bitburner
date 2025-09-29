@@ -2,12 +2,12 @@ import * as Log from 'workspace/socle/utils/logging';
 import { CodingContractResolver } from 'workspace/socle/interface/coding-contract-resolver';
 
 export async function main(ns: NS) {
-    const resolver: FindAllValidMathExpressionsResolver = new FindAllValidMathExpressionsResolver(ns);
+    const resolver: SpiralizeMatrixResolver = new SpiralizeMatrixResolver(ns);
     
     await resolver.run();
 }
 
-class FindAllValidMathExpressionsResolver extends CodingContractResolver {
+class SpiralizeMatrixResolver extends CodingContractResolver {
     constructor(ns: NS) {
         super(
             ns, 
@@ -96,10 +96,4 @@ class FindAllValidMathExpressionsResolver extends CodingContractResolver {
         return result;
     }
 
-}
-
-enum Operation {
-    ADD = '+', 
-    SUBSTRACT = '-',
-    MULTIPLY = '*'
 }
