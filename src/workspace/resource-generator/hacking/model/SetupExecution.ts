@@ -3,27 +3,33 @@ import { RamResourceExecution } from 'workspace/load-balancer/model/RamResourceE
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import * as Log from 'workspace/socle/utils/logging';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 //#region Constants
 export const SETUP_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/setup-server.sequencer.ts';
 //#endregion Constants
 
 export class SetupHackExecution implements RamResourceExecution {
+    private ns: NS;
+    private dashboard: Dashboard;
     private targetHostname: string;
     request: ProcessRequest;
 
-    constructor(request: ProcessRequest) {
+    constructor(ns: NS, request: ProcessRequest) {
+        this.ns = ns;
         this.targetHostname = request.id;
         this.request = request;
+
+        this.dashboard = new Dashboard(ns, `Setup ${Log.target(this.targetHostname, {colorless: true})}`, {icon: '🛠️🖥️', role: 'looper'});
     }
 
-    async isExecutionUsless(ns: NS): Promise<boolean> {
-        /*const serversRepository = new ServersRepository(ns);
+    async isExecutionUsless(): Promise<boolean> {
+        /*const serversRepository = new ServersRepository(this.ns);
         // load host data
         const data: ServerData|null = serversRepository.get(this.targetHostname);
         const hackData: HackData = data!.hackData;
-        return ns.getServer(this.targetHostname).hackDifficulty <= hackData.minDifficulty
-            && ns.getServer(this.targetHostname).moneyAvailable >= hackData.moneyMax*/
+        return this.ns.getServer(this.targetHostname).hackDifficulty <= hackData.minDifficulty
+            && this.ns.getServer(this.targetHostname).moneyAvailable >= hackData.moneyMax*/
         return false;
     }
     
@@ -31,8 +37,8 @@ export class SetupHackExecution implements RamResourceExecution {
         return `${Log.action('Setup')} ${this.targetHostname}`;
     }
     
-    setupDashboard(ns: NS, pid: number, targetHost: string) {        
-        Log.initTailTitle(ns, 'Setup', 'looper', targetHost, pid);
+    setupDashboard() {
+        this.dashboard.initTailTitle();
     }
 
     static getRequest(targetHostname: string): ProcessRequest {

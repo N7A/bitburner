@@ -4,6 +4,7 @@ import {executeUpgrade} from 'workspace/load-balancer/upgrade-servers.worker'
 import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution'
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
 import { Daemon } from 'workspace/socle/interface/daemon';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -39,12 +40,14 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 class UpgradeServersDaemon extends Daemon {
+    private dashboard: Dashboard;
     private moneyPiggyBankService: MoneyPiggyBankService;
 
     constructor(ns: NS) {
         super(ns);
 
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
+        this.dashboard = new Dashboard(ns, 'Upgrade server', {icon: '🆙🏠', role: 'Scheduler'});
     }
 
     async work(): Promise<any> {
@@ -93,7 +96,7 @@ class UpgradeServersDaemon extends Daemon {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Upgrade server', 'scheduler');
+        this.dashboard.initTailTitle();
         
         this.ns.print('Starting...');
         this.ns.ui.openTail();

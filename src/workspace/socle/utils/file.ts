@@ -29,6 +29,15 @@ export function getHash(ns: NS, filepath: string): number {
     return getHashFromContent(contents);
 }
 
+/**
+ * Calcule le hash d'un texte.
+ * 
+ * @param ns Bitburner API
+ * @param contents texte à hash
+ * @returns hash correspondant au texte
+ * 
+ * @remarks RAM cost: 0 GB
+ */
 export function getHashFromContent(contents: string): number {
     let hash = 0;
     for (const char of contents) {
@@ -38,6 +47,14 @@ export function getHashFromContent(contents: string): number {
     return hash;
 }
 
+/**
+ * Extrait le nom d'un script à partir de son chemin.
+ * 
+ * @param filePath chemin du fichier cible
+ * @returns nom du script
+ * 
+ * @remarks RAM cost: 0 GB
+ */
 export function getScriptName(filePath: string): string {
     return filePath.substring(filePath.lastIndexOf('/') + 1, filePath.lastIndexOf('.ts'))
 }

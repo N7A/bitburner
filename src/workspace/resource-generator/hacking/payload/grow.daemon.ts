@@ -1,6 +1,7 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Logger } from 'workspace/socle/Logger';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 let daemon: GrowDaemon;
 
@@ -58,6 +59,7 @@ export function killAfterLoop() {
 }
 
 class GrowDaemon extends Daemon {
+    private dashboard: Dashboard;
     private targetHost: string;
     private moneyThresh: number;
 
@@ -66,6 +68,8 @@ class GrowDaemon extends Daemon {
 
         this.targetHost = targetHost;
         this.moneyThresh = moneyThresh;
+        
+        this.dashboard = new Dashboard(ns, `Grow ${Log.target(this.targetHost, {colorless: true})}`, {icon: '📈💲', role: 'Daemon'});
     }
     
     async work() {
@@ -89,7 +93,7 @@ class GrowDaemon extends Daemon {
         this.ns.enableLog('grow');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, `Grow ${Log.target(this.targetHost, {colorless: true})}`, 'Daemon');
+        this.dashboard.initTailTitle();
     }
     //#endregion Dashboard
 

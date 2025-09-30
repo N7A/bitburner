@@ -1,6 +1,7 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 let daemon: HackDaemon;
 
@@ -52,12 +53,15 @@ export function killAfterLoop() {
 }
 
 class HackDaemon extends Daemon {
+    private dashboard: Dashboard;
     private targetHost: string;
 
     constructor(ns: NS, targetHost: string) {
         super(ns);
         
         this.targetHost = targetHost;
+
+        this.dashboard = new Dashboard(ns, `Hack ${Log.target(this.targetHost, {colorless: true})}`, {icon: '👨🏻‍💻💲', role: 'Daemon'});
     }
 
     async work() {
@@ -69,6 +73,6 @@ class HackDaemon extends Daemon {
         this.ns.enableLog('hack');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, `Hack ${Log.target(this.targetHost, {colorless: true})}`, 'Daemon');
+        this.dashboard.initTailTitle();
     }
 }

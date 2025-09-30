@@ -1,5 +1,6 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 let daemon: Daemon;
 
@@ -44,7 +45,8 @@ function setupDashboard(ns: NS, input: InputArg) {
     ns.enableLog('share');
     ns.clearLog();
     
-    Log.initTailTitle(ns, `Share`, 'Daemon');
+    const dashboard: Dashboard = new Dashboard(ns, `Share`, {icon: '♻️⚡️', role: 'Daemon'});
+    dashboard.initTailTitle();
     ns.print(Log.title('Données d\'entrée'));
     ns.print(Log.object(input));
 }

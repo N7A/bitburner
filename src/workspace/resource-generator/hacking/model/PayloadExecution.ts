@@ -9,6 +9,7 @@ import { HackData } from 'workspace/servers/domain/model/HackData'
 import * as Referentiel from 'workspace/common/referentiel'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository';
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 export class PayloadExecution implements RamResourceExecution {
     //#region Constants
@@ -17,6 +18,7 @@ export class PayloadExecution implements RamResourceExecution {
     static readonly GROW_SCRIPT = Referentiel.HACKING_DIRECTORY + '/payload/grow.daemon.ts';
     //#endregion Constants
 
+    private dashboard: Dashboard;
     private targetHostname: string;
     request: ProcessRequest;
     private executionOrdersService: ExecutionOrdersService;
@@ -25,9 +27,10 @@ export class PayloadExecution implements RamResourceExecution {
         this.request = request;
         this.targetHostname = request.id;
         this.executionOrdersService = new ExecutionOrdersService(ns);
+        this.dashboard = new Dashboard(ns, `Hack ${Log.target(this.targetHostname, {colorless: true})}`, {icon: '👨🏻‍💻💲', role: 'looper'});
     }
 
-    async isExecutionUsless(ns: NS): Promise<boolean> {
+    async isExecutionUsless(): Promise<boolean> {
         // TODO : check if payload already running
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.daemon.ts', targetHost)
         //ns.getRunningScript(Properties.HACKING_DIRECTORY + '/payload/hack.daemon.ts', 'home', targetHost)
@@ -42,8 +45,8 @@ export class PayloadExecution implements RamResourceExecution {
         return `${Log.action('Hacking')} ${Log.target(this.targetHostname)}`;
     }
     
-    setupDashboard(ns: NS, pid: number, targetHost: string) {        
-        Log.initTailTitle(ns, 'Hack', 'looper', targetHost, pid);
+    setupDashboard() {   
+        this.dashboard.initTailTitle();
     }
     
     // TODO : split nb thread (plutot que nb RAM) <- pour que le grow et weaken aient la force pour soutenir le hack

@@ -3,6 +3,7 @@ import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
 import { getAvailableEquipements, getBestEquipement } from 'workspace/resource-generator/gang/equipement.selector';
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 let daemon: EquipMemberDaemon;
 
@@ -55,6 +56,7 @@ export function killAfterLoop() {
 }
 
 class EquipMemberDaemon extends Daemon {
+    private dashboard: Dashboard;
     private memberName: string;
     private moneyPiggyBankService: MoneyPiggyBankService;
 
@@ -62,6 +64,7 @@ class EquipMemberDaemon extends Daemon {
         super(ns);
         this.memberName = memberName;
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
+        this.dashboard = new Dashboard(ns, `${Log.source(this.memberName, {colorless: true})} Equip member`, {icon: '🎒', role: 'Daemon'});
     }
     
     async work() {
@@ -106,6 +109,6 @@ class EquipMemberDaemon extends Daemon {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Equip member', 'Daemon', this.memberName);
+        this.dashboard.initTailTitle();
     }
 }

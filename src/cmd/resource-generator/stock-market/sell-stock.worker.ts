@@ -1,6 +1,7 @@
 import { waitRepayTime } from "workspace/resource-generator/stock-market/buy-stock.selector";
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
+import { Dashboard } from "workspace/socle/interface/dashboard";
 
 export async function main(ns: NS) {
     // load input arguments
@@ -38,12 +39,15 @@ function getInput(ns: NS): InputArg {
 export class SellStockWorker {
     private ns: NS;
     private logger: Logger;
+    private dashboard: Dashboard;
     private stockSymbol: string;
 
     constructor(ns: NS, input: InputArg) {
         this.ns = ns;
         this.logger = new Logger(ns);
         this.stockSymbol = input.stockSymbol;
+
+        this.dashboard = new Dashboard(ns, `${Log.source(this.stockSymbol, {colorless: true})} Sell stock`, {icon: '📈💲', role: 'worker'});
     }
 
     async run() {
@@ -79,7 +83,7 @@ export class SellStockWorker {
         this.ns.disableLog('asleep');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Sell stock', 'worker', this.stockSymbol);
+        this.dashboard.initTailTitle();
         
         this.ns.ui.openTail();
     

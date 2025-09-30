@@ -4,6 +4,7 @@ import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.ser
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
 import { SellStockWorker } from "cmd/resource-generator/stock-market/sell-stock.worker";
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * 
@@ -42,12 +43,14 @@ function getInput(ns: NS): InputArg {
 
 class Main extends Headhunter<string> {
     private logger: Logger;
+    private dashboard: Dashboard;
     private stockSymbol: string;
 
     constructor(ns: NS) {
         // waitNewTargets = true : contracts appear over the time
         super(ns, true)
         this.logger = new Logger(ns);
+        this.dashboard = new Dashboard(ns, 'Buy max volatility stock', {icon: '📉💲', role: 'scheduler'});
         this.setupDashboard();
     }
 
@@ -113,7 +116,7 @@ class Main extends Headhunter<string> {
         this.ns.disableLog('asleep');
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Buy max volatility stock', 'scheduler');
+        this.dashboard.initTailTitle();
         
         this.ns.ui.openTail();
     

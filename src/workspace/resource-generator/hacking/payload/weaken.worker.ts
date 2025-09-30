@@ -1,5 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -39,6 +40,7 @@ function setupDashboard(ns: NS, input: InputArg) {
     ns.enableLog('weaken');
     ns.clearLog();
     
-    Log.initTailTitle(ns, `Weaken ${Log.target(input.targetHost, {colorless: true})}`, 'Worker');
+    const dashboard: Dashboard = new Dashboard(ns, `Weaken ${Log.target(input.targetHost, {colorless: true})}`, {icon: '📉🔒', role: 'Worker'});
+    dashboard.initTailTitle();
 }
 //#endregion Dashboard

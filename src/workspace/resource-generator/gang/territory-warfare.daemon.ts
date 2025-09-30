@@ -1,6 +1,7 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
 import { GANG_LOGO } from 'workspace/resource-generator/gang/application-properties';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 let daemon: TerritoryWarfareDaemon;
 
@@ -45,8 +46,12 @@ export function killAfterLoop() {
 }
 
 class TerritoryWarfareDaemon extends Daemon {
+    private dashboard: Dashboard;
+    
     constructor(ns: NS) {
         super(ns);
+        
+        this.dashboard = new Dashboard(ns, 'Territory warfare', {icon: '⚔️', role: 'Daemon'});
     }
     
     async work() {
@@ -107,6 +112,6 @@ class TerritoryWarfareDaemon extends Daemon {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Territory warfare', 'Daemon');
+        this.dashboard.initTailTitle();
     }
 }

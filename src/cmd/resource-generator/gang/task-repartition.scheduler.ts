@@ -5,6 +5,7 @@ import { getBestEmployee, getRepartitionEmployee, getTargetTask } from 'workspac
 import { GangDirective } from 'workspace/resource-generator/gang/domain/model/GangDirective';
 import { WantedLvl } from 'workspace/resource-generator/gang/domain/model/WantedLvl';
 import { TaskType } from 'workspace/resource-generator/gang/model/TaskType';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * Cartographie et enregistre les données des serveurs du réseau.
@@ -43,6 +44,7 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 class Main extends Daemon {
+    private dashboard: Dashboard;
     private gangDirectiveRepository: GangDirectiveRepository;
 
     constructor(ns: NS) {
@@ -50,6 +52,7 @@ class Main extends Daemon {
         super(ns)
 
         this.gangDirectiveRepository = new GangDirectiveRepository(ns);
+        this.dashboard = new Dashboard(ns, 'Gang task', {icon: '🏴‍☠️📋', role: 'Scheduler'});
         this.setupDashboard();
     }
 
@@ -125,7 +128,7 @@ class Main extends Daemon {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Gang task', 'Scheduler');
+        this.dashboard.initTailTitle();
         this.ns.ui.openTail();
     }
     //#endregion Dashboard

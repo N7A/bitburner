@@ -2,6 +2,7 @@ import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * Scan les cibles données par le unlock.
@@ -42,8 +43,9 @@ function setupDashboard(ns: NS, input: InputArg) {
     ns.disableLog("ALL");
     ns.enableLog('scan');
     ns.clearLog();
-        
-    Log.initTailTitle(ns, `Scan ${Log.target(input.targetHost, {colorless: true})}`, 'Worker');
+    
+    const dashboard: Dashboard = new Dashboard(ns, `Scan ${Log.target(input.targetHost, {colorless: true})}`, {icon: '📡', role: 'Worker'});
+    dashboard.initTailTitle();
 }
 
 //#region Input arguments

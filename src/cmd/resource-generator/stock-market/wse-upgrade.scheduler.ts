@@ -2,6 +2,7 @@ import * as Log from 'workspace/socle/utils/logging';
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service'
 import { selectUpgrade } from 'workspace/resource-generator/stock-market/wse-upgrade.selector'
 import { WseUpgrade } from 'workspace/resource-generator/stock-market/model/WseUpgrade';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 // TODO : generic upgrade scheduler
 export async function main(ns: NS) {
@@ -70,8 +71,9 @@ function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.clearLog();
     
-    Log.initTailTitle(ns, 'Upgrade WSE', 'scheduler');
-    
+    const dashboard: Dashboard = new Dashboard(ns, 'Upgrade WSE', {icon: '🆙🏠', role: 'scheduler'});
+    dashboard.initTailTitle();
+
     ns.print('Starting...');
     ns.ui.openTail();
 }

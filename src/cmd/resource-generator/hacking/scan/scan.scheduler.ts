@@ -2,6 +2,7 @@ import { getScanTarget } from 'workspace/resource-generator/hacking/scan/scan.ta
 import { main as doScan } from 'workspace/resource-generator/hacking/scan/scan.worker'
 import * as Log from 'workspace/socle/utils/logging';
 import { Headhunter } from 'workspace/socle/interface/headhunter';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
  * Cartographie et enregistre les données des serveurs du réseau.
@@ -40,9 +41,12 @@ function getInput(ns: NS): InputArg {
 //#endregion Input arguments
 
 class Main extends Headhunter<string> {
+    private dashboard: Dashboard;
+    
     constructor(ns: NS) {
         // waitNewTargets = false : targets fix and auto discovered
         super(ns, false)
+        this.dashboard = new Dashboard(ns, `Scan`, {icon: '📡', role: 'Scheduler'});
         this.setupDashboard();
     }
     
@@ -63,7 +67,7 @@ class Main extends Headhunter<string> {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Scan', 'Scheduler');
+        this.dashboard.initTailTitle();
         this.ns.ui.openTail();
     }
     //#endregion Dashboard

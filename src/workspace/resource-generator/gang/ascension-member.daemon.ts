@@ -1,6 +1,7 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
+import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 let daemon: AscensionMemberDaemon;
 
@@ -53,11 +54,13 @@ export function killAfterLoop() {
 }
 
 class AscensionMemberDaemon extends Daemon {
+    private dashboard: Dashboard;
     private memberName: string;
 
     constructor(ns: NS, memberName: string) {
         super(ns);
         this.memberName = memberName;
+        this.dashboard = new Dashboard(ns, `${Log.source(this.memberName, {colorless: true})} Ascend member`, {icon: '🔺', role: 'Daemon'});
     }
     
     async work() {
@@ -136,6 +139,6 @@ class AscensionMemberDaemon extends Daemon {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
         
-        Log.initTailTitle(this.ns, 'Ascend member', 'Daemon', this.memberName);
+        this.dashboard.initTailTitle();
     }
 }

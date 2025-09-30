@@ -1,7 +1,7 @@
-import { GitRepository } from "workspace/synchronize/model/GitRepository";
-import { getFilepaths } from "workspace/socle/utils/file";
+import { GitRepository } from 'workspace/synchronize/model/GitRepository';
+import { getFilepaths } from 'workspace/socle/utils/file';
 import * as Referentiel from 'workspace/common/referentiel'
-import { Logger } from "workspace/socle/Logger";
+import { Logger } from 'workspace/socle/Logger';
 import { LogLevel } from "workspace/socle/model/LogLevel";
 
 /**
@@ -37,7 +37,7 @@ export class GitHubConnector {
         await this.pullManifestFiles();
         // suppression des fichiers non définis dans le manifest
         this.clearButManifestFiles();
-        this.logger.success('Pull from manifest');
+        this.logger.success('Pull from manifest [done]');
     }
 
     /**
@@ -90,7 +90,6 @@ export class GitHubConnector {
 
         let successNumber: number = 0;
         let failNumber: number = 0;
-
         
         for (const [index, file] of manifestFiles.entries()) {
             if (!file) {
