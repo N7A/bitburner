@@ -15,7 +15,6 @@
 /cmd/notification/money-amount.alert.ts
 /cmd/notification/server-unlocked.alert.ts
 /cmd/orchestration/orchestration.launcher.ts
-/cmd/resource-generator/coding-contract/all-contracts.info.ts
 /cmd/resource-generator/coding-contract/contract.info.ts
 /cmd/resource-generator/coding-contract/resolve-contracts.scheduler.ts
 /cmd/resource-generator/crime/crime.info.ts
@@ -107,6 +106,7 @@
 /workspace/resource-generator/coding-contract/model/VigenereCipherData.ts
 /workspace/resource-generator/coding-contract/proper-2-coloring-of-a-graph.resolver.ts
 /workspace/resource-generator/coding-contract/sanitize-parentheses-in-expression.resolver.ts
+/workspace/resource-generator/coding-contract/spiralize-matrix.resolver.ts
 /workspace/resource-generator/coding-contract/total-ways-to-sum.ts
 /workspace/resource-generator/crime/model/PlayerStatType.ts
 /workspace/resource-generator/crime/model/TaskType.ts
