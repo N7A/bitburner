@@ -1,23 +1,3 @@
-// TODO: à migrer
-/**
- * 
- * @deprecated use workspace/socle/interface/dashboard.ts instead
- * 
- * @param ns 
- * @param service 
- * @param role 
- * @param hostSource 
- * @param pid 
- * 
- * @remarks Ram cost : 0
- */
-export function initTailTitle(ns: NS, service: string, role?: string, hostSource?: string, pid?: number) {
-    const roleLabel = role ? ` #${role.toLowerCase()}` : ''
-    const sourceLabel = hostSource ? source(hostSource, {colorless: true}) : ''
-    
-    ns.ui.setTailTitle(`${sourceLabel}[${service}]${roleLabel}`, pid);
-}
-
 export function setTailSize(ns: NS) {
     const messages: string[] = ns.getScriptLogs();
     const maxWidth = Math.floor(ns.ui.windowSize()[0] * 2/3);

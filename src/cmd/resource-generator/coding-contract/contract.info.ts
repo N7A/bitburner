@@ -1,26 +1,18 @@
 import * as Log from 'workspace/socle/utils/logging';
 import {main as getContracts} from 'workspace/resource-generator/coding-contract/contract.selector';
-import { Logger } from 'workspace/socle/Logger';
+import { Info } from 'workspace/socle/interface/info';
+import { Contract } from 'workspace/resource-generator/coding-contract/model/Contract';
 
 export async function main(ns: NS) {
-    const input: InputArg = getInput(ns);
+    const input: InputArg = await getInput(ns);
 
-    setupDashboard(ns);
+    const contracts = await getContracts(this.ns);  
+    const info: ContractInfo = new ContractInfo(
+        ns, 
+        input.contratFilepath === '--- All ---' ? null : contracts.find(x => x.filepath === input.contratFilepath)
+    );
 
-    ns.print(Log.getStartLog())
-    const contract = (await getContracts(ns))
-        .filter(x => x.filepath === input.contratFilepath)
-        .shift();
-            
-    const codingContract: CodingContractObject = ns.codingcontract.getContract(contract.filepath, contract.hostname)
-
-    ns.print(Log.INFO('Server', contract.hostname));
-    ns.print(Log.INFO('Fichier', contract.filepath));
-    ns.print(Log.INFO('Type', codingContract.type));
-    ns.print(Log.INFO('Data', codingContract.data));
-    ns.print(Log.INFO('Description', codingContract.description));
-    ns.print(Log.INFO('Essais restant', codingContract.numTriesRemaining()));
-    ns.print(Log.getEndLog());
+    info.run();
 }
 
 //#region Input parameters
@@ -33,26 +25,62 @@ type InputArg = {
  * @param ns Bitburner API
  * @returns 
  */
-function getInput(ns: NS): InputArg {
-    const logger = new Logger(ns);
+async function getInput(ns: NS): Promise<InputArg> {    
+    // TODO: remplacer par le type de contrat ?
+    let contratFilepath: string;
     if (ns.args[0] === undefined) {
-        logger.err('Merci de renseigner un contrat');
-        ns.exit();
+        const contracts = await getContracts(this.ns);  
+        contratFilepath = await ns.prompt('Merci de renseigner un contrat', { type: "select", choices: ['--- All ---', ...contracts.map(x => x.filepath)] }) as string
+    } else {
+        contratFilepath = (ns.args[0] as string);
     }
     
     return {
-        contratFilepath: (ns.args[0] as string)
+        contratFilepath: contratFilepath
     };
 }
 //#endregion Input parameters
 
-//#region Dashboard
-function setupDashboard(ns: NS) {
-    ns.disableLog("ALL");
-    ns.clearLog();
-    
-    Log.initTailTitle(ns, 'Contract', 'info');
-    
-    ns.ui.openTail();
+class ContractInfo extends Info {
+    private contract: Contract;
+
+    constructor(ns: NS, contrat: Contract) {
+        super(ns, contrat?.filepath ?? 'All');
+
+        this.contract = contrat;
+    }
+
+    async printData() {
+		if (this.contract !== null) {
+            const contract = (await getContracts(this.ns))
+                .filter(x => x.filepath === this.contract.filepath)
+                .shift();
+            
+            const codingContract: CodingContractObject = this.ns.codingcontract.getContract(contract.filepath, contract.hostname)
+
+            this.ns.print(Log.getStartLog())
+            this.ns.print(Log.INFO('Server', contract.hostname));
+            this.ns.print(Log.INFO('Fichier', contract.filepath));
+            this.ns.print(Log.INFO('Type', codingContract.type));
+            this.ns.print(Log.INFO('Data', codingContract.data));
+            this.ns.print(Log.INFO('Description', codingContract.description));
+            this.ns.print(Log.INFO('Essais restant', codingContract.numTriesRemaining()));
+            this.ns.print(Log.getEndLog());
+        } else {
+            const contracts = (await getContracts(this.ns))
+            contracts.forEach(contract => {
+                const codingContract: CodingContractObject = this.ns.codingcontract.getContract(contract.filepath, contract.hostname)
+
+                this.ns.print(Log.getStartLog())
+                this.ns.print(Log.INFO('Server', contract.hostname));
+                this.ns.print(Log.INFO('Fichier', contract.filepath));
+                this.ns.print(Log.INFO('Type', codingContract.type));
+                this.ns.print(Log.INFO('Data', codingContract.data));
+                this.ns.print(Log.INFO('Description', codingContract.description));
+                this.ns.print(Log.INFO('Essais restant', codingContract.numTriesRemaining()));
+                this.ns.print(Log.getEndLog());
+            })
+            this.ns.print(Log.INFO('Nombre de contrat', contracts.length));
+        }
+    }
 }
-//#endregion Dashboard
