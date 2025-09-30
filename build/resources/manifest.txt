@@ -51,7 +51,6 @@
 /cmd/servers/domain/refresh-owned-servers.worker.ts
 /cmd/servers/domain/refresh-servers.worker.ts
 /cmd/servers/server.info.ts
-/cmd/synchronize/init-pull.ts
 /cmd/synchronize/pull.launcher.ts
 /cmd/synchronize/synchronize-workspace.ts
 /lab/oui.ts

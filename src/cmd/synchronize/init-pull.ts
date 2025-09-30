@@ -12,17 +12,18 @@ export const repoParams = {
         "/workspace/common/log.properties.ts",
         "/workspace/referentiel.ts",
         "/workspace/socle/utils/file.ts",
-        "workspace/socle/interface/dashboard"
+        "/workspace/socle/interface/dashboard"
     ]
 };
 const MAIN_HOSTNAME: string = 'home';
+const SELF_FILEPATH: string = '/cmd/synchronize/init-pull.ts';
 //#endregion Constants
 
 /**
  * Pull les fichiers nécessaire à la sychronisation depuis le repository Git, puis déclenche la synchronisation.
  * @param ns Bitburner API
  * 
- * @remarks RAM cost: 1 GB
+ * @remarks RAM cost: 2 GB
  */
 export async function main(ns: NS) {
     // telechargement des fichiers nécessaires au telechargement complet
@@ -39,7 +40,8 @@ export async function main(ns: NS) {
     // lancement du script de telechargement complet
     ns.run(repoParams.pullLauncherScript);
 
-    // TODO: supprimer le fichier init-pull ? (inutile une fois le toolkit chargé)
+    // supprimer le script, inutile une fois le toolkit chargé
+    ns.rm(SELF_FILEPATH)
 }
 
 /**
