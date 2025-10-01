@@ -3,47 +3,21 @@ import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.ser
 import { selectUpgrade } from 'workspace/resource-generator/stock-market/wse-upgrade.selector'
 import { WseUpgrade } from 'workspace/resource-generator/stock-market/model/WseUpgrade';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { Headhunter } from 'workspace/socle/interface/headhunter';
+import { Logger } from 'workspace/socle/Logger';
 
 // TODO : generic upgrade scheduler
 export async function main(ns: NS) {
     // load input arguments
 	const input: InputArg = getInput(ns);
 
-    setupDashboard(ns);
+    const upgradeHeadHunter: WseUpgradeHeadHunter = new WseUpgradeHeadHunter(ns);
+
+    if (!input.runHasLoop) {
+        upgradeHeadHunter.killAfterLoop();
+    }
     
-    //#region Utils
-	const getMoney = () => ns.getPlayer().money;
-    //#endregion
-    
-    const moneyPiggyBankService = new MoneyPiggyBankService(ns);
-
-    do {
-        ns.print(Log.getStartLog());
-        // select next upgrade
-        const nextUpgrade: WseUpgrade | null = await selectUpgrade(ns);
-        if (!nextUpgrade) {
-            continue;
-        }
-
-        ns.print(Log.INFO('Prochaine amélioration', `${nextUpgrade.name} (${Log.money(ns, nextUpgrade.cost)})`));
-
-        ns.print('Waiting to have enough money...');
-        // wait purchase to be possible
-        while(moneyPiggyBankService.getDisponibleMoney(getMoney()) < nextUpgrade.cost) {
-            // sleep to prevent crash because of infinite loop
-            await ns.sleep(500);
-        }
-        
-        ns.print('Achat de l\'amélioration');
-        // do purchase
-        ns.run(nextUpgrade.purchase);
-        
-        ns.print(Log.getEndLog());
-        if (input.runHasLoop) {
-            // sleep to prevent crash because of infinite loop
-            await ns.sleep(500);
-        }
-	} while (input.runHasLoop)
+    await upgradeHeadHunter.run();
     
     ns.ui.closeTail();
 }
@@ -66,15 +40,56 @@ function getInput(ns: NS): InputArg {
 }
 //#endregion Input arguments
 
-//#region Dashboard
-function setupDashboard(ns: NS) {
-    ns.disableLog("ALL");
-    ns.clearLog();
+class WseUpgradeHeadHunter extends Headhunter<WseUpgrade> {
+    private logger: Logger;
+    private dashboard: Dashboard;
+    private moneyPiggyBankService: MoneyPiggyBankService;
     
-    const dashboard: Dashboard = new Dashboard(ns, 'Upgrade WSE', {icon: '🆙🏠', role: 'scheduler'});
-    dashboard.initTailTitle();
+    constructor(ns: NS) {
+        super(ns, false)
+        this.logger = new Logger(ns);
+        this.dashboard = new Dashboard(ns, 'Upgrade WSE', {icon: '🆙🏠', role: 'scheduler'});
+        this.setupDashboard();
+        
+        this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
+    }
+    
+    protected async work(targets: WseUpgrade[]): Promise<any> {
+        for (const target of targets) {
+            this.logger.log(Log.INFO('Prochaine amélioration', `${target.name} (${Log.money(this.ns, target.cost)})`));
 
-    ns.print('Starting...');
-    ns.ui.openTail();
+            this.logger.waiting('Waiting to have enough money');
+            // wait purchase to be possible
+            while(this.moneyPiggyBankService.getDisponibleMoney(this.getMoney()) < target.cost) {
+                // sleep to prevent crash because of infinite loop
+                await this.ns.sleep(500);
+            }
+            this.logger.stopWaiting();
+            
+            this.logger.log('Achat de l\'amélioration');
+            // do purchase
+            this.ns.run(target.purchase);
+        }
+    }
+
+    async getTargets(): Promise<WseUpgrade[]> {
+        const nextUpgrade: WseUpgrade | undefined = await selectUpgrade(this.ns);
+        return nextUpgrade ? [nextUpgrade] : []
+    }
+    
+    //#region Utils
+    getMoney = () => this.ns.getPlayer().money;
+    //#endregion
+        
+    //#region Dashboard
+    setupDashboard() {
+        this.ns.disableLog("ALL");
+        this.ns.clearLog();
+        
+        this.dashboard.initTailTitle();
+
+        this.logger.log('Starting...');
+        this.ns.ui.openTail();
+    }
+    //#endregion Dashboard
 }
-//#endregion Dashboard

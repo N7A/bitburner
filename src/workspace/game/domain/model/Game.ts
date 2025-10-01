@@ -3,7 +3,8 @@ export type Game = {
     hasFormulas: boolean;
     hasSingularity: boolean;
     //#region Stock market
-    hasTIX: boolean;
+    hasWSEAccount: boolean;
+    hasTIXAPIAccess: boolean;
     has4SDataTIXAPI: boolean;
     //#endregion Stock market
     //#endregion API
