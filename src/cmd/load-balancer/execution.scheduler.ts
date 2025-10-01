@@ -234,7 +234,12 @@ class ExecutionSchedulerDaemon extends Daemon {
             await waitEndExecution(this.ns, copyPid);
         }
 
-        return this.ns.exec(executionOrder.request.scriptsFilepath, executionOrder.sourceHostname, executionOrder.nbThread, ...executionOrder.request.args ?? []);
+        return this.ns.exec(
+            executionOrder.request.scriptsFilepath, 
+            executionOrder.sourceHostname, 
+            {threads: executionOrder.nbThread, preventDuplicates: true, temporary: true}, 
+            ...executionOrder.request.args ?? []
+        );
     }
     //#endregion Execution
 
