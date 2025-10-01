@@ -237,7 +237,7 @@ class ExecutionSchedulerDaemon extends Daemon {
         return this.ns.exec(
             executionOrder.request.scriptsFilepath, 
             executionOrder.sourceHostname, 
-            {threads: executionOrder.nbThread, preventDuplicates: true, temporary: true}, 
+            {threads: executionOrder.nbThread, temporary: true}, 
             ...executionOrder.request.args ?? []
         );
     }
