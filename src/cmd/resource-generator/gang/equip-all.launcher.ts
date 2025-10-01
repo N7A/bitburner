@@ -8,6 +8,6 @@ export async function main(ns: NS) {
         
     for (const name of availableMembers) {
         // launch setup
-        ns.run(EQUIP_SCRIPT, 1, name);
+        ns.run(EQUIP_SCRIPT, {preventDuplicates: true}, name);
     }
 }

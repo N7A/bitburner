@@ -58,8 +58,8 @@ class Main extends Headhunter<string> {
             // TODO: new employee guide
             // training, equip, give task
             // TODO: use load balancer
-            this.ns.run(this.EQUIP_SCRIPT, 1, newMember);
-            this.ns.run(this.ASCENSION_SCRIPT, 1, newMember);
+            this.ns.run(this.EQUIP_SCRIPT, {preventDuplicates: true}, newMember);
+            this.ns.run(this.ASCENSION_SCRIPT, {preventDuplicates: true}, newMember);
         }
     }
 
