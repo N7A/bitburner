@@ -187,11 +187,11 @@ class ExecutionSchedulerDaemon extends Daemon {
         const executionsOrder = executions
             .map(order => {
                 if (order.type === ProcessRequestType.SHARE_RAM) {
-                    return new ShareRamExecution(order);
+                    return new ShareRamExecution(this.ns, order);
                 } else if (order.type === ProcessRequestType.HACK) {
                     return new PayloadExecution(this.ns, order);
                 } else if (order.type === ProcessRequestType.SETUP_HACK) {
-                    return new SetupHackExecution(order);
+                    return new SetupHackExecution(this.ns, order);
                 } else if (order.type === ProcessRequestType.ONESHOT) {
                     return new OneShotExecution(this.ns, order);
                 }
