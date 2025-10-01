@@ -17,10 +17,17 @@ import { ShareRamExecution } from 'workspace/resource-generator/faction/model/Sh
 import { OneShotExecution } from 'workspace/load-balancer/model/OneShotExecution';
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution';
 import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 export async function main(ns: NS) {
-    // load input arguments
-    const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
 
     const daemon: ExecutionSchedulerDaemon = new ExecutionSchedulerDaemon(ns);
     
@@ -30,7 +37,7 @@ export async function main(ns: NS) {
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
@@ -38,24 +45,6 @@ export async function main(ns: NS) {
     
     ns.ui.closeTail();
 }
-
-//#region Input arguments
-type InputArg = {
-    /** Serveur cible */
-    runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-    return {
-        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
-    };
-}
-//#endregion Input arguments
 
 class ExecutionSchedulerDaemon extends Daemon {
 	private logger: Logger
@@ -202,7 +191,7 @@ class ExecutionSchedulerDaemon extends Daemon {
 
         let result = [];
         for (const executionOrder of executionsOrder) {
-            const isUseful = !(await executionOrder?.isExecutionUsless(this.ns));
+            const isUseful = !(await executionOrder?.isExecutionUsless());
             if (isUseful) {
                 result.push(executionOrder)
             }

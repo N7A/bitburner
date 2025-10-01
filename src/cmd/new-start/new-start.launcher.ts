@@ -67,15 +67,15 @@ class NewStart {
 
     private startScripts() {
         // lancement du unlock automatisé
-        this.ns.run(this.INFECTION_SCRIPT);
+        this.ns.run(this.INFECTION_SCRIPT, {preventDuplicates: true});
 
         // TODO : lancement du gestionnaire d'embauche
 
         // lancement de l'achat de node automatisé
-        this.ns.run(this.HACKNET_SCRIPT, 1, true);
+        this.ns.run(this.HACKNET_SCRIPT, {preventDuplicates: true}, true);
 
         // lancement du hacking automatisé
-        this.ns.run(this.EXECUTION_SCRIPT, 1, true);
+        this.ns.run(this.EXECUTION_SCRIPT, {preventDuplicates: true});
     }
 
     /**
