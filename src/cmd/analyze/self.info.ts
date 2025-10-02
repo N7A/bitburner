@@ -76,7 +76,6 @@ class PlayerInfo extends Info {
 	}
 
 	showServeurs() {
-		// TODO : detail pour chaque serveurs
 		this.ns.print(Log.title("Server"));
 		this.ns.print(Log.color("Home", Log.Color.MAGENTA));
 		this.ns.print(Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer().ramUsed) + '/' + this.ns.formatNumber(this.ns.getServer().maxRam)));
