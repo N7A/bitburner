@@ -149,7 +149,6 @@
 /workspace/resource-generator/hacking/unlock/open-ports.worker.ts
 /workspace/resource-generator/hacking/unlock/purchase-program.worker.ts
 /workspace/resource-generator/hacking/unlock/purchase-tor.worker.ts
-/workspace/resource-generator/hacking/unlock/unlock.launcher.ts
 /workspace/resource-generator/hacking/unlock/unlock.selector.ts
 /workspace/resource-generator/hacking/unlock/unlock.worker.ts
 /workspace/resource-generator/hacknet/application-properties.ts
