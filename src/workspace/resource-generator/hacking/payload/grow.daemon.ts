@@ -18,16 +18,12 @@ export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
 
-    // load host data
-    // INFO : getServerMaxMoney aussi cher que get depuis la bdd
-    const moneyThresh = ns.getServerMaxMoney(input.targetHost)
-
-    if (moneyThresh === 0) {
+    if (input.moneyThresh === 0) {
         ns.tprint('WARN', ' ', '[', input.targetHost, '] ', 'No money in there')
         ns.exit()
     }
     
-    daemon = new GrowDaemon(ns, input.targetHost, moneyThresh);
+    daemon = new GrowDaemon(ns, input.targetHost, input.moneyThresh);
     
     daemon.setupDashboard();
 
@@ -41,6 +37,7 @@ export async function main(ns: NS) {
 //#region Input arguments
 type InputArg = {
     targetHost: string;
+    moneyThresh: number;
 }
 
 /**
@@ -56,7 +53,8 @@ function getInput(ns: NS): InputArg {
     }
 
 	return {
-		targetHost: (ns.args[0] as string)
+		targetHost: (ns.args[0] as string),
+		moneyThresh: (ns.args[1] as number)
 	};
 }
 //#endregion Input arguments

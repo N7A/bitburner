@@ -18,11 +18,7 @@ export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
 
-    // TODO : add to input
-    // INFO : getServerMinSecurityLevel aussi cher que get depuis la bdd
-    const securityThresh = ns.getServerMinSecurityLevel(input.targetHost);
-
-    daemon = new WeakenDaemon(ns, input.targetHost, securityThresh);
+    daemon = new WeakenDaemon(ns, input.targetHost, input.securityThresh);
     
     daemon.setupDashboard();
 
@@ -36,6 +32,7 @@ export async function main(ns: NS) {
 //#region Input arguments
 type InputArg = {
     targetHost: string;
+    securityThresh: number;
 }
 
 /**
@@ -51,7 +48,8 @@ function getInput(ns: NS): InputArg {
     }
 
 	return {
-		targetHost: (ns.args[0] as string)
+		targetHost: (ns.args[0] as string),
+		securityThresh: (ns.args[1] as number)
 	};
 }
 //#endregion Input arguments

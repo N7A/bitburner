@@ -19,9 +19,9 @@ export async function main(ns: NS, hostnameTarget: string) {
     // load input arguments
 	const input: InputArg = getInput(ns, hostnameTarget);
 
-    // TODO : waitEndExecution exit script -> copie pas faite
+    // TODO : waitEndExecution return false pas assez de ram ? -> copie pas faite -> utiliser loadbalancer
     // copie du toolkit
-    var pidClear: number = ns.run(CLEAR_SCRIPT, 1, input.hostnameTarget);
+    var pidClear: number = ns.run(CLEAR_SCRIPT, {preventDuplicates:true}, input.hostnameTarget);
     // attendre la copie du toolkit
     await waitEndExecution(ns, pidClear);
 

@@ -16,7 +16,6 @@ export async function selectUpgrade(ns: NS): Promise<DarkwebUpgrade | null> {
     return null;
 }
 
-// TODO : extract purchase on script run to reduice ram
 function getAllUpgrades(ns: NS): DarkwebUpgrade[] {
     return [
         {

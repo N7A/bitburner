@@ -61,13 +61,13 @@ export class PayloadExecution implements RamResourceExecution {
     
         let scripts = [];
         scripts.push({scriptsFilepath: PayloadExecution.HACK_SCRIPT, args: [targetHostname]});
-        scripts.push({scriptsFilepath: PayloadExecution.WEAKEN_SCRIPT, args: [targetHostname]});
+        scripts.push({scriptsFilepath: PayloadExecution.WEAKEN_SCRIPT, args: [targetHostname, hackData.minDifficulty]});
     
         if (hackData.moneyMax === 0) {
             //ns.print('WARN', ' ', '[', this.targetHost, '] ', 'No money in there');
         } else {
-            scripts.push({scriptsFilepath: PayloadExecution.GROW_SCRIPT, args: [targetHostname]});
-            scripts.push({scriptsFilepath: PayloadExecution.WEAKEN_SCRIPT, args: [targetHostname]});
+            scripts.push({scriptsFilepath: PayloadExecution.GROW_SCRIPT, args: [targetHostname, hackData.moneyMax]});
+            scripts.push({scriptsFilepath: PayloadExecution.WEAKEN_SCRIPT, args: [targetHostname, hackData.minDifficulty]});
         }
 
         return {

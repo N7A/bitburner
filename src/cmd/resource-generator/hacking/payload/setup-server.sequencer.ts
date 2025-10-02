@@ -68,7 +68,7 @@ async function runScriptUntilEnoughThread(
     ns: NS, 
     targetHost: string, 
     hackData: HackData, 
-    work: (ns: NS, threadToLaunch: number, targetHost: string) => Promise<any>,
+    work: (ns: NS, threadToLaunch: number, targetHost: string, hackData: HackData) => Promise<any>,
     getNeededThreads: (ns: NS, targetHost: string, hackData: HackData) => number
 ) {
     let neededThread: number;
@@ -83,7 +83,7 @@ async function runScriptUntilEnoughThread(
         if (neededThread > 0) {
             ns.print('----------')
             // wait execution end
-            await work(ns, neededThread, targetHost);
+            await work(ns, neededThread, targetHost, hackData);
         }
     } while(neededThread > 0)
     ns.print(Log.getEndLog());
@@ -92,6 +92,11 @@ async function runScriptUntilEnoughThread(
 async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
     const executionOrdersService = new ExecutionOrdersService(ns);
     
+    const repository = new ServersRepository(ns);
+    // load host data
+    const data: ServerData|null = repository.get(targetHost);
+    const hackData: HackData = data!.hackData
+
     const processRequest: ProcessRequest = {
         type: ProcessRequestType.ONESHOT, 
         id: targetHost, 
@@ -99,15 +104,10 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
         label: 'growToMax',
         request: {
             wantedThreadNumber: threadToLaunch,
-            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, `--${DaemonFlags.oneshot}`]}]
+            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, hackData.moneyMax, `--${DaemonFlags.oneshot}`]}]
         }
     };
     await executionOrdersService.add(processRequest);
-
-    const repository = new ServersRepository(ns);
-    // load host data
-    const data: ServerData|null = repository.get(targetHost);
-    const hackData: HackData = data!.hackData
 
     // on attend la fin du grow
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${getScriptName(GROW_SCRIPT)}...`);
@@ -124,7 +124,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
     await runScriptUntilEnoughThread(ns, targetHost, hackData, weakenToMax, getWeakenNeededThreads);
 }
 
-async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): Promise<void> {
+async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string, hackData: HackData): Promise<void> {
     const executionOrdersService = new ExecutionOrdersService(ns);
 
     const processRequest: ProcessRequest = {
@@ -134,7 +134,7 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): 
         label: 'weakenToMax',
         request: {
             wantedThreadNumber: threadToLaunch,
-            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, `--${DaemonFlags.oneshot}`]}]
+            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, hackData.minDifficulty, `--${DaemonFlags.oneshot}`]}]
         }
     };
     await executionOrdersService.add(processRequest);

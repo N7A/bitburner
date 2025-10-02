@@ -3,6 +3,13 @@ import { UpgradeExecution } from 'workspace/resource-generator/hacknet/model/Upg
 import { UpgradeType } from 'workspace/resource-generator/hacknet/model/UpgradeType'
 
 // TODO: ns.formulas.hacknetNodes
+/*
+ns.tprint(ns.formatNumber(ns.hacknet.getPurchaseNodeCost()))
+ns.tprint(ns.formatNumber(ns.formulas.hacknetNodes.hacknetNodeCost(ns.hacknet.numNodes()+1, ns.getPlayer().mults.hacknet_node_purchase_cost)));
+
+ns.tprint(ns.formatNumber(ns.hacknet.getCoreUpgradeCost(0, 1)));
+ns.tprint(ns.formatNumber(ns.formulas.hacknetNodes.coreUpgradeCost(0, 1, ns.getPlayer().mults.hacknet_node_core_cost)));
+*/
 /**
  * @remarks RAM cost: 4.25GB
  */
@@ -35,37 +42,29 @@ function getProfits(ns: NS, maxMoneyToSpend?: number): UpgradeExecution[] {
  * Ratio = Production growth divided by Upgrade Cost
  * Production growth = Production after upgrade divided by Current production
  */
-function getProfitUpgradeNode(ns: NS, nodeIndex: number, maxMoneyToSpend?: number): UpgradeExecution[] {
-    // TODO : max level 200 -> n+1
-    // max RAM 64 -> n*2
-    // max core 16 -> n+1
-    // what append when max ?
-
-    let nbLevelUpgrade: number = 1;
-    let nbRamUpgrade: number = 1;
-    let nbCoreUpgrade: number = 1;
+function getProfitUpgradeNode(ns: NS, nodeIndex: number, maxMoneyToSpend?: number): UpgradeExecution[] {    
+    let result: UpgradeExecution[] = [];
 
     // recherche de la quantité maximum d'upgrade possible
     if (maxMoneyToSpend !== undefined) {
-        const lvlUp = getUpgrade(ns, UpgradeType.LEVEL) as HacknetUpgrade;
-        while(lvlUp.getCost(nodeIndex, nbLevelUpgrade+1) <= maxMoneyToSpend) {
-            nbLevelUpgrade++;
-        }
-        const ramUp = getUpgrade(ns, UpgradeType.RAM) as HacknetUpgrade;
-        while(ramUp.getCost(nodeIndex, nbRamUpgrade+1) <= maxMoneyToSpend) {
-            nbRamUpgrade++;
-        }
-        const coreUp = getUpgrade(ns, UpgradeType.CORES) as HacknetUpgrade;
-        while(coreUp.getCost(nodeIndex, nbCoreUpgrade+1) <= maxMoneyToSpend) {
-            nbCoreUpgrade++;
-        }
+        [
+            UpgradeType.LEVEL, 
+            UpgradeType.RAM, 
+            UpgradeType.CORES
+        ].forEach(upgradeType => {
+            const upgrade = getUpgrade(ns, upgradeType) as HacknetUpgrade;
+            // le nombre maximum d'upgrade n'est pas encore atteind
+            if (upgrade.getCost(nodeIndex) !== Number.POSITIVE_INFINITY) {
+                let nbUpgrade: number = 1;
+                while(upgrade.getCost(nodeIndex, nbUpgrade + 1) <= maxMoneyToSpend) {
+                    nbUpgrade++;
+                }
+                result.push(getProfitUpgrade(ns, upgrade, nodeIndex, nbUpgrade));
+            }
+        });
     }
 
-    return [
-        getProfitUpgrade(ns, getUpgrade(ns, UpgradeType.LEVEL) as HacknetUpgrade, nodeIndex, nbLevelUpgrade),
-        getProfitUpgrade(ns, getUpgrade(ns, UpgradeType.RAM) as HacknetUpgrade, nodeIndex, nbRamUpgrade),
-        getProfitUpgrade(ns, getUpgrade(ns, UpgradeType.CORES) as HacknetUpgrade, nodeIndex, nbCoreUpgrade)
-    ];
+    return result;
 }
 
 export function getUpgrade(ns: NS, type: UpgradeType): HacknetUpgrade|undefined {
