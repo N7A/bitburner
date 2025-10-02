@@ -27,12 +27,12 @@ export class Logger {
     async waiting(subject: string) {
         this.isWaiting = true;
 
-        this.history.push(`${Log.time(new Date(Date.now()))} - Waiting ${subject}${'.'.repeat(3)}`)
+        const startTime = new Date(Date.now());
 
         let dotsTime = 0;
         do {
             this.ns.clearLog();
-            this.history.slice(0, this.history.length-1).forEach(element => {
+            this.history.forEach(element => {
                 this.ns.print(element);
             });
 
@@ -44,6 +44,7 @@ export class Logger {
             }
             await this.ns.asleep(1000);
         } while(this.isWaiting);
+        this.history.push(`${Log.time(startTime)} - Waiting ${subject}${'.'.repeat(3)}`);
 
         this.ns.clearLog();
         this.history.forEach(element => {

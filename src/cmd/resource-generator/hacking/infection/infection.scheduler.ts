@@ -50,7 +50,7 @@ class Main extends Headhunter<string> {
         let nextTarget: ServerData | undefined;
 
         // wait until next target unlockable
-        this.logger.waiting(`Wait until ${Log.action('unlock')} possible...`);
+        this.logger.waiting(`Wait until ${Log.action('unlock')} possible`);
         do {
             // maj next target
             const newNextTarget = getNextTarget(this.ns)
