@@ -75,11 +75,7 @@ class Proper2ColoringOfAGraphResolver extends CodingContractResolver {
             }
         }
         
-        // if vertex not in graph then impossible resolution
-        if (Array.from(Array(data.verticesNumber).keys()).some(x => !coloredGraph.has(x))) {
-            return []
-        }
-
+        // if vertex not in graph set to any color
         return Array.from(Array(data.verticesNumber).keys())
             .map(x => coloredGraph.get(x) ?? this.COLORS[0]);
     }
