@@ -31,10 +31,6 @@ export async function main(ns: NS) {
     
     daemon.setupDashboard();
 
-    /*if (!input.runHasLoop) {
-        daemon.killAfterLoop();
-    }*/
-    
     await daemon.run();
     
     ns.ui.closeTail();

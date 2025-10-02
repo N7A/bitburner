@@ -1,8 +1,17 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { ServersService } from 'workspace/servers/servers.service';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 export async function main(ns: NS) {
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
     // load input arguments
     const input: InputArg = getInput(ns);
 
@@ -10,7 +19,7 @@ export async function main(ns: NS) {
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
@@ -21,8 +30,6 @@ export async function main(ns: NS) {
 
 //#region Input arguments
 type InputArg = {
-    /** Serveur cible */
-    runHasLoop: boolean;
     threshold: number;
 }
 
@@ -33,7 +40,6 @@ type InputArg = {
  */
 function getInput(ns: NS): InputArg {
     return {
-        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true,
         threshold: ns.args[1] !== undefined ? (ns.args[1] as number) : 0
     };
 }

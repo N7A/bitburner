@@ -1,5 +1,6 @@
 import { InfiltrationSelector } from "workspace/resource-generator/infiltration/infiltration.selector";
 import { DirectiveType } from "workspace/resource-generator/infiltration/model/DirectiveType";
+import { DaemonFlags } from "workspace/common/model/DaemonFlags";
 
 /** @param {NS} ns */
 export async function main(ns: NS) {
@@ -48,7 +49,7 @@ class Infiltration {
 
         // TODO: si pas assez d'argent pour heal l'infiltration prévue -> prompt pour valider
         // TODO: give hp lose by fail (this.ns.infiltration.getInfiltration(this.location.name).maxClearanceLevel)
-        this.ns.run('cmd/resource-generator/infiltration/auto-heal.daemon.ts', 1, false);
+        this.ns.run('cmd/resource-generator/infiltration/auto-heal.daemon.ts', {preventDuplicates: true}, `--${DaemonFlags.oneshot}`);
 
         this.ns.alert(
             `Looses before die : ${this.getMaxLosesPossible()}\n

@@ -5,36 +5,25 @@ import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
 import { SellStockWorker } from "cmd/resource-generator/stock-market/sell-stock.worker";
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 export async function main(ns: NS) {
-    // load input arguments
-	const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
     const main: Main = new Main(ns);
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         main.killAfterLoop();
     }
     
     await main.run();
 }
-
-//#region Input arguments
-type InputArg = {
-	/** Serveur cible */
-	runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-	return {
-		runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : false
-	};
-}
-//#endregion Input arguments
 
 class Main extends Headhunter<string> {
     private logger: Logger;

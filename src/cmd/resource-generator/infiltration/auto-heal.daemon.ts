@@ -1,5 +1,12 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 export async function main(ns: NS) {
     // singleton
@@ -8,14 +15,14 @@ export async function main(ns: NS) {
         ns.kill(script.pid);
     }
 
-    // load input arguments
-    const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
 
     const daemon: AutoHealDaemon = new AutoHealDaemon(ns);
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
@@ -23,24 +30,6 @@ export async function main(ns: NS) {
     
     ns.ui.closeTail();
 }
-
-//#region Input arguments
-type InputArg = {
-    /** Serveur cible */
-    runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-    return {
-        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
-    };
-}
-//#endregion Input arguments
 
 class AutoHealDaemon extends Daemon {
 
@@ -55,7 +44,7 @@ class AutoHealDaemon extends Daemon {
     async work(): Promise<any> {
         // TODO: prise en compte piggy bank
         // TODO: si pas assez d'argent pour heal -> alert
-        // TODO: hospitalize cut game -> ? (alert impossible avec timer du jeu)
+        // TODO: hospitalize cut game -> ? (alert impossible avec timer du jeu) -> hospitalize si killed after one loose
         // TODO: => notif nombre de lose autorisé avant infiltration + hospitalize
         if (this.ns.getPlayer().hp.current < this.ns.getPlayer().hp.max) {
             this.ns.singularity.hospitalize();

@@ -5,39 +5,28 @@ import { UpgradeExecution } from 'workspace/load-balancer/model/UpgradeExecution
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 export async function main(ns: NS) {
-    // load input arguments
-	const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
 
     const daemon = new UpgradeServersDaemon(ns);
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
     await daemon.run();
 }
-
-//#region Input arguments
-type InputArg = {
-	/** Serveur cible */
-	runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-	return {
-		runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : false
-	};
-}
-//#endregion Input arguments
 
 class UpgradeServersDaemon extends Daemon {
     private dashboard: Dashboard;

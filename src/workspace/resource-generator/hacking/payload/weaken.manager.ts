@@ -3,12 +3,20 @@ import * as Log from 'workspace/socle/utils/logging';
 import { waitEndExecution } from 'workspace/socle/utils/execution';
 import { Logger } from 'workspace/socle/Logger';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+const WORKER_SCRIPT = 'workspace/resource-generator/hacking/payload/weaken.worker.ts';
+//#endregion Constantes
 
 let daemon: WeakenManager;
 
-const WORKER_SCRIPT = 'workspace/resource-generator/hacking/payload/weaken.worker.ts';
-
 export async function main(ns: NS) {
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
     // load input arguments
     const input: InputArg = getInput(ns);
 
@@ -20,7 +28,7 @@ export async function main(ns: NS) {
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
 
@@ -31,7 +39,6 @@ export async function main(ns: NS) {
 type InputArg = {
     targetHost: string;
     threadAmount: number;
-	runHasLoop: boolean;
 }
 
 /**
@@ -48,8 +55,7 @@ function getInput(ns: NS): InputArg {
 
 	return {
 		targetHost: (ns.args[0] as string),
-        threadAmount: ns.args[1] !== undefined ? (ns.args[0] as number) : 1,
-		runHasLoop: ns.args[2] !== undefined ? (ns.args[2] as boolean) : true
+        threadAmount: ns.args[1] !== undefined ? (ns.args[0] as number) : 1
 	};
 }
 //#endregion Input arguments
