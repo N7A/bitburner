@@ -70,8 +70,9 @@ class Proper2ColoringOfAGraphResolver extends CodingContractResolver {
 
             coloredGraph = this.colorVertex(startVertex, this.COLORS[0], data.edges, coloredGraph);
 
+            // colorVertex return empty array then impossible resolution
             if (coloredGraph.size ===0) {
-                break;
+                return [];
             }
         }
         
