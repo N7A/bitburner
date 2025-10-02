@@ -6,5 +6,5 @@ export async function main(ns: NS) {
     const executionOrdersService = new ExecutionOrdersService(ns);
 
     const request: ProcessRequest = ShareRamExecution.getRequest();
-    executionOrdersService.remove(request);
+    await executionOrdersService.remove(request);
 }

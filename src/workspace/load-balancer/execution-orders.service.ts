@@ -3,6 +3,7 @@ import { SgbdDaemon } from "workspace/socle/database/sgbd.handler";
 import { CommitRequest } from "workspace/socle/database/model/CommitRequest";
 import { CommitType } from "workspace/socle/database/model/CommitType";
 import { Repository } from "workspace/socle/database/model/Repository";
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export class ExecutionOrdersService {
     private ns: NS;
@@ -28,34 +29,37 @@ export class ExecutionOrdersService {
         } while (data === 'NULL PORT DATA')
         
         return data as ProcessRequest[];
+        
+        /*const executionsRepository = new ExecutionsRepository(this.ns);
+        return executionsRepository.getAll();*/
     }
     
-    add(data: ProcessRequest) {
-        SgbdDaemon.pushData(this.ns, {
+    async add(data: ProcessRequest) {
+        await SgbdDaemon.pushData(this.ns, {
             repository: Repository.EXECUTIONS, 
             type: CommitType.ADD,
             data: data
         } as CommitRequest);
     }
 
-    save(execution: ProcessRequest) {
-        SgbdDaemon.pushData(this.ns, {
+    async save(execution: ProcessRequest) {
+        await SgbdDaemon.pushData(this.ns, {
             repository: Repository.EXECUTIONS, 
             type: CommitType.SAVE,
             data: execution
         } as CommitRequest);
     }
     
-    remove(executionToRemove: ProcessRequest) {
-        SgbdDaemon.pushData(this.ns, {
+    async remove(executionToRemove: ProcessRequest) {
+        await SgbdDaemon.pushData(this.ns, {
             repository: Repository.EXECUTIONS, 
             type: CommitType.REMOVE,
             data: executionToRemove
         } as CommitRequest);
     }
 
-    reset() {
-        SgbdDaemon.pushData(this.ns, {
+    async reset() {
+        await SgbdDaemon.pushData(this.ns, {
             repository: Repository.EXECUTIONS, 
             type: CommitType.RESET
         } as CommitRequest);

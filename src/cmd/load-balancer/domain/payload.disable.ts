@@ -11,7 +11,7 @@ export async function main(ns: NS) {
 
     const request = PayloadExecution.getRequest(ns, input.hostnameTarget);
 
-    executionOrdersService.remove(request);
+    await executionOrdersService.remove(request);
     logger.success(`Hack ${input.hostnameTarget} [disabled]`);
 }
 

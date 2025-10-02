@@ -11,7 +11,7 @@ export async function main(ns: NS) {
 
     const request = SetupHackExecution.getRequest(input.hostnameTarget);
 
-    executionOrdersService.remove(request);
+    await executionOrdersService.remove(request);
     logger.success(`Setup ${input.hostnameTarget} [disabled]`);
 }
 

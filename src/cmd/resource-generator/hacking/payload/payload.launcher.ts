@@ -18,7 +18,7 @@ export async function main(ns: NS) {
         .filter(x => !currentExecutions.includes(x));
     
     for (const target of targets) {
-        executionOrdersService.add(PayloadExecution.getRequest(ns, target));
+        await executionOrdersService.add(PayloadExecution.getRequest(ns, target));
     }
 
     // TODO : run execution.scheduler if not running

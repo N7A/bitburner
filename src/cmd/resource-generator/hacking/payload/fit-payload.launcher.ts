@@ -8,6 +8,6 @@ export async function main(ns: NS) {
     const targetHost: string | undefined = getBestPayloadTarget(ns);
 
     if (targetHost !== undefined) {
-        executionOrdersService.add(PayloadExecution.getRequest(ns, targetHost));
+        await executionOrdersService.add(PayloadExecution.getRequest(ns, targetHost));
     }
 }

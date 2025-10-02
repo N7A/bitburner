@@ -7,6 +7,7 @@ import { ProcessRequestType } from 'workspace/load-balancer/domain/model/Process
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest'
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository';
+import { getScriptName } from 'workspace/socle/utils/file';
 
 //#region Constants
 const ENABLE_PAYLOAD_SCRIPT = "cmd/load-balancer/domain/payload.enable.ts";
@@ -100,7 +101,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
             scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, false]}]
         }
     };
-    executionOrdersService.add(processRequest);
+    await executionOrdersService.add(processRequest);
 
     const repository = new ServersRepository(ns);
     // load host data
@@ -108,13 +109,13 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
     const hackData: HackData = data!.hackData
 
     // on attend la fin du grow
-    ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${GROW_SCRIPT.substring(GROW_SCRIPT.lastIndexOf('/'), GROW_SCRIPT.lastIndexOf('.ts'))}...`);
+    ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', `Waiting ${getScriptName(GROW_SCRIPT)}...`);
     
     let orders: ProcessRequest[] = await executionOrdersService.getAll();
     while (
         orders.some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))
     ) {
-            await ns.asleep(500);
+        await ns.asleep(500);
         orders = await executionOrdersService.getAll();
     }
 
@@ -135,18 +136,18 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): 
             scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, false]}]
         }
     };
-    executionOrdersService.add(processRequest);
+    await executionOrdersService.add(processRequest);
     
     // wait execution end
     ns.print(`${Log.date(ns, new Date())} - `, 'INFO', ' ', 
-        `Waiting ${WEAKEN_SCRIPT.substring(WEAKEN_SCRIPT.lastIndexOf('/'), WEAKEN_SCRIPT.lastIndexOf('.ts'))}...`);
+        `Waiting ${getScriptName(WEAKEN_SCRIPT)}...`);
 
     let orders: ProcessRequest[] = await executionOrdersService.getAll();
     while (
         orders.some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))
     ) {
-            await ns.asleep(500);
-            orders = await executionOrdersService.getAll();
+        await ns.asleep(500);
+        orders = await executionOrdersService.getAll();
     }
 }
 

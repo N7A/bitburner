@@ -17,6 +17,7 @@ import { ShareRamExecution } from 'workspace/resource-generator/faction/model/Sh
 import { OneShotExecution } from 'workspace/load-balancer/model/OneShotExecution';
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution';
 import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
+import { getHashFromContent } from 'workspace/socle/utils/file';
 
 export async function main(ns: NS) {
     // load input arguments
@@ -118,7 +119,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                 // maj pid processes
                 process.request.pid = [...(process.request.pid ?? []), pid];
             }
-            this.executionOrdersService.save(process.request);
+            await this.executionOrdersService.save(process.request);
         }
     }
     
@@ -126,6 +127,11 @@ class ExecutionSchedulerDaemon extends Daemon {
         for (const request of this.orders.map(x => x.request)) {
             await this.resetRunningProcess(request);
         }
+    }
+    
+    getId = (request: RamResourceExecution) => ExecutionsRepository.getHash(request.request);
+    getHash(requests: RamResourceExecution[]) {
+        return getHashFromContent(JSON.stringify(requests.map(x => this.getId(x)).sort()))
     }
     
     /**
@@ -139,8 +145,6 @@ class ExecutionSchedulerDaemon extends Daemon {
                 .map(x => this.ns.getServerMaxRam(x))
                 .reduce((a,b) => a+b);
         const ramBank: number = this.piggyBankRepository.getHash();
-
-        const getId = (request: RamResourceExecution) => ExecutionsRepository.getHash(request.request);
 
         let newRequest: RamResourceExecution[];
         let newRamDisponible: number;
@@ -172,8 +176,9 @@ class ExecutionSchedulerDaemon extends Daemon {
             newRamBank = this.piggyBankRepository.getHash();
         } while (
             // requetes inchangées
-            Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
-                .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))
+            /*Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
+                .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))*/
+            this.getHash(requests) === this.getHash(newRequest)
             // RAM inchangée
             && newRamDisponible === ramDisponible
             // valeurs du piggy-bank inchangée
@@ -187,11 +192,11 @@ class ExecutionSchedulerDaemon extends Daemon {
         const executionsOrder = executions
             .map(order => {
                 if (order.type === ProcessRequestType.SHARE_RAM) {
-                    return new ShareRamExecution(order);
+                    return new ShareRamExecution(this.ns, order);
                 } else if (order.type === ProcessRequestType.HACK) {
                     return new PayloadExecution(this.ns, order);
                 } else if (order.type === ProcessRequestType.SETUP_HACK) {
-                    return new SetupHackExecution(order);
+                    return new SetupHackExecution(this.ns, order);
                 } else if (order.type === ProcessRequestType.ONESHOT) {
                     return new OneShotExecution(this.ns, order);
                 }
@@ -202,7 +207,7 @@ class ExecutionSchedulerDaemon extends Daemon {
 
         let result = [];
         for (const executionOrder of executionsOrder) {
-            const isUseful = !(await executionOrder?.isExecutionUsless(this.ns));
+            const isUseful = !(await executionOrder?.isExecutionUsless());
             if (isUseful) {
                 result.push(executionOrder)
             }
@@ -228,7 +233,7 @@ class ExecutionSchedulerDaemon extends Daemon {
         
         // reset all repository pid
         request.pid = [];
-        this.executionOrdersService.save(request);
+        await this.executionOrdersService.save(request);
     }
 
     //#region Execution
