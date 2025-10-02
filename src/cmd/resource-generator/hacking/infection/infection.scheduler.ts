@@ -7,20 +7,24 @@ import {ServerData} from 'workspace/servers/domain/model/ServerData'
 import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortProgram'
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
 
 //#region Constants
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
 export const SCAN_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/scan/scan.scheduler.ts';
 export const UNLOCK_SCRIPT = Referentiel.HACKING_DIRECTORY + '/unlock/unlock.launcher.ts';
 export const PAYLOAD_SCRIPT = Referentiel.CMD_HACKING_DIRECTORY + '/payload/payload.launcher.ts';
 //#endregion Constantes
 
 export async function main(ns: NS) {
-    // load input arguments
-	const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
 
     const daemon = new Main(ns);
     
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
@@ -28,24 +32,6 @@ export async function main(ns: NS) {
 
     ns.ui.closeTail();
 }
-
-//#region Input arguments
-type InputArg = {
-	/** Serveur cible */
-	runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-	return {
-		runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
-	};
-}
-//#endregion Input arguments
 
 class Main extends Headhunter<string> {
     private dashboard: Dashboard;

@@ -7,7 +7,8 @@ export async function main(ns: NS) {
     let data: Game = {
         hasFormulas: ns.fileExists('Formulas.exe', 'home'),
         hasSingularity: ns.getResetInfo().ownedSF.has(4) || ns.getResetInfo().currentNode === 4,
-        hasTIX: ns.stock.hasTIXAPIAccess(),
+        hasWSEAccount: ns.stock.hasWSEAccount(),
+        hasTIXAPIAccess: ns.stock.hasTIXAPIAccess(),
         has4SDataTIXAPI: ns.stock.has4SDataTIXAPI()
     }
 

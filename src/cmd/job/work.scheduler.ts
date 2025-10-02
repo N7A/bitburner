@@ -1,49 +1,37 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import { getBestWork } from 'workspace/resource-generator/job/job.selector';
 import { JobOrder } from 'workspace/resource-generator/job/model/JobOrder';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 /**
  * 
  * @requires singularity
- * @param ns 
+ * @param ns Bitburner API
  */
 export async function main(ns: NS) {
-    // load input arguments
-	const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
     
-    // waitNewTargets = true : contracts appear over the time
     const daemon = new Main(ns);
     
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
     await daemon.run();
 }
 
-//#region Input arguments
-type InputArg = {
-	/** Serveur cible */
-	runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-	return {
-		runHasLoop: ns.args[0] ? (ns.args[0] as boolean) : false
-	};
-}
-//#endregion Input arguments
-
 class Main extends Headhunter<JobOrder> {
     private currentWork: JobOrder | undefined;
 
     constructor(ns: NS) {
-        // waitNewTargets = true : contracts appear over the time
+        // waitNewTargets = true : best work appear over the time
         super(ns, true)
     }
 

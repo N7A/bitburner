@@ -1,6 +1,6 @@
 import { ServersService } from "workspace/servers/servers.service";
 
-// TODO: newTarget() to call when worker have new target 
+// TODO: newTarget() to call when worker have new target
 export class HeadHunterAlert {
     private ns: NS;
     private headHunterScriptPath: string;
@@ -12,6 +12,11 @@ export class HeadHunterAlert {
         this.serversService = new ServersService(ns);
     }
 
+    /**
+     * A executer lors de la découverte de nouvelle cibles.
+     * 
+     * @remarks RAM cost: 0.1 GB
+     */
     newTarget() {
         const executableServers = this.serversService.getAllExecutable();
         let isHeadHunterRunning: boolean = executableServers
@@ -23,6 +28,11 @@ export class HeadHunterAlert {
         }
     }
 
+    /**
+     * Affiche comment démarrer le headhunter lié au nouvelles targets.
+     * 
+     * @remarks RAM cost: 0 GB
+     */
     private howToCallHeadHunter() {
         this.ns.alert(`New target but no headhunter on work !\n\n Please call one there :\n run ${this.headHunterScriptPath};`)
     }

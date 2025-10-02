@@ -2,6 +2,13 @@ import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 let daemon: AscensionMemberDaemon;
 
@@ -9,6 +16,8 @@ let daemon: AscensionMemberDaemon;
  * Share RAM to faction.
  */
 export async function main(ns: NS) {
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
     // load input arguments
     const input: InputArg = getInput(ns);
  
@@ -16,7 +25,7 @@ export async function main(ns: NS) {
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
 
@@ -26,7 +35,6 @@ export async function main(ns: NS) {
 //#region Input arguments
 type InputArg = {
     memberName: string;
-	runHasLoop: boolean;
 }
 
 /**
@@ -42,8 +50,7 @@ function getInput(ns: NS): InputArg {
     }
 
     return {
-        memberName: (ns.args[0] as string),
-		runHasLoop: ns.args[1] !== undefined ? (ns.args[1] as boolean) : true
+        memberName: (ns.args[0] as string)
     };
 }
 //#endregion Input arguments

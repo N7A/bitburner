@@ -4,8 +4,8 @@ import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.ser
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domain/GangDirective.repository';
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
-import { GameRepository } from 'workspace/game/domain/game.repository';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { GameService } from 'workspace/game/game.service';
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
@@ -29,7 +29,7 @@ class NewStart {
     private executionOrdersService: ExecutionOrdersService;
     private moneyPiggyBankService: MoneyPiggyBankService;
     private gangDirectiveRepository: GangDirectiveRepository;
-    private gameRepository: GameRepository;
+    private gameService: GameService;
 
     constructor(ns: NS) {
         this.ns = ns;
@@ -38,7 +38,7 @@ class NewStart {
         this.executionOrdersService = new ExecutionOrdersService(ns);
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
         this.gangDirectiveRepository = new GangDirectiveRepository(ns);
-        this.gameRepository = new GameRepository(ns);
+        this.gameService = new GameService(ns);
     }
 
     run() {
@@ -62,20 +62,20 @@ class NewStart {
         this.serversRepository.reset();
         this.executionOrdersService.reset();
         this.gangDirectiveRepository.reset();
-        this.gameRepository.reset();
+        this.gameService.reset();
     }
 
     private startScripts() {
         // lancement du unlock automatisé
-        this.ns.run(this.INFECTION_SCRIPT);
+        this.ns.run(this.INFECTION_SCRIPT, {preventDuplicates: true});
 
         // TODO : lancement du gestionnaire d'embauche
 
         // lancement de l'achat de node automatisé
-        this.ns.run(this.HACKNET_SCRIPT, 1, true);
+        this.ns.run(this.HACKNET_SCRIPT, {preventDuplicates: true});
 
         // lancement du hacking automatisé
-        this.ns.run(this.EXECUTION_SCRIPT, 1, true);
+        this.ns.run(this.EXECUTION_SCRIPT, {preventDuplicates: true});
     }
 
     /**

@@ -8,6 +8,7 @@ import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest'
 import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository';
 import { getScriptName } from 'workspace/socle/utils/file';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
 
 //#region Constants
 const ENABLE_PAYLOAD_SCRIPT = "cmd/load-balancer/domain/payload.enable.ts";
@@ -98,7 +99,7 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
         label: 'growToMax',
         request: {
             wantedThreadNumber: threadToLaunch,
-            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, false]}]
+            scripts: [{scriptsFilepath: GROW_SCRIPT, args: [targetHost, `--${DaemonFlags.oneshot}`]}]
         }
     };
     await executionOrdersService.add(processRequest);
@@ -133,7 +134,7 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string): 
         label: 'weakenToMax',
         request: {
             wantedThreadNumber: threadToLaunch,
-            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, false]}]
+            scripts: [{scriptsFilepath: WEAKEN_SCRIPT, args: [targetHost, `--${DaemonFlags.oneshot}`]}]
         }
     };
     await executionOrdersService.add(processRequest);

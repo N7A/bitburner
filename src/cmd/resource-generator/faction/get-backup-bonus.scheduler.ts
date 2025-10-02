@@ -1,20 +1,27 @@
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Logger } from 'workspace/socle/Logger';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 /**
  * @requires singularity
  * @param ns 
  */
 export async function main(ns: NS) {
-    // load input arguments
-    const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
 
     const daemon = new GetBackupBonus(ns);
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
@@ -22,24 +29,6 @@ export async function main(ns: NS) {
 
     ns.ui.closeTail();
 }
-
-//#region Input arguments
-type InputArg = {
-    /** Serveur cible */
-    runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-    return {
-        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : false
-    };
-}
-//#endregion Input arguments
 
 class GetBackupBonus extends Daemon {
     private dashboard: Dashboard;

@@ -1,6 +1,13 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 let daemon: Daemon;
 
@@ -8,12 +15,12 @@ let daemon: Daemon;
  * Share RAM to faction.
  */
 export async function main(ns: NS) {
-    // load input arguments
-	const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
  
-    setupDashboard(ns, input);
+    setupDashboard(ns);
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
 
@@ -22,25 +29,8 @@ export async function main(ns: NS) {
     await daemon.run();
 }
 
-//#region Input arguments
-type InputArg = {
-	runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-	return {
-		runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
-	};
-}
-//#endregion Input arguments
-
 //#region Dashboard
-function setupDashboard(ns: NS, input: InputArg) {
+function setupDashboard(ns: NS) {
     ns.disableLog("ALL");
     ns.enableLog('share');
     ns.clearLog();
@@ -48,7 +38,9 @@ function setupDashboard(ns: NS, input: InputArg) {
     const dashboard: Dashboard = new Dashboard(ns, `Share`, {icon: '♻️⚡️', role: 'Daemon'});
     dashboard.initTailTitle();
     ns.print(Log.title('Données d\'entrée'));
-    ns.print(Log.object(input));
+    ns.print(Log.object(ns.args));
+    ns.print(Log.title('Flags'));
+    ns.print(Log.object(ns.flags(FLAGS_SCHEMA)));
 }
 //#endregion Dashboard
 

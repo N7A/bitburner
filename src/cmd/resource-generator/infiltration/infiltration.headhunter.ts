@@ -1,42 +1,28 @@
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import { DirectiveType } from "workspace/resource-generator/infiltration/model/DirectiveType";
 import { InfiltrationSelector } from "workspace/resource-generator/infiltration/infiltration.selector";
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
 
 //#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
 export const MOVE_SCRIPT = 'cmd/resource-generator/infiltration/infiltration.launcher.ts';
 //#endregion Constantes
 
 export async function main(ns: NS) {
-    // load input arguments
-	const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
     
     // waitNewTargets = true : contracts appear over the time
     const daemon = new Main(ns);
     
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
     await daemon.run();
 }
-
-//#region Input arguments
-type InputArg = {
-	/** Serveur cible */
-	runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-	return {
-		runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
-	};
-}
-//#endregion Input arguments
 
 class Main extends Headhunter<ILocation> {
     private selector: InfiltrationSelector;

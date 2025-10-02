@@ -18,10 +18,17 @@ import { OneShotExecution } from 'workspace/load-balancer/model/OneShotExecution
 import { PayloadExecution } from 'workspace/resource-generator/hacking/model/PayloadExecution';
 import { SetupHackExecution } from 'workspace/resource-generator/hacking/model/SetupExecution';
 import { getHashFromContent } from 'workspace/socle/utils/file';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 export async function main(ns: NS) {
-    // load input arguments
-    const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
 
     const daemon: ExecutionSchedulerDaemon = new ExecutionSchedulerDaemon(ns);
     
@@ -31,7 +38,7 @@ export async function main(ns: NS) {
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
     
@@ -39,24 +46,6 @@ export async function main(ns: NS) {
     
     ns.ui.closeTail();
 }
-
-//#region Input arguments
-type InputArg = {
-    /** Serveur cible */
-    runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-    return {
-        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
-    };
-}
-//#endregion Input arguments
 
 class ExecutionSchedulerDaemon extends Daemon {
 	private logger: Logger
@@ -250,7 +239,12 @@ class ExecutionSchedulerDaemon extends Daemon {
             await waitEndExecution(this.ns, copyPid);
         }
 
-        return this.ns.exec(executionOrder.request.scriptsFilepath, executionOrder.sourceHostname, executionOrder.nbThread, ...executionOrder.request.args ?? []);
+        return this.ns.exec(
+            executionOrder.request.scriptsFilepath, 
+            executionOrder.sourceHostname, 
+            {threads: executionOrder.nbThread, temporary: true}, 
+            ...executionOrder.request.args ?? []
+        );
     }
     //#endregion Execution
 

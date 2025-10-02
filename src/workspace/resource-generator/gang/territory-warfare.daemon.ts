@@ -1,7 +1,13 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
-import * as Log from 'workspace/socle/utils/logging';
 import { GANG_LOGO } from 'workspace/resource-generator/gang/application-properties';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+
+//#region Constantes
+const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
+    [DaemonFlags.oneshot, false]
+];
+//#endregion Constantes
 
 let daemon: TerritoryWarfareDaemon;
 
@@ -9,36 +15,19 @@ let daemon: TerritoryWarfareDaemon;
  * Share RAM to faction.
  */
 export async function main(ns: NS) {
-    // load input arguments
-    const input: InputArg = getInput(ns);
+    // load input flags
+    const scriptFlags = ns.flags(FLAGS_SCHEMA);
  
     daemon = new TerritoryWarfareDaemon(ns);
     
     daemon.setupDashboard();
 
-    if (!input.runHasLoop) {
+    if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
 
     await daemon.run();
 }
-
-//#region Input arguments
-type InputArg = {
-	runHasLoop: boolean;
-}
-
-/**
- * Load input arguments
- * @param ns Bitburner API
- * @returns 
- */
-function getInput(ns: NS): InputArg {
-    return {
-        runHasLoop: ns.args[0] !== undefined ? (ns.args[0] as boolean) : true
-    };
-}
-//#endregion Input arguments
 
 // TODO: will not work, find the good way
 export function killAfterLoop() {

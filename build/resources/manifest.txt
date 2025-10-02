@@ -56,11 +56,13 @@
 /lab/oui.ts
 /lab/test.ts
 /workspace/common/log.properties.ts
+/workspace/common/model/DaemonFlags.ts
 /workspace/common/model/DirectiveType.ts
 /workspace/common/referentiel.ts
 /workspace/game/domain/game.repository.ts
 /workspace/game/domain/model/Game.ts
 /workspace/game/domain/refresh-game-repository.worker.ts
+/workspace/game/game.service.ts
 /workspace/load-balancer/analyse.ts
 /workspace/load-balancer/application-properties.ts
 /workspace/load-balancer/domain/executions.repository.ts
