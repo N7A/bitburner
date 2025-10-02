@@ -2,6 +2,8 @@ import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { ServersService } from 'workspace/servers/servers.service';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+import { Logger } from 'workspace/socle/Logger';
+import * as Log from 'workspace/socle/utils/logging';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
@@ -39,9 +41,18 @@ type InputArg = {
  * @returns 
  */
 function getInput(ns: NS): InputArg {
-    return {
-        threshold: ns.args[1] !== undefined ? (ns.args[1] as number) : 0
+    const logger = new Logger(ns);
+
+    logger.trace(Log.title('Arguments'));
+    logger.trace(ns.args?.toString());
+    
+    const input = {
+        threshold: ns.args[0] !== undefined ? (ns.args[0] as number) : 0
     };
+    
+    logger.trace(Log.title('Données d\'entrée'));
+    logger.trace(Log.object(input));
+    return input;
 }
 //#endregion Input arguments
 

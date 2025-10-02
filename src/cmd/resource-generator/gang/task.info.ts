@@ -30,9 +30,16 @@ function getInput(ns: NS): InputArg {
         ns.exit();
     }
 
-    return {
+    logger.trace(Log.title('Arguments'));
+    logger.trace(ns.args?.toString());
+
+    const input = {
         taskNameTarget: (ns.args[0] as string)
     };
+    
+    logger.trace(Log.title('Données d\'entrée'));
+    logger.trace(Log.object(input));
+    return input;
 }
 //#endregion Input parameters
 

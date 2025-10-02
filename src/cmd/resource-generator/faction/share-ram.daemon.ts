@@ -2,6 +2,7 @@ import { Daemon } from 'workspace/socle/interface/daemon';
 import * as Log from 'workspace/socle/utils/logging';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+import { Logger } from 'workspace/socle/Logger';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
@@ -37,10 +38,11 @@ function setupDashboard(ns: NS) {
     
     const dashboard: Dashboard = new Dashboard(ns, `Share`, {icon: '♻️⚡️', role: 'Daemon'});
     dashboard.initTailTitle();
-    ns.print(Log.title('Données d\'entrée'));
-    ns.print(Log.object(ns.args));
-    ns.print(Log.title('Flags'));
-    ns.print(Log.object(ns.flags(FLAGS_SCHEMA)));
+    const logger = new Logger(ns);
+    logger.trace(Log.title('Arguments'));
+    logger.trace(ns.args?.toString());
+    logger.trace(Log.title('Flags'));
+    logger.trace(JSON.stringify(ns.flags(FLAGS_SCHEMA)));
 }
 //#endregion Dashboard
 

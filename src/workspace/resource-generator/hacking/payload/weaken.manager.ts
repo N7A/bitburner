@@ -20,7 +20,6 @@ export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
 
-    // TODO : add to input
     // INFO : getServerMinSecurityLevel aussi cher que get depuis la bdd
     const securityThresh = ns.getServerMinSecurityLevel(input.targetHost);
 
@@ -53,10 +52,17 @@ function getInput(ns: NS): InputArg {
         ns.exit();
     }
 
-	return {
+    logger.trace(Log.title('Arguments'));
+    logger.trace(ns.args?.toString());
+
+	const input = {
 		targetHost: (ns.args[0] as string),
         threadAmount: ns.args[1] !== undefined ? (ns.args[0] as number) : 1
 	};
+    
+    logger.trace(Log.title('Données d\'entrée'));
+    logger.trace(Log.object(input));
+    return input;
 }
 //#endregion Input arguments
 
@@ -85,7 +91,7 @@ class WeakenManager extends Daemon {
         this.ns.print(Log.threshold(this.ns, currentSecurityLevel, this.securityThresh));
         // If security level too high
         if (currentSecurityLevel > this.securityThresh) {
-            var pid: number = this.ns.run(WORKER_SCRIPT, this.threadAmount, this.targetHost);
+            var pid: number = this.ns.run(WORKER_SCRIPT, this.threadAmount, this.targetHost, this.securityThresh, `--${DaemonFlags.oneshot}`);
             await waitEndExecution(this.ns, pid);
         } else {
             await this.ns.asleep(500);
