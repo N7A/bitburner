@@ -55,6 +55,10 @@ export class Headhunter<T> {
                 await this.ns.sleep(500);
             }
         } while (this.needLoop(threadStartTime, targets))
+
+        if(this.isTargetOut(targets)) {
+            this.ns.print('No more targets');
+        }
     }
 
     protected async work(targets: T[]): Promise<any> {

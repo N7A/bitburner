@@ -60,14 +60,14 @@ class ServerInfo extends Info {
         this.ns.print(Log.title('Nuke data'));
         this.ns.print(Log.INFO('Unlocked : ', this.data.hasAdminRights));
         if (!this.data.hasAdminRights) {
-            this.ns.print(Log.INFO('Unlock possible', this.nukeAchievable(this.ns, this.data.hostname)));
+            this.ns.print(Log.INFO('Unlock possible', this.nukeAchievable()));
             this.ns.print(Log.INFO('Hacking level requis', this.data.requiredHackingSkill));
-            this.ns.print(Log.INFO('Ports requis', this.data.openPortCount));
+            this.ns.print(Log.INFO('Ports requis', this.data.numOpenPortsRequired - this.data.openPortCount));
             this.ns.print(Log.INFO('Backdoor installé', this.data.backdoorInstalled));
         } else if (!this.data.backdoorInstalled) {
             this.ns.print(Log.INFO('Deep connect command', this.service.getConnectCommand(this.data.hostname) + ' backdoor;'));
         } else {
-            this.ns.print(Log.INFO('Deep connect command', this.service.getConnectCommand(this.data.hostname)));
+            this.ns.print(Log.INFO('Deep connect command', `connect ${this.data.hostname};`));
         }
         this.ns.print(Log.INFO('Path', ''));
         this.ns.print(this.service.getHostPathLibelle(this.data.hostname));
@@ -81,10 +81,9 @@ class ServerInfo extends Info {
             this.ns.print(Log.INFO('RAM', this.ns.formatRam(this.data.maxRam)));
     }
     
-    // TODO : use function from main class
-    private nukeAchievable(ns: NS, hostToHack: string): boolean {
-        return ns.getServerNumPortsRequired(hostToHack) == 0
-            && ns.getHackingLevel() >= ns.getServerRequiredHackingLevel(hostToHack)
+    private nukeAchievable(): boolean {
+        return this.data.numOpenPortsRequired - this.data.openPortCount <= 0
+            && this.ns.getHackingLevel() >= this.data.requiredHackingSkill
     }
 
 }
