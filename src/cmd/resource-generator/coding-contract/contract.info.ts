@@ -6,7 +6,7 @@ import { Contract } from 'workspace/resource-generator/coding-contract/model/Con
 export async function main(ns: NS) {
     const input: InputArg = await getInput(ns);
 
-    const contracts = await getContracts(this.ns);  
+    const contracts = await getContracts(ns);  
     const info: ContractInfo = new ContractInfo(
         ns, 
         input.contratFilepath === '--- All ---' ? null : contracts.find(x => x.filepath === input.contratFilepath)
@@ -29,7 +29,7 @@ async function getInput(ns: NS): Promise<InputArg> {
     // TODO: remplacer par le type de contrat ?
     let contratFilepath: string;
     if (ns.args[0] === undefined) {
-        const contracts = await getContracts(this.ns);  
+        const contracts = await getContracts(ns);  
         contratFilepath = await ns.prompt('Merci de renseigner un contrat', { type: "select", choices: ['--- All ---', ...contracts.map(x => x.filepath)] }) as string
     } else {
         contratFilepath = (ns.args[0] as string);
