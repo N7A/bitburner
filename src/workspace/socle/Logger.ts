@@ -119,7 +119,7 @@ export class Logger {
     // TODO: get currentLogLevel from home server
     private print(message: string, currentLogLevel: LogLevel) {
         if (currentLogLevel <= logLevel.terminal) {
-            this.printTerminal(`${Log.time(new Date(Date.now()))} - ${message}`);
+            this.printTerminal(`${message} | ${Log.time(new Date(Date.now()))}`);
         }
 
         if (currentLogLevel <= logLevel.print) {
