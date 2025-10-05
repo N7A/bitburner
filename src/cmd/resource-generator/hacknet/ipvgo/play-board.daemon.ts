@@ -122,7 +122,7 @@ class PlayBoardDaemon extends Daemon {
             }
 
             this.ns.print(Log.getEndLog());
-            await this.ns.sleep(200);
+            await this.ns.asleep(200);
 
             // Keep looping as long as the opponent is playing moves
         } while (board.result?.type !== this.GAME_OVER);

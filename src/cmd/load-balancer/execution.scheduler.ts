@@ -140,7 +140,7 @@ class ExecutionSchedulerDaemon extends Daemon {
         let newRamBank: number;
         
         do {
-            await this.ns.sleep(500);
+            await this.ns.asleep(500);
 
             newRamDisponible = this.serversService.getAllExecutable()
                 .map(x => this.ns.getServerMaxRam(x))
