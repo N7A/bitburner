@@ -43,7 +43,10 @@ class Main extends Headhunter<string> {
         const workStartTime = new Date();
         await this.getTargets();
         this.logger.log(`Best to buy : ${Log.target(this.stockSymbol)}`);
-        await this.buy();
+        // on a pas réussi à acheter
+        if (await this.buy() === null) {
+            return;
+        }
         const sellWorker: SellStockWorker = new SellStockWorker(this.ns, {stockSymbol: this.stockSymbol});
         const profit = await sellWorker.sell();
         const workEndTime = new Date();
@@ -78,6 +81,10 @@ class Main extends Headhunter<string> {
         const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money));
         const shares: number = getMaxShares(this.ns, this.stockSymbol, availableMoney);
         
+        if (shares === 0) {
+            return null;
+        }
+
         const buyPrice = this.ns.stock.buyStock(this.stockSymbol, shares);
         const spent = buyPrice * shares;
         this.logger.log(`Buy ${this.ns.formatNumber(shares)} ${this.stockSymbol} for ${Log.money(this.ns, spent)} (${Log.money(this.ns, buyPrice)})`);
