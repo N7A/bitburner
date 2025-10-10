@@ -13,6 +13,16 @@ ns.tprint(ns.formatNumber(ns.formulas.hacknetNodes.coreUpgradeCost(0, 1, ns.getP
 /**
  * @remarks RAM cost: 4.25GB
  */
+export function getBestTarget(ns: NS, maxMoneyToSpend?: number): UpgradeExecution | undefined {
+    // load profits disponibles
+    let profits: UpgradeExecution[] = getProfits(ns, maxMoneyToSpend)
+    // check if you have enough money for any upgrade
+    .filter(upgradeRatio => maxMoneyToSpend === undefined || upgradeRatio.cost <= maxMoneyToSpend);
+
+    // find the most profitability upgrade
+    return profits.sort((a, b) => a.ratio * b.cost - b.ratio * a.cost).pop();
+}
+
 export function getBestProfits(ns: NS, maxMoneyToSpend?: number): UpgradeExecution | undefined {
     // load profits disponibles
     let profits: UpgradeExecution[] = getProfits(ns, maxMoneyToSpend)

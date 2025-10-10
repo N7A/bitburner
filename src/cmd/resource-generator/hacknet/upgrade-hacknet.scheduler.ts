@@ -1,5 +1,5 @@
 import { executeUpgrade } from 'workspace/resource-generator/hacknet/upgrade-hacknet.worker'
-import { getBestProfits } from 'workspace/resource-generator/hacknet/upgrade-hacknet.target-selector'
+import { getBestProfits, getBestTarget } from 'workspace/resource-generator/hacknet/upgrade-hacknet.target-selector'
 import * as Log from 'workspace/socle/utils/logging';
 import { UpgradeExecution } from 'workspace/resource-generator/hacknet/model/UpgradeExecution'
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
@@ -60,6 +60,7 @@ class UpgradeHacknetHeadHunter extends Headhunter<UpgradeExecution> {
 
             // get best purchase with max amount disponible
             const selectedUpgrade = getBestProfits(this.ns, this.moneyPiggyBankService.getDisponibleMoney(this.getMoney()));
+
             // do purchase
             executeUpgrade(this.ns, selectedUpgrade);
 
@@ -71,11 +72,10 @@ class UpgradeHacknetHeadHunter extends Headhunter<UpgradeExecution> {
                 await this.ns.sleep(500);
             }*/
         }
-
     }
 
     async getTargets(): Promise<UpgradeExecution[]> {
-        const nextUpgrade: UpgradeExecution | undefined = getBestProfits(this.ns);
+        const nextUpgrade: UpgradeExecution | undefined = getBestTarget(this.ns);
         return nextUpgrade ? [nextUpgrade] : []
     }
 
