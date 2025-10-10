@@ -129,11 +129,36 @@ export function date(ns: NS, date: Date): string {
     return date.toLocaleTimeString();
 }
 
+enum TimeValue {
+    SECONDS_BY_MINUTE = 60,
+    MINUTES_BY_HOUR = 60,
+    HOURS_BY_DAY = 24
+}
 export function time(date: Date) {
-    const hour: number = date.getHours()
-    const minute: number = date.getMinutes()
-    const second: number = date.getSeconds()
-    return hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0') + ":" + second.toString().padStart(2, '0')
+    var seconds = Math.floor(date.getTime() / 1000);
+    let days: number = 0;
+    let hours: number = 0;
+    let minutes: number = 0;
+
+    var interval = seconds / TimeValue.HOURS_BY_DAY * TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE;
+    if (interval > 1) {
+        days = Math.floor(interval);
+        seconds -= days;
+    }
+    interval = seconds / TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE;
+    if (interval > 1) {
+        hours = Math.floor(interval);
+        seconds -= hours;
+    }
+    interval = seconds / TimeValue.SECONDS_BY_MINUTE;
+    if (interval > 1) {
+        minutes = Math.floor(interval);
+        seconds -= minutes;
+    }
+    seconds = Math.floor(seconds);
+
+    return days > 0 ? days + "d " : "" 
+        + hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')
 }
 
 export function duration(date: Date) {
