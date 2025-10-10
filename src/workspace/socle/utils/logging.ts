@@ -141,24 +141,24 @@ export function time(date: Date) {
     let minutes: number = 0;
 
     var interval = seconds / (TimeValue.HOURS_BY_DAY * TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
-    if (interval > 1) {
+    if (interval > 0) {
         days = Math.floor(interval);
         seconds -= days * (TimeValue.HOURS_BY_DAY * TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
     }
     interval = seconds / (TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
-    if (interval > 1) {
+    if (interval > 0) {
         hours = Math.floor(interval);
         seconds -= hours * (TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
     }
     interval = seconds / TimeValue.SECONDS_BY_MINUTE;
-    if (interval > 1) {
+    if (interval > 0) {
         minutes = Math.floor(interval);
         seconds -= minutes * TimeValue.SECONDS_BY_MINUTE;
     }
     seconds = Math.floor(seconds);
 
-    return (days > 0 ? days + "d " : "") 
-        + hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')
+    return (days > 0 ? days + "j " : "") 
+        + hours.toString().padStart(2, '0') + "h" + minutes.toString().padStart(2, '0') + "m" + seconds.toString().padStart(2, '0') + "s"
 }
 
 export function duration(date: Date) {
