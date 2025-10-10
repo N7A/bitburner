@@ -37,8 +37,6 @@ export class Headhunter<T> {
         let targets = await this.getTargets();
 
         do {
-            this.ns.print(Log.getStartLog());
-
             const workStartTime = new Date();
 
             const message = targets?.length < 10 ? JSON.stringify(targets) : `(${targets.length})`
@@ -51,8 +49,6 @@ export class Headhunter<T> {
 
             // refresh targets
             targets = await this.getTargets();
-
-            this.ns.print(Log.getEndLog());
 
             if (this.needLoop(threadStartTime, targets)) {
                 // TODO : adapt waiting time
@@ -100,12 +96,14 @@ export class Headhunter<T> {
     }
 
     //#region Dashboard    
-    private refreshDashBoard(threadStartTime: Date, workStartTime: Date, workEndTime: Date) {
+    protected refreshDashBoard(threadStartTime: Date, workStartTime: Date, workEndTime: Date) {
+        this.ns.print(Log.getStartLog());
         const shareDuration = new Date(workEndTime.getTime() - workStartTime.getTime())
         this.ns.print(Log.INFO("Thread start time", Log.time(threadStartTime)));
         this.ns.print(Log.INFO("Last work time",  Log.time(workEndTime)));
         this.ns.print(Log.INFO("Last work duration",  Log.duration(shareDuration)));
         this.ns.print('-'.repeat(10));
+        this.ns.print(Log.getEndLog());
     }
     //#endregion Dashboard
 }

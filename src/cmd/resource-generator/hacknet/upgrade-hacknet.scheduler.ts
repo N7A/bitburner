@@ -96,6 +96,8 @@ class UpgradeHacknetHeadHunter extends Headhunter<UpgradeExecution> {
 	getMoney = () => this.ns.getPlayer().money;
     //#endregion
 
+    refreshDashBoard(threadStartTime: Date, workStartTime: Date, workEndTime: Date) {}
+
     refreshDashBoard2(currentMoney: number, interval: number | null, nextUpgrade?: UpgradeExecution | undefined) {
         this.ns.clearLog();
         const allNodes: NodeStats[] = Array(this.ns.hacknet.numNodes()).fill(0)
