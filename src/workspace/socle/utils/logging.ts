@@ -140,24 +140,24 @@ export function time(date: Date) {
     let hours: number = 0;
     let minutes: number = 0;
 
-    var interval = seconds / TimeValue.HOURS_BY_DAY * TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE;
+    var interval = seconds / (TimeValue.HOURS_BY_DAY * TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
     if (interval > 1) {
         days = Math.floor(interval);
-        seconds -= days;
+        seconds -= days * (TimeValue.HOURS_BY_DAY * TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
     }
-    interval = seconds / TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE;
+    interval = seconds / (TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
     if (interval > 1) {
         hours = Math.floor(interval);
-        seconds -= hours;
+        seconds -= hours * (TimeValue.MINUTES_BY_HOUR * TimeValue.SECONDS_BY_MINUTE);
     }
     interval = seconds / TimeValue.SECONDS_BY_MINUTE;
     if (interval > 1) {
         minutes = Math.floor(interval);
-        seconds -= minutes;
+        seconds -= minutes * TimeValue.SECONDS_BY_MINUTE;
     }
     seconds = Math.floor(seconds);
 
-    return days > 0 ? days + "d " : "" 
+    return (days > 0 ? days + "d " : "") 
         + hours.toString().padStart(2, '0') + ":" + minutes.toString().padStart(2, '0') + ":" + seconds.toString().padStart(2, '0')
 }
 
