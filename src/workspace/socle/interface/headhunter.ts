@@ -1,9 +1,15 @@
 import * as Log from 'workspace/socle/utils/logging';
+import * as Properties from 'workspace/socle/application-properties'
 
 /**
  * Execute en boucle une séquence ayant pour ressource une cible.
  */
 export class Headhunter<T> {
+    //#region input parameters
+    /** loop frequency time */
+    readonly REFRESH_INTERVAL: number = Properties.defaultInterval;
+    //#endregion input parameters
+
     protected ns: NS;
     private waitNewTargets: boolean;
     private runHasLoop: boolean = true;
@@ -52,7 +58,7 @@ export class Headhunter<T> {
                 // TODO : adapt waiting time
                 // TODO : check repository maj instead || next target time
                 // sleep to prevent crash because of infinite loop
-                await this.ns.asleep(500);
+                await this.ns.asleep(this.REFRESH_INTERVAL);
             }
         } while (this.needLoop(threadStartTime, targets))
 

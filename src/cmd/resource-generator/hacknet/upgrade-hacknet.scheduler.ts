@@ -1,7 +1,6 @@
 import { executeUpgrade } from 'workspace/resource-generator/hacknet/upgrade-hacknet.worker'
 import { getBestProfits } from 'workspace/resource-generator/hacknet/upgrade-hacknet.target-selector'
 import * as Log from 'workspace/socle/utils/logging';
-import * as Properties from 'workspace/resource-generator/hacknet/application-properties'
 import { UpgradeExecution } from 'workspace/resource-generator/hacknet/model/UpgradeExecution'
 import { MoneyPiggyBankService } from 'workspace/piggy-bank/money-piggy-bank.service';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
@@ -38,11 +37,6 @@ export async function main(ns: NS) {
 }
 
 class UpgradeHacknetHeadHunter extends Headhunter<UpgradeExecution> {
-    //#region input parameters
-    /** loop frequency time */
-    readonly REFRESH_INTERVAL: number = Properties.defaultInterval;
-    //#endregion input parameters
-
     private logger: Logger;
     private dashboard: Dashboard;
     private moneyPiggyBankService: MoneyPiggyBankService;
@@ -59,10 +53,9 @@ class UpgradeHacknetHeadHunter extends Headhunter<UpgradeExecution> {
     protected async work(targets: UpgradeExecution[]): Promise<any> {
         for (const target of targets) {
             // wait purchase to be possible
-            while(this.moneyPiggyBankService.getDisponibleMoney(this.getMoney()) < target.cost) {
+            if (this.moneyPiggyBankService.getDisponibleMoney(this.getMoney()) < target.cost) {
                 this.refreshDashBoard2(this.getMoney(), this.REFRESH_INTERVAL, target);
-                // sleep to prevent crash because of infinite loop
-                await this.ns.sleep(this.REFRESH_INTERVAL);
+                continue;
             }
 
             // get best purchase with max amount disponible
