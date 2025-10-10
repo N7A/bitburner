@@ -52,7 +52,7 @@ export class Headhunter<T> {
                 // TODO : adapt waiting time
                 // TODO : check repository maj instead || next target time
                 // sleep to prevent crash because of infinite loop
-                await this.ns.sleep(500);
+                await this.ns.asleep(500);
             }
         } while (this.needLoop(threadStartTime, targets))
 

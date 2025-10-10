@@ -109,6 +109,7 @@
 /workspace/resource-generator/coding-contract/sanitize-parentheses-in-expression.resolver.ts
 /workspace/resource-generator/coding-contract/spiralize-matrix.resolver.ts
 /workspace/resource-generator/coding-contract/total-ways-to-sum.ts
+/workspace/resource-generator/coding-contract/unique-paths-in-a-grid.resolver.ts
 /workspace/resource-generator/crime/model/PlayerStatType.ts
 /workspace/resource-generator/crime/model/TaskType.ts
 /workspace/resource-generator/crime/task.selector.ts
