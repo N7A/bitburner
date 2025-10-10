@@ -135,7 +135,17 @@ enum TimeValue {
     HOURS_BY_DAY = 24
 }
 export function time(date: Date) {
-    var seconds = Math.floor(date.getTime() / 1000);
+    const hour: number = date.getHours()
+    const minute: number = date.getMinutes()
+    const second: number = date.getSeconds()
+
+    return hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0') + ":" + second.toString().padStart(2, '0')
+}
+
+export function duration(date: Date) {
+    const mappedDate = new Date(date.getTime()-1000 * 60 * 60)
+    
+    var seconds = Math.floor(mappedDate.getTime() / 1000);
     let days: number = 0;
     let hours: number = 0;
     let minutes: number = 0;
@@ -158,12 +168,7 @@ export function time(date: Date) {
     seconds = Math.floor(seconds);
 
     return (days > 0 ? days + "j " : "") 
-        + hours.toString().padStart(2, '0') + "h" + minutes.toString().padStart(2, '0') + "m" + seconds.toString().padStart(2, '0') + "s"
-}
-
-export function duration(date: Date) {
-    const mappedDate = new Date(date.getTime()-1000 * 60 * 60)
-    return time(mappedDate)
+        + hours.toString().padStart(2, '0') + "h" + minutes.toString().padStart(2, '0') + "m" + seconds.toString().padStart(2, '0') + "s";
 }
 
 /**
