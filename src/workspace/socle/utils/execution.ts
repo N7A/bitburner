@@ -36,3 +36,19 @@ export async function waitEndAllExecutions(ns: NS, pidExecutions: number[]): Pro
 
     return true;
 }
+
+/**
+ * Vérifie si un script commun tourne déjà.
+ * Si c'est le cas on termine le script actuel.
+ * 
+ * @param ns Bitburner API
+ * 
+ * @remarks RAM cost: 0.3 GB
+ */
+export function singletonValidation(ns: NS) {
+    const currentScript: RunningScript = ns.getRunningScript();
+    const script: RunningScript | null = ns.getRunningScript(currentScript.filename, currentScript.server, ...currentScript.args);
+    if (script !== null && currentScript.pid !== script.pid) {
+        ns.exit();
+    }
+}

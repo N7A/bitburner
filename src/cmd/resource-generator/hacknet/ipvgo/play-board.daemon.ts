@@ -1,6 +1,7 @@
 import { Daemon } from 'workspace/socle/interface/daemon';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import * as Log from 'workspace/socle/utils/logging';
+import { singletonValidation } from 'workspace/socle/utils/execution';
 
 enum BoardSize {
     CINQ = 5, 
@@ -21,11 +22,7 @@ enum GoOpponent {
 }
 
 export async function main(ns: NS) {
-    // singleton
-    const script: RunningScript | null = ns.getRunningScript('cmd/resource-generator/hacknet/ipvgo/play-board.daemon.ts');
-    if (script) {
-        ns.kill(script.pid);
-    }
+    singletonValidation(ns);
 
     const daemon: PlayBoardDaemon = new PlayBoardDaemon(ns);
     
