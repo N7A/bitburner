@@ -56,23 +56,21 @@ function getProfitUpgradeNode(ns: NS, nodeIndex: number, maxMoneyToSpend?: numbe
     let result: UpgradeExecution[] = [];
 
     // recherche de la quantité maximum d'upgrade possible
-    if (maxMoneyToSpend !== undefined) {
-        [
-            UpgradeType.LEVEL, 
-            UpgradeType.RAM, 
-            UpgradeType.CORES
-        ].forEach(upgradeType => {
-            const upgrade = getUpgrade(ns, upgradeType) as HacknetUpgrade;
-            // le nombre maximum d'upgrade n'est pas encore atteind
-            if (upgrade.getCost(nodeIndex) !== Number.POSITIVE_INFINITY) {
-                let nbUpgrade: number = 1;
-                while(upgrade.getCost(nodeIndex, nbUpgrade + 1) <= maxMoneyToSpend) {
-                    nbUpgrade++;
-                }
-                result.push(getProfitUpgrade(ns, upgrade, nodeIndex, nbUpgrade));
+    [
+        UpgradeType.LEVEL, 
+        UpgradeType.RAM, 
+        UpgradeType.CORES
+    ].forEach(upgradeType => {
+        const upgrade = getUpgrade(ns, upgradeType) as HacknetUpgrade;
+        // le nombre maximum d'upgrade n'est pas encore atteind
+        if (upgrade.getCost(nodeIndex) !== Number.POSITIVE_INFINITY) {
+            let nbUpgrade: number = 1;
+            while(maxMoneyToSpend !== undefined && upgrade.getCost(nodeIndex, nbUpgrade + 1) <= maxMoneyToSpend) {
+                nbUpgrade++;
             }
-        });
-    }
+            result.push(getProfitUpgrade(ns, upgrade, nodeIndex, nbUpgrade));
+        }
+    });
 
     return result;
 }
