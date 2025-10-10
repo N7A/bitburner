@@ -152,7 +152,6 @@
 /workspace/resource-generator/hacking/unlock/purchase-tor.worker.ts
 /workspace/resource-generator/hacking/unlock/unlock.selector.ts
 /workspace/resource-generator/hacking/unlock/unlock.worker.ts
-/workspace/resource-generator/hacknet/application-properties.ts
 /workspace/resource-generator/hacknet/model/HacknetUpgrade.ts
 /workspace/resource-generator/hacknet/model/UpgradeExecution.ts
 /workspace/resource-generator/hacknet/model/UpgradeType.ts
@@ -179,6 +178,7 @@
 /workspace/servers/domain/servers.repository.ts
 /workspace/servers/findServer.ts
 /workspace/servers/servers.service.ts
+/workspace/socle/application-properties.ts
 /workspace/socle/database/model/CommitRequest.ts
 /workspace/socle/database/model/CommitType.ts
 /workspace/socle/database/model/Repository.ts
