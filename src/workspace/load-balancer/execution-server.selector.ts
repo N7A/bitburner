@@ -9,6 +9,7 @@ import { RamPiggyBankService } from 'workspace/piggy-bank/ram-piggy-bank.service
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { PiggyBankRepository } from 'workspace/piggy-bank/domain/piggy-bank.repository';
+import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
 
 export class ExecutionSelector {
     private ns: NS;
@@ -131,12 +132,22 @@ export class ExecutionSelector {
                 const orderThreadNumber = Math.min(currentThreadPossible, maxThreadWanted);
 
                 if (orderThreadNumber > 0) {
-                    orders.push({
-                        sourceHostname: entry[0], 
-                        nbThread: orderThreadNumber, 
-                        request: script
-                    } as ExecutionOrder);
-
+                    // TODO : trouver une méthode plus explicite pour valider que le flag thread est à utiliser
+                    // TODO : ici if possible car uniquement grow et weaken dans ce cas actuellement et qu'ils utilisent tous les deux le flag
+                    if (executionRequest.wantedThreadNumber !== undefined && executionRequest.wantedThreadNumber > 1) {
+                        script.args.push(`--${DaemonFlags.threads}=${orderThreadNumber}`)
+                        orders.push({
+                            sourceHostname: entry[0], 
+                            nbThread: 1, 
+                            request: script
+                        } as ExecutionOrder);
+                    } else {
+                        orders.push({
+                            sourceHostname: entry[0], 
+                            nbThread: orderThreadNumber, 
+                            request: script
+                        } as ExecutionOrder);
+                    }
 
                     const ramUsed: number = orderThreadNumber * ramNeededByThread
                     // maj ram by server
