@@ -15,9 +15,7 @@ export class Logger {
     }
 
     log(message: string, ...args: string[]) {
-        const formatedMessage: string = `${LogLevelLitteral.NEUTRAL} ${message.concat(...args)}`;
-
-        this.print(formatedMessage, LogLevel.INFO);
+        this.print(message.concat(...args), LogLevelLitteral.NEUTRAL, LogLevel.INFO);
     }
 
     stopWaiting() {
@@ -81,49 +79,41 @@ export class Logger {
     }
 
     err(message: string, ...args: string[]) {
-        const formatedMessage: string = `${LogLevelLitteral.ERROR} ${message.concat(...args)}`;
-
-        this.print(formatedMessage, LogLevel.ERROR);
+        this.print(message.concat(...args), LogLevelLitteral.ERROR, LogLevel.ERROR);
     }
 
     warn(message: string, ...args: string[]) {
-        const formatedMessage: string = `${LogLevelLitteral.WARN} ${message.concat(...args)}`;
-
-        this.print(formatedMessage, LogLevel.WARN);
+        this.print(message.concat(...args), LogLevelLitteral.WARN, LogLevel.WARN);
     }
 
     info(message: string, ...args: string[]) {
-        const formatedMessage: string = `${LogLevelLitteral.INFO} ${message}`.concat(...args)
-
-        this.print(formatedMessage, LogLevel.INFO);
+        this.print(message.concat(...args), LogLevelLitteral.INFO, LogLevel.INFO);
     }
 
     debug(message: string) {
-        const formatedMessage: string = `${LogLevelLitteral.DEBUG} ${message}`;
-
-        this.print(formatedMessage, LogLevel.DEBUG);
+        this.print(message, LogLevelLitteral.DEBUG, LogLevel.DEBUG);
     }
 
     trace(message: string) {
-        const formatedMessage: string = `${LogLevelLitteral.TRACE} ${message}`;
-
-        this.print(formatedMessage, LogLevel.TRACE);
+        this.print(message, LogLevelLitteral.TRACE, LogLevel.TRACE);
     }
     
     success(message: string, logLevel?: LogLevel) {
-        const formatedMessage: string = `${LogLevelLitteral.SUCCESS} ${message}`;
-        
-        this.print(formatedMessage, logLevel ?? LogLevel.INFO);
+        this.print(message, LogLevelLitteral.SUCCESS, logLevel ?? LogLevel.INFO);
+    }
+
+    private getSuffixe(logLevel: LogLevelLitteral) {
+        `${(logLevel ? logLevel : '').padEnd(8, ' ')}> ${Log.time(new Date(Date.now()))}`
     }
     
     // TODO: get currentLogLevel from home server
-    private print(message: string, currentLogLevel: LogLevel) {
+    private print(message: string, logLevelLitteral: LogLevelLitteral, currentLogLevel: LogLevel) {
         if (currentLogLevel <= logLevel.terminal) {
-            this.printTerminal(`${message} | ${Log.time(new Date(Date.now()))}`);
+            this.printTerminal(`${this.getSuffixe(logLevelLitteral)} - ${message}`);
         }
 
         if (currentLogLevel <= logLevel.print) {
-            const formatedMessage = `${Log.time(new Date(Date.now()))} - ${message}`
+            const formatedMessage = `${this.getSuffixe(logLevelLitteral)} - ${message}`
             this.history.push(formatedMessage);
 
             if (this.loadingBar) {
