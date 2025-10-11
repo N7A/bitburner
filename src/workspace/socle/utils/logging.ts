@@ -61,17 +61,21 @@ const DEFAULT_BLOCK_LOG_WIDTH: number = 40
 /**
  * @remarks Ram cost : 0
  */
-export function getStartLog() {
+export function getStartLog(doubleLine: boolean = true, title?: string) {
     const width: number = DEFAULT_BLOCK_LOG_WIDTH
-    return color(/*'╔' + */'╗'.padStart(width, '═'), Color.WHITE)
+    const line = doubleLine ? '═' : '─'
+    const end = doubleLine ? '╗' : '┐'
+    return color(/*'╔' + */(`${title ? ' ' + title + ' ' : ''}`).padStart(width/2, line).padEnd(width/2, '═') + end, Color.WHITE)
 }
 
 /**
  * @remarks Ram cost : 0
  */
-export function getEndLog() {
+export function getEndLog(doubleLine: boolean = true, title?: string) {
     const width: number = DEFAULT_BLOCK_LOG_WIDTH
-    return color(/*'╚' + */'╝'.padStart(width, '═'), Color.WHITE)
+    const line = doubleLine ? '═' : '─'
+    const end = doubleLine ? '╝' : '┘'
+    return color(/*'╚' + */(`${title ? ' ' + title + ' ' : ''}`).padStart(width/2, line).padEnd(width/2, '═') + end, Color.WHITE)
 }
 
 const colorReset = "\u001b[0m";
