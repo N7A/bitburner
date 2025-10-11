@@ -96,12 +96,25 @@ export enum BackgrounColor {
     WHITE = "\u001b[47m",
 }
 
+export enum Typography {
+    BOLD = "\u001b[1m",
+    UNDERLINE = "\u001b[4m"
+}
+
 /**
  * @remarks Ram cost : 0
  */
 export function color(message: string, color: Color) {
     return `${color}${message}${colorReset}`
 }
+
+/**
+ * @remarks Ram cost : 0
+ */
+export function backgroundColor(message: string, color: BackgrounColor) {
+    return `${color}${message}${colorReset}`
+}
+
 
 /**
  * @param {NS} ns

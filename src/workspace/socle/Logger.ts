@@ -72,7 +72,8 @@ export class Logger {
         
         const message = pourcent
             + '['
-            + (`${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`).padEnd(barSize)
+            //+ (`${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`).padEnd(barSize)
+            + (`${Log.color(`${'█'.repeat(pourcentage)}`, color)}`).padEnd(barSize, '░')
             + ']';
         
         this.ns.print(message);
@@ -102,18 +103,19 @@ export class Logger {
         this.print(message, LogLevelLitteral.SUCCESS, logLevel ?? LogLevel.INFO);
     }
 
-    private getSuffixe(logLevel: LogLevelLitteral) {
-        `${(logLevel ? logLevel : '').padEnd(8, ' ')}> ${Log.time(new Date(Date.now()))}`
+    private getSuffixe(logLevel: LogLevelLitteral): string {
+        return `${(logLevel ? logLevel : '').padEnd(8, ' ')}> `
+            + `${Log.color('[', Color.YELLOW)}${Log.color(Log.time(new Date(Date.now())), Color.WHITE)}${Log.color(']', Color.YELLOW)}`
     }
     
     // TODO: get currentLogLevel from home server
     private print(message: string, logLevelLitteral: LogLevelLitteral, currentLogLevel: LogLevel) {
         if (currentLogLevel <= logLevel.terminal) {
-            this.printTerminal(`${this.getSuffixe(logLevelLitteral)} - ${message}`);
+            this.printTerminal(`${this.getSuffixe(logLevelLitteral)} ${message}`);
         }
 
         if (currentLogLevel <= logLevel.print) {
-            const formatedMessage = `${this.getSuffixe(logLevelLitteral)} - ${message}`
+            const formatedMessage = `${this.getSuffixe(logLevelLitteral)} ${message}`
             this.history.push(formatedMessage);
 
             if (this.loadingBar) {
