@@ -81,21 +81,16 @@ async function runScriptUntilEnoughThread(
         ns.print(Log.INFO('Needed thread', ns.formatNumber(neededThread, 0)));
 
         if (neededThread > 0) {
-            ns.print('----------')
             // wait execution end
             await work(ns, neededThread, targetHost, hackData);
+            ns.print('----------')
         }
     } while(neededThread > 0)
     ns.print(Log.getEndLog());
 }
 
-async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
+async function growToMax(ns: NS, threadToLaunch: number, targetHost: string, hackData: HackData) {
     const executionOrdersService = new ExecutionOrdersService(ns);
-    
-    const repository = new ServersRepository(ns);
-    // load host data
-    const data: ServerData|null = repository.get(targetHost);
-    const hackData: HackData = data!.hackData
 
     const processRequest: ProcessRequest = {
         type: ProcessRequestType.ONESHOT, 
@@ -114,7 +109,10 @@ async function growToMax(ns: NS, threadToLaunch: number, targetHost: string) {
     
     let orders: ProcessRequest[] = await executionOrdersService.getAll();
     while (
-        orders.some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))
+        orders.some(x => 
+            ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x)
+                && x.request.wantedThreadNumber > 0
+        )
     ) {
         await ns.asleep(500);
         orders = await executionOrdersService.getAll();
@@ -145,7 +143,10 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string, h
 
     let orders: ProcessRequest[] = await executionOrdersService.getAll();
     while (
-        orders.some(x => ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x))
+        orders.some(x => 
+            ExecutionsRepository.getHash(processRequest) === ExecutionsRepository.getHash(x)
+                && x.request.wantedThreadNumber > 0
+        )
     ) {
         await ns.asleep(500);
         orders = await executionOrdersService.getAll();
