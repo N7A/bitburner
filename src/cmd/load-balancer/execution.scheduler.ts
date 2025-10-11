@@ -113,7 +113,10 @@ class ExecutionSchedulerDaemon extends Daemon {
     }
     
     async resetAllRunningProcess() {
-        for (const request of this.orders.map(x => x.request)) {
+        const daemonOrder = this.orders
+            .filter(x => x.request.request?.wantedThreadNumber === null)
+            .map(x => x.request);
+        for (const request of daemonOrder) {
             await this.resetRunningProcess(request);
         }
     }
@@ -152,11 +155,12 @@ class ExecutionSchedulerDaemon extends Daemon {
 
             // thread execution ended
             const killedOrders: RamResourceExecution[] = requests
-                .filter(x => x.request.request.wantedThreadNumber !== undefined)
+                .filter(x => x.request.request?.wantedThreadNumber !== undefined)
                 .filter(x => x.request.pid?.every(y => !this.ns.isRunning(y)));
-            if (killedOrders.length > 0) {
-                killedOrders.filter(x => x.request.request.wantedThreadNumber <= 0)
-                    .forEach(x => this.executionOrdersService.remove(x.request));
+            for (const element of killedOrders.filter(x => x.request.request.wantedThreadNumber <= 0)) {
+                await this.executionOrdersService.remove(element.request)
+            }
+            if (killedOrders.filter(x => x.request.request.wantedThreadNumber > 0).length > 0) {
                 break;
             }
             
@@ -192,6 +196,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                 return null;
             })
             .filter(x => x !== null)
+            .filter(x => x.request.request?.wantedThreadNumber === undefined || x.request.request.wantedThreadNumber > 0)
             .map(x => x as RamResourceExecution);
 
         let result = [];
@@ -209,7 +214,7 @@ class ExecutionSchedulerDaemon extends Daemon {
      * @param ns 
      * @param request process request to reset
      */
-    private async resetRunningProcess(request: ProcessRequest) {
+    private async resetRunningProcess(request: ProcessRequest): Promise<void> {
         // kill all process
         request.pid?.filter(x => x !== undefined).forEach(x => this.ns.kill(x));
         
