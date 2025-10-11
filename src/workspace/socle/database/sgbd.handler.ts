@@ -43,6 +43,7 @@ export class SgbdDaemon extends Daemon {
 
     handleExecutionRequest(data: any, type: CommitType) {
         if (type === CommitType.GET_ALL) {
+            this.ns.clearPort(SgbdDaemon.RESPONSE_PORT);
             this.pushResponse(this.executionsRepository.getAll());
         } else if (type === CommitType.ADD) {
             this.executionsRepository.add(data);

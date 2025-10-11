@@ -37,7 +37,7 @@ export class ExecutionSelector {
         // define repartition to fixed ram executions
         let ramDisponiblePostFixed = totalRamDisponible;
         // TODO: sort order par priorité
-        for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber !== undefined)) {
+        for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber !== undefined && x.request.request.wantedThreadNumber > 0)) {
             this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`));
 
             const ramAuthorized = await this.getAuthorizedRam(order, totalRamDisponible);

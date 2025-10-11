@@ -3,7 +3,6 @@ import { SgbdDaemon } from "workspace/socle/database/sgbd.handler";
 import { CommitRequest } from "workspace/socle/database/model/CommitRequest";
 import { CommitType } from "workspace/socle/database/model/CommitType";
 import { Repository } from "workspace/socle/database/model/Repository";
-import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 export class ExecutionOrdersService {
     private ns: NS;
@@ -20,7 +19,7 @@ export class ExecutionOrdersService {
         let data: ProcessRequest[] | String;
 
         do {
-            SgbdDaemon.pushData(this.ns, {
+            await SgbdDaemon.pushData(this.ns, {
                 repository: Repository.EXECUTIONS, 
                 type: CommitType.GET_ALL
             } as CommitRequest);
