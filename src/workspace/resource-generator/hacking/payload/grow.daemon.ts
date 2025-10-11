@@ -6,7 +6,8 @@ import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
-    [DaemonFlags.oneshot, false]
+    [DaemonFlags.oneshot, false],
+    [DaemonFlags.threads, 1]
 ];
 //#endregion Constantes
 
@@ -23,7 +24,7 @@ export async function main(ns: NS) {
         ns.exit()
     }
     
-    daemon = new GrowDaemon(ns, input.targetHost, input.moneyThresh);
+    daemon = new GrowDaemon(ns, input.targetHost, input.moneyThresh, (scriptFlags[DaemonFlags.threads] as number));
     
     daemon.setupDashboard();
 
@@ -74,25 +75,27 @@ class GrowDaemon extends Daemon {
     private dashboard: Dashboard;
     private targetHost: string;
     private moneyThresh: number;
+    private nbThreads: number;
 
-    constructor(ns: NS, targetHost: string, moneyThresh: number) {
+    constructor(ns: NS, targetHost: string, moneyThresh: number, nbThreads: number = 1) {
         super(ns);
 
         this.targetHost = targetHost;
         this.moneyThresh = moneyThresh;
+        this.nbThreads = nbThreads;
         
-        this.dashboard = new Dashboard(ns, `Grow ${Log.target(this.targetHost, {colorless: true})}`, {icon: '📈💲', role: 'Daemon'});
+        this.dashboard = new Dashboard(
+            ns, 
+            `Grow ${Log.target(this.targetHost, {colorless: true})}${this.nbThreads > 1 ? ' x' + this.nbThreads : ''}`, 
+            {icon: '📈💲', role: 'Daemon'}
+        );
     }
     
     async work() {
         const currentMoney = this.ns.getServerMoneyAvailable(this.targetHost);
         this.ns.print(Log.threshold(this.ns, currentMoney, this.moneyThresh));
-        if (currentMoney < this.moneyThresh) {        
-            //const threadNeeded = ns.growthAnalyze(targetHost, moneyThresh - currentMoney);
-            //const avaliableRam: number = ns.getServerMaxRam(targetHost) - ns.getServerUsedRam(targetHost);
-            const nbThreads = 1//Math.min(threadNeeded, avaliableRam / 0.15);
-            
-            await this.ns.grow(this.targetHost, {threads:nbThreads});
+        if (currentMoney < this.moneyThresh) {
+            await this.ns.grow(this.targetHost, {threads:this.nbThreads});
         } else {
             await this.ns.asleep(500);
         }

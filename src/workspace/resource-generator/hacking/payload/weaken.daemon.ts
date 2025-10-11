@@ -6,7 +6,8 @@ import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
-    [DaemonFlags.oneshot, false]
+    [DaemonFlags.oneshot, false],
+    [DaemonFlags.threads, 1]
 ];
 //#endregion Constantes
 
@@ -18,7 +19,7 @@ export async function main(ns: NS) {
     // load input arguments
     const input: InputArg = getInput(ns);
 
-    daemon = new WeakenDaemon(ns, input.targetHost, input.securityThresh);
+    daemon = new WeakenDaemon(ns, input.targetHost, input.securityThresh, (scriptFlags[DaemonFlags.threads] as number));
     
     daemon.setupDashboard();
 
@@ -69,13 +70,19 @@ class WeakenDaemon extends Daemon {
     private dashboard: Dashboard;
     private targetHost: string;
     private securityThresh: number;
+    private nbThreads: number;
 
-    constructor(ns: NS, targetHost: string, securityThresh: number) {
+    constructor(ns: NS, targetHost: string, securityThresh: number, nbThreads: number = 1) {
         super(ns);
         
         this.targetHost = targetHost;
         this.securityThresh = securityThresh;
-        this.dashboard = new Dashboard(ns, `Weaken ${Log.target(this.targetHost, {colorless: true})}`, {icon: '📉🔒', role: 'Daemon'});
+        this.nbThreads = nbThreads;
+        this.dashboard = new Dashboard(
+            ns, 
+            `Weaken ${Log.target(this.targetHost, {colorless: true})}${this.nbThreads > 1 ? ' x' + this.nbThreads : ''}`, 
+            {icon: '📉🔒', role: 'Daemon'}
+        );
     }
 
     async work() {
@@ -83,7 +90,7 @@ class WeakenDaemon extends Daemon {
         this.ns.print(Log.threshold(this.ns, currentSecurityLevel, this.securityThresh));
         // If security level too high
         if (currentSecurityLevel > this.securityThresh) {
-            await this.ns.weaken(this.targetHost);
+            await this.ns.weaken(this.targetHost, {threads:this.nbThreads});
         } else {
             await this.ns.asleep(500);
         }
