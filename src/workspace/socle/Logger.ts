@@ -71,10 +71,10 @@ export class Logger {
         this.ns.print(count.padStart(Math.ceil((barSize - count.length) / 2) + pourcent.length));
         
         const message = pourcent
-            + '['
-            //+ (`${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`).padEnd(barSize)
-            + (`${Log.color(`${'█'.repeat(pourcentage)}`, color)}`).padEnd(barSize, '░')
-            + ']';
+            /*+ '['
+            + (`${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`).padEnd(barSize)
+            + ']'*/
+            + (`${Log.color(`${'█'.repeat(pourcentage)}`, color)}`).padEnd(barSize, '░');
         
         this.ns.print(message);
     }
