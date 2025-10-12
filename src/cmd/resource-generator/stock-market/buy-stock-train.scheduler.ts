@@ -38,6 +38,7 @@ class Main extends Headhunter<string> {
         this.setupDashboard();
     }
 
+    // TODO : save current state pour reprendre le travail apès avoir quitté le jeu
     protected async work(targets: string[]): Promise<any> {
         this.logger.log(`Start`);
         const workStartTime = new Date();
