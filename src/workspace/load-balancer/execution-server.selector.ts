@@ -143,7 +143,7 @@ export class ExecutionSelector {
                     // TODO : trouver une méthode plus explicite pour valider que le flag thread est à utiliser
                     // TODO : ici if possible car uniquement grow et weaken dans ce cas actuellement et qu'ils utilisent tous les deux le flag
                     if (THREAD_FLAG_SCRIPTS.includes(script.scriptsFilepath)) {
-                        script.args.push(`--${DaemonFlags.threads}=${orderThreadNumber}`)
+                        script.args = [...(script.args ?? []), `--${DaemonFlags.threads}=${orderThreadNumber}`]
                     }
                     orders.push({
                         sourceHostname: entry[0], 
