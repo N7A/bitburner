@@ -155,7 +155,9 @@ async function weakenToMax(ns: NS, threadToLaunch: number, targetHost: string, h
 
 const getGrowthNeededThreads = (ns: NS, targetHost: string, hackData: HackData) => {
     const currentMoney = Math.max(ns.getServerMoneyAvailable(targetHost), 1);
-    return Math.floor(ns.growthAnalyze(targetHost, Math.ceil(hackData.moneyMax as number / currentMoney), hackData.cpuCores));
+    const wantedPercent: number = 100/100
+    // TODO : preparer les commandes avec la prise en compte des cores -> executer en priorité sur le serveur avec le plus de cores
+    return Math.floor(ns.growthAnalyze(targetHost, (hackData.moneyMax as number / (currentMoney * wantedPercent))));
 }
 
 const getWeakenNeededThreads = (ns: NS, targetHost: string, hackData: HackData) => {
