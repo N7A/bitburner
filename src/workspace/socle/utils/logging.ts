@@ -260,7 +260,7 @@ export function threshold(ns: NS, currentValue: number, threshold: number): stri
     const difference = Math.abs(threshold - currentValue);
 
     if (threshold === currentValue) {
-        return `SUCCESS Threshold OK (' + ${ns.formatNumber(currentValue)} + ')`
+        return `SUCCESS Threshold OK (${ns.formatNumber(currentValue)})`
     }
 
     return ns.formatNumber(currentValue) + separateur + ns.formatNumber(threshold) + ' (' + ns.formatNumber(difference) + ')';
