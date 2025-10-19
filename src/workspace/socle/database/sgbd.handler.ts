@@ -17,6 +17,7 @@ const COMMIT_HANDLER_SCRIPT = "workspace/socle/database/sgbd.handler.ts";
 
 export class SgbdDaemon extends Daemon {
     //#region Constants
+    private static readonly NO_DATA = 'NULL PORT DATA';
     static readonly REQUEST_PORT = 1;
     static readonly RESPONSE_PORT = 2;
     //#endregion Constants
@@ -25,14 +26,19 @@ export class SgbdDaemon extends Daemon {
 
     constructor(ns: NS) {
         super(ns);
-            
+        
         this.executionsRepository = new ExecutionsRepository(ns);
     }
     
     async work(): Promise<any> {
-        if (this.ns.peek(SgbdDaemon.REQUEST_PORT) === 'NULL PORT DATA') {
-            await this.ns.nextPortWrite(SgbdDaemon.REQUEST_PORT);
+        // quand plus de requete en attente on maj le port du getAll
+        if (this.ns.peek(SgbdDaemon.REQUEST_PORT) === SgbdDaemon.NO_DATA) {
+            this.ns.clearPort(SgbdDaemon.RESPONSE_PORT);
+            await this.pushResponse(this.executionsRepository.getAll());
         }
+        await Broker.waitNewData(this.ns, SgbdDaemon.REQUEST_PORT);
+        // dès qu'on doit traiter une requete on invalide le port du getAll
+        this.ns.clearPort(SgbdDaemon.RESPONSE_PORT);
 
         const commitRequest: CommitRequest = this.ns.readPort(SgbdDaemon.REQUEST_PORT);
 
@@ -42,10 +48,7 @@ export class SgbdDaemon extends Daemon {
     }
 
     handleExecutionRequest(data: any, type: CommitType) {
-        if (type === CommitType.GET_ALL) {
-            this.ns.clearPort(SgbdDaemon.RESPONSE_PORT);
-            this.pushResponse(this.executionsRepository.getAll());
-        } else if (type === CommitType.ADD) {
+        if (type === CommitType.ADD) {
             this.executionsRepository.add(data);
         } else if (type === CommitType.SAVE) {
             this.executionsRepository.save(data);
@@ -65,7 +68,7 @@ export class SgbdDaemon extends Daemon {
     }
     
     static async getResponse(ns: NS): Promise<any> {
-        return await Broker.getResponse(ns, SgbdDaemon.RESPONSE_PORT);
+        return await Broker.peekResponse(ns, SgbdDaemon.RESPONSE_PORT);
     }
     
 }

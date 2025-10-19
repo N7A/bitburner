@@ -11,6 +11,12 @@ export class Broker {
         }
     }
     
+    static async waitEmptyPort(ns: NS, port: number): Promise<any> {
+        while(ns.peek(port) !== Broker.NO_DATA) {
+            ns.asleep(250);
+        }
+    }
+    
     static async waitNewData(ns: NS, port: number): Promise<any> {
         if (ns.peek(port) === Broker.NO_DATA) {
             await ns.nextPortWrite(port);
