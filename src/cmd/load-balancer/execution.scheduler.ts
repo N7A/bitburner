@@ -158,6 +158,8 @@ class ExecutionSchedulerDaemon extends Daemon {
             // TODO: alert ?
             // this.ns.print('Execution order killed : ', killedOrders.map(x => x.request.type + ' ' + x.request.target));
 
+            newRequest = await this.getExecutionOrders();
+
             // thread execution ended
             const killedOrders: RamResourceExecution[] = newRequest
                 .filter(x => x.request.request?.wantedThreadNumber !== undefined)
@@ -169,8 +171,6 @@ class ExecutionSchedulerDaemon extends Daemon {
                 break;
             }
             
-            newRequest = await this.getExecutionOrders();
-
             newRamBank = this.piggyBankRepository.getHash();
         } while (
             // requetes inchangées

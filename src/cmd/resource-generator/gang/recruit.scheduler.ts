@@ -3,6 +3,7 @@ import { MemberNamesService } from 'workspace/resource-generator/gang/MemberName
 import { GANG_LOGO } from 'workspace/resource-generator/gang/application-properties';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+import { Rank } from 'workspace/resource-generator/gang/model/Rank';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [

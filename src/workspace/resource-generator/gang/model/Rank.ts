@@ -1,5 +1,5 @@
 
-class Rank {
+export class Rank {
     static STAGIAIRE = new Rank('Larbin', '🔰');
     static JUNIOR = new Rank('Junior', '🎓');
     static CONFIRME = new Rank('Confirmé', '✅');
