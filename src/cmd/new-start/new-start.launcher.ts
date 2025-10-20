@@ -6,6 +6,7 @@ import { GangDirectiveRepository } from 'workspace/resource-generator/gang/domai
 import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders.service';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { GameService } from 'workspace/game/game.service';
+import { MemberNamesRepository } from "workspace/resource-generator/gang/domain/MemberNamesRepository";
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
@@ -29,6 +30,7 @@ class NewStart {
     private executionOrdersService: ExecutionOrdersService;
     private moneyPiggyBankService: MoneyPiggyBankService;
     private gangDirectiveRepository: GangDirectiveRepository;
+    private memberNamesRepository: MemberNamesRepository;
     private gameService: GameService;
 
     constructor(ns: NS) {
@@ -39,6 +41,7 @@ class NewStart {
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
         this.gangDirectiveRepository = new GangDirectiveRepository(ns);
         this.gameService = new GameService(ns);
+        this.memberNamesRepository = new MemberNamesRepository(ns)
     }
 
     run() {
@@ -62,6 +65,7 @@ class NewStart {
         this.serversRepository.reset();
         this.executionOrdersService.reset();
         this.gangDirectiveRepository.reset();
+        this.memberNamesRepository.reset();
         this.gameService.reset();
     }
 
