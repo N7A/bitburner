@@ -43,7 +43,7 @@ class GetBackupBonus extends Daemon {
     async work(): Promise<any> {
         if(this.ns.singularity.exportGameBonus()) {
             this.ns.singularity.exportGame();
-            this.logger.success(`${this.dashboard.icon} Backup bonus claim !`);
+            this.logger.success(`${this.dashboard.icon} Backup bonus claimed !`);
         }
     }
 
