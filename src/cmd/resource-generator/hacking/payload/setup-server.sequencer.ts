@@ -163,7 +163,8 @@ const getGrowthNeededThreads = (ns: NS, targetHost: string, hackData: HackData) 
 const getWeakenNeededThreads = (ns: NS, targetHost: string, hackData: HackData) => {
     const currentSecurity = ns.getServerSecurityLevel(targetHost);
     let weakenThreadNeeded = 0
-    while (currentSecurity - ns.weakenAnalyze(weakenThreadNeeded, hackData.cpuCores) > (hackData.minDifficulty as number)) {
+    // TODO : preparer les commandes avec la prise en compte des cores -> executer en priorité sur le serveur avec le plus de cores
+    while (currentSecurity - ns.weakenAnalyze(weakenThreadNeeded) > (hackData.minDifficulty as number)) {
         weakenThreadNeeded++;
     }
     return weakenThreadNeeded;

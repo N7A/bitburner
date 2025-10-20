@@ -139,11 +139,12 @@ export class ExecutionSelector {
                 const orderThreadNumber = Math.min(currentThreadPossible, maxThreadWanted);
 
                 if (orderThreadNumber > 0) {
+                    let args: ScriptArg[] = [...(script.args ?? [])];
                     // TODO : add flag thread pour payload aussi
                     // TODO : trouver une méthode plus explicite pour valider que le flag thread est à utiliser
                     // TODO : ici if possible car uniquement grow et weaken dans ce cas actuellement et qu'ils utilisent tous les deux le flag
                     if (THREAD_FLAG_SCRIPTS.includes(script.scriptsFilepath)) {
-                        script.args = [
+                        args = [
                             ...(script.args ? script.args.filter(x => typeof x !== 'string' || !(x as string).startsWith(`--${DaemonFlags.threads}=`)) : []), 
                             `--${DaemonFlags.threads}=${orderThreadNumber}`
                         ]
@@ -151,7 +152,7 @@ export class ExecutionSelector {
                     orders.push({
                         sourceHostname: entry[0], 
                         nbThread: orderThreadNumber, 
-                        request: script
+                        request: {scriptsFilepath: script.scriptsFilepath, args: args}
                     } as ExecutionOrder);
 
                     const ramUsed: number = orderThreadNumber * ramNeededByThread

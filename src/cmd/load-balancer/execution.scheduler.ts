@@ -108,6 +108,11 @@ class ExecutionSchedulerDaemon extends Daemon {
                 // maj pid processes
                 process.request.pid = [...(process.request.pid ?? []), pid];
             }
+            
+            // ignore DaemonFlags.threads
+            process.request.request?.scripts.forEach(x => {
+                x.args = x.args?.filter(arg => typeof arg !== 'string' || !(arg as string).startsWith(`--${DaemonFlags.threads}=`))
+            });
             await this.executionOrdersService.save(process.request);
         }
     }
