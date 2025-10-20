@@ -159,7 +159,7 @@ class ExecutionSchedulerDaemon extends Daemon {
             // this.ns.print('Execution order killed : ', killedOrders.map(x => x.request.type + ' ' + x.request.target));
 
             // thread execution ended
-            const killedOrders: RamResourceExecution[] = requests
+            const killedOrders: RamResourceExecution[] = newRequest
                 .filter(x => x.request.request?.wantedThreadNumber !== undefined)
                 .filter(x => x.request.pid?.every(y => !this.ns.isRunning(y)));
             for (const element of killedOrders.filter(x => x.request.request.wantedThreadNumber <= 0)) {

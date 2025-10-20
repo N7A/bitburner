@@ -37,7 +37,10 @@ export class PayloadExecution implements RamResourceExecution {
 
         const setupRequest = SetupHackExecution.getRequest(this.targetHostname);
         return (await this.executionOrdersService.getAll())
-            .some(x => ExecutionsRepository.getHash(setupRequest) === ExecutionsRepository.getHash(x))
+            .some(x => 
+                ExecutionsRepository.getHash(setupRequest) === ExecutionsRepository.getHash(x) 
+                && (x.request?.wantedThreadNumber ?? 0) > 0
+            )
         /*|| (ns.getServer(this.targetHost).moneyAvailable ?? 0) <= (ns.getServer(this.targetHost).moneyMax ?? 0) * 0.5*/;
     }
     
