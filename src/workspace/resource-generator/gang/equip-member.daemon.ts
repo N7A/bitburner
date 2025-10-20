@@ -70,12 +70,14 @@ export function killAfterLoop() {
 }
 
 class EquipMemberDaemon extends Daemon {
+    private logger: Logger;
     private dashboard: Dashboard;
     private memberName: string;
     private moneyPiggyBankService: MoneyPiggyBankService;
 
     constructor(ns: NS, memberName: string) {
         super(ns);
+        this.logger = new Logger(ns);
         this.memberName = memberName;
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
         this.dashboard = new Dashboard(ns, `${Log.source(this.memberName, {colorless: true})} Equip member`, {icon: '🎒', role: 'Daemon'});
@@ -83,6 +85,9 @@ class EquipMemberDaemon extends Daemon {
     
     async work() {
         let nextUpgrade = this.getNextUpgrade();
+        this.logger.log(Log.INFO('🔨 Prochaine amélioration d\'équipement', `${nextUpgrade} (${Log.money(this.ns, this.ns.gang.getEquipmentCost(nextUpgrade))})`));
+
+        this.logger.waiting('Waiting to have enough money');
         // wait purchase to be possible
         while(nextUpgrade !== null && this.moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money) < this.ns.gang.getEquipmentCost(nextUpgrade)) {
             // sleep to prevent crash because of infinite loop
@@ -91,6 +96,7 @@ class EquipMemberDaemon extends Daemon {
             // refresh nextUpgrade
             nextUpgrade = this.getNextUpgrade();
         }
+        this.logger.stopWaiting();
 
         if (nextUpgrade === null) {
             return;
