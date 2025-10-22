@@ -127,28 +127,28 @@ class AscensionMemberDaemon extends Daemon {
         return false;
     }
 
-    getRankIcon() {
+    getRankIcon(): string {
         if (this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult <= 0) {
-            return Rank.STAGIAIRE;
+            return Rank.STAGIAIRE.icon;
         } else if (
             this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult > 0
             && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 10
         ) {
-            return Rank.JUNIOR;
+            return Rank.JUNIOR.icon;
         } else if (
             this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 10
             && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 100
         ) {
-            return Rank.CONFIRME;
+            return Rank.CONFIRME.icon;
         } else if (
             this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 100
             && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 1000
         ) {
-            return Rank.SENIOR;
+            return Rank.SENIOR.icon;
         } else if (
             this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 1000
         ) {
-            return Rank.EXPERT;
+            return Rank.EXPERT.icon;
         }
     }
 
