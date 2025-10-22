@@ -129,11 +129,11 @@ class AscensionMemberDaemon extends Daemon {
 
     getAscensionMultiplcateurAverage(): number {
         return (this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult
-        + this.ns.gang.getMemberInformation(this.memberName).cha_asc_mult
-        + this.ns.gang.getMemberInformation(this.memberName).def_asc_mult
-        + this.ns.gang.getMemberInformation(this.memberName).dex_asc_mult
-        + this.ns.gang.getMemberInformation(this.memberName).hack_asc_mult
-        + this.ns.gang.getMemberInformation(this.memberName).str_asc_mult) / 6
+            + this.ns.gang.getMemberInformation(this.memberName).cha_asc_mult
+            + this.ns.gang.getMemberInformation(this.memberName).def_asc_mult
+            + this.ns.gang.getMemberInformation(this.memberName).dex_asc_mult
+            + this.ns.gang.getMemberInformation(this.memberName).hack_asc_mult
+            + this.ns.gang.getMemberInformation(this.memberName).str_asc_mult) / 6
     }
 
     getRankIcon(): string {
