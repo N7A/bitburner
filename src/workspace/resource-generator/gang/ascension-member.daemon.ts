@@ -3,6 +3,7 @@ import * as Log from 'workspace/socle/utils/logging';
 import { Logger } from 'workspace/socle/Logger';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+import { Rank } from 'workspace/resource-generator/gang/model/Rank';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
