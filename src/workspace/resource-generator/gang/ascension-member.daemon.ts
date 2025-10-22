@@ -127,26 +127,36 @@ class AscensionMemberDaemon extends Daemon {
         return false;
     }
 
+    getAscensionMultiplcateurAverage(): number {
+        return (this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult
+        + this.ns.gang.getMemberInformation(this.memberName).cha_asc_mult
+        + this.ns.gang.getMemberInformation(this.memberName).def_asc_mult
+        + this.ns.gang.getMemberInformation(this.memberName).dex_asc_mult
+        + this.ns.gang.getMemberInformation(this.memberName).hack_asc_mult
+        + this.ns.gang.getMemberInformation(this.memberName).str_asc_mult) / 6
+    }
+
     getRankIcon(): string {
-        if (this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult <= 0) {
+        const average = this.getAscensionMultiplcateurAverage();
+        if (average <= 0) {
             return Rank.STAGIAIRE.icon;
         } else if (
-            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult > 0
-            && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 10
+            average > 0
+            && average < 1
         ) {
             return Rank.JUNIOR.icon;
         } else if (
-            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 10
-            && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 100
+            average >= 1
+            && average < 2
         ) {
             return Rank.CONFIRME.icon;
         } else if (
-            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 100
-            && this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult < 1000
+            average >= 2
+            && average < 3
         ) {
             return Rank.SENIOR.icon;
         } else if (
-            this.ns.gang.getMemberInformation(this.memberName).agi_asc_mult >= 1000
+            average >= 3
         ) {
             return Rank.EXPERT.icon;
         }
