@@ -89,8 +89,10 @@ class AscensionMemberDaemon extends Daemon {
         // achat de l'equipement
         this.ns.gang.ascendMember(this.memberName);
         const newName = this.memberName.split('|')[0] + '|' + this.getRankIcon();
-        this.ns.gang.renameMember(this.memberName, newName);
-        this.memberName = newName;
+        if (newName !== this.memberName) {
+            this.ns.gang.renameMember(this.memberName, newName);
+            this.memberName = newName;
+        }
         this.ns.print(`✨🆙︽ ${this.memberName} ascension ! ✨`);
         this.ns.print(`Respect perdu : ${reputationLost}`);
     }
