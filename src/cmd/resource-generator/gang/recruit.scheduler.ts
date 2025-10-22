@@ -48,9 +48,9 @@ class Main extends Headhunter<string> {
         const recruitsAvailable: number = this.ns.gang.getRecruitsAvailable();
         if (recruitsAvailable > 0) {
             // select name
-            const newMember = this.memberNamesService.getNextName();
+            const newMember = this.memberNamesService.getNextName() + '|' + Rank.STAGIAIRE.icon;
 
-            this.ns.gang.recruitMember(newMember + '|' + Rank.STAGIAIRE.icon);
+            this.ns.gang.recruitMember(newMember);
             const role = Rank.STAGIAIRE.name.toLowerCase();
             const resumeParcour = '{parcour à alimenter}'
             this.ns.print(`✨ ${GANG_LOGO}🆕🔰 ${newMember} recruitment ! ✨`);
