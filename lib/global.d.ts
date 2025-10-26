@@ -26,6 +26,37 @@ declare global {
     type CodingContractObject = bitburner.CodingContractObject
     type CodingContractName = bitburner.CodingContractName
     type Player = bitburner.Player
+    interface WorkStats extends bitburner.WorkStats {}
+
+    enum UniversityClassType {
+        computerScience = "Computer Science",
+        dataStructures = "Data Structures",
+        networks = "Networks",
+        algorithms = "Algorithms",
+        management = "Management",
+        leadership = "Leadership",
+    }
+
+    enum UniversityLocationName {
+      AevumSummitUniversity = "Summit University",
+      Sector12RothmanUniversity = "Rothman University",
+      VolhavenZBInstituteOfTechnology = "ZB Institute of Technology",
+    }
+
+    enum GymLocationName {
+        AevumCrushFitnessGym = "Crush Fitness Gym",
+        AevumSnapFitnessGym = "Snap Fitness Gym",
+        Sector12IronGym = "Iron Gym",
+        Sector12PowerhouseGym = "Powerhouse Gym",
+        VolhavenMilleniumFitnessGym = "Millenium Fitness Gym",
+    }
+
+    enum GymType {
+        strength = "str",
+        defense = "def",
+        dexterity = "dex",
+        agility = "agi",
+    }
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 
