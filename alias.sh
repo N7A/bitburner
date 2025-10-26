@@ -1,7 +1,6 @@
 alias again="run /cmd/new-start/new-start.launcher.ts"
 alias friday-mep="run /cmd/new-start/friday-mep.launcher.ts"
 alias infect="run /cmd/resource-generator/hacking/infection/auto-infection.launcher.ts"
-alias targets="run /cmd/analyze/getCurrentTargets.ts"
 alias info-self="run /cmd/analyze/self.info.ts"
 alias info-server="run /cmd/servers/server.info.ts"
 alias info-contracts="run /cmd/resource-generator/coding-contract/contract.info.ts"

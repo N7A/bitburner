@@ -88,6 +88,13 @@ export enum Color {
     MAGENTA = "\u001b[35m",
     CYAN = "\u001b[36m",
     WHITE = "\u001b[37m",
+    BOLD_RED = "\u001b[31;1m",
+    BOLD_GREEN = "\u001b[32;1m",
+    BOLD_YELLOW = "\u001b[33;1m",
+    BOLD_BLUE = "\u001b[34;1m",
+    BOLD_MAGENTA = "\u001b[35;1m",
+    BOLD_CYAN = "\u001b[36;1m",
+    BOLD_WHITE = "\u001b[37;1m",
 }
 
 export enum BackgrounColor {

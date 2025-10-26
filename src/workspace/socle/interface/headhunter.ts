@@ -1,5 +1,6 @@
 import * as Log from 'workspace/socle/utils/logging';
 import * as Properties from 'workspace/socle/application-properties'
+import { Logger } from 'workspace/socle/Logger';
 
 /**
  * Execute en boucle une séquence ayant pour ressource une cible.
@@ -11,6 +12,7 @@ export class Headhunter<T> {
     //#endregion input parameters
 
     protected ns: NS;
+    protected logger: Logger
     private waitNewTargets: boolean;
     private runHasLoop: boolean = true;
     private durationLimit?: number;
@@ -27,6 +29,7 @@ export class Headhunter<T> {
         durationLimit?: number
     ) {
         this.ns = ns;
+        this.logger = new Logger(ns);
         this.waitNewTargets = waitNewTargets;
         this.durationLimit = durationLimit;
     }
@@ -34,21 +37,24 @@ export class Headhunter<T> {
     async run() {
         const threadStartTime: Date = new Date();
 
-        let targets = await this.getTargets();
+        let targets: T[];
 
         do {
             const workStartTime = new Date();
 
+            // refresh targets
+            targets = await this.getTargets();
+            if (this.waitNewTargets && targets !== undefined) {
+                this.logger.info(Log.INFO('Nombre de cibles restantes', targets.length));
+            }
+
             const message = targets?.length < 10 ? JSON.stringify(targets) : `(${targets.length})`
-            this.ns.print(Log.INFO('Selected targets', message));
+            this.logger.info(Log.INFO('Selected targets', message));
 
             await this.work(targets);
 
             const workEndTime = new Date();
             this.refreshDashBoard(threadStartTime, workStartTime, workEndTime);
-
-            // refresh targets
-            targets = await this.getTargets();
 
             if (this.needLoop(threadStartTime, targets)) {
                 // TODO : adapt waiting time
@@ -59,13 +65,11 @@ export class Headhunter<T> {
         } while (this.needLoop(threadStartTime, targets))
 
         if(this.isTargetOut(targets)) {
-            this.ns.print('No more targets');
+            this.logger.success('No more targets');
         }
     }
 
-    protected async work(targets: T[]): Promise<any> {
-
-    }
+    protected async work(targets: T[]): Promise<any> {}
 
     protected async getTargets(): Promise<T[]> {
         return [];
@@ -97,13 +101,13 @@ export class Headhunter<T> {
 
     //#region Dashboard    
     protected refreshDashBoard(threadStartTime: Date, workStartTime: Date, workEndTime: Date) {
-        this.ns.print(Log.getStartLog());
+        this.logger.info(Log.getStartLog());
         const shareDuration = new Date(workEndTime.getTime() - workStartTime.getTime())
-        this.ns.print(Log.INFO("Thread start time", Log.time(threadStartTime)));
-        this.ns.print(Log.INFO("Last work time",  Log.time(workEndTime)));
-        this.ns.print(Log.INFO("Last work duration",  Log.duration(shareDuration)));
-        this.ns.print('-'.repeat(10));
-        this.ns.print(Log.getEndLog());
+        this.logger.info(Log.INFO("Thread start time", Log.time(threadStartTime)));
+        this.logger.info(Log.INFO("Last work time",  Log.time(workEndTime)));
+        this.logger.info(Log.INFO("Last work duration",  Log.duration(shareDuration)));
+        this.logger.info('-'.repeat(10));
+        this.logger.info(Log.getEndLog());
     }
     //#endregion Dashboard
 }

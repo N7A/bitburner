@@ -8,7 +8,6 @@ import {getPortPrograms} from 'workspace/resource-generator/hacking/model/PortPr
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
-import { Logger } from 'workspace/socle/Logger';
 
 //#region Constants
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
@@ -35,13 +34,11 @@ export async function main(ns: NS) {
 }
 
 class Main extends Headhunter<string> {
-    private logger: Logger
     private dashboard: Dashboard;
 
     constructor(ns: NS) {
         // waitNewTargets = false : targets fix and auto discovered
         super(ns, false)
-        this.logger = new Logger(ns);
         this.dashboard = new Dashboard(ns, 'Infection', {icon: '🦠', role: 'Scheduler'});
         this.setupDashboard();
     }
@@ -134,10 +131,31 @@ class Main extends Headhunter<string> {
         this.ns.alert(title + '\n\n' + todoList.join('\n'));
     }
 
+    /**
+     * 
+     * @param newNextTarget 
+     * 
+     * @remarks RAM cost: 0.5 GB
+     */
     refreshDashbord(newNextTarget: ServerData) {
-        this.logger.log(Log.INFO('Next target', newNextTarget.name));
-        this.logger.log(Log.INFO('Next target ports needed', newNextTarget.unlockRequirements.numOpenPortsRequired));
-        this.logger.log(Log.INFO('Next target lvl needed', newNextTarget.unlockRequirements.requiredHackingSkill));
+        this.logger.log(Log.title('Next target'));
+        this.logger.log(Log.INFO('Name', newNextTarget.name));
+
+        const numAvailablePortOpener = getAvailablePortProgram(this.ns).length;
+        const numOpenPortsRequired = newNextTarget.unlockRequirements.numOpenPortsRequired;
+        if (numAvailablePortOpener >= numOpenPortsRequired) {
+             this.logger.success(`Enough port opener (${numOpenPortsRequired})`);
+        } else {
+            this.logger.log(Log.INFO('Ports opener available', `${numAvailablePortOpener} / ${numOpenPortsRequired}`));
+        }
+        
+        const currentHackingLevel = this.ns.getPlayer().skills.hacking;
+        const requiredHackingSkill = newNextTarget.unlockRequirements.requiredHackingSkill;
+        if (currentHackingLevel >= requiredHackingSkill) {
+             this.logger.success(`Enough hacking level (${requiredHackingSkill})`);
+        } else {
+            this.logger.log(Log.INFO('Next target lvl needed', `${currentHackingLevel} / ${requiredHackingSkill}`));
+        }
     }
 
     isKillConditionReached(): boolean {
@@ -147,6 +165,10 @@ class Main extends Headhunter<string> {
     }
 
     //#region Dashboard
+    /**
+     * 
+     * @remarks RAM cost: 0 GB
+     */
     setupDashboard() {
         this.ns.disableLog("ALL");
         this.ns.clearLog();
