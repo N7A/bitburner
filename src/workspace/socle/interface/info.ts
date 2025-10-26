@@ -1,4 +1,5 @@
 import * as Log from 'workspace/socle/utils/logging';
+import { Logger } from 'workspace/socle/Logger';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 
 /**
@@ -7,11 +8,13 @@ import { Dashboard } from 'workspace/socle/interface/dashboard';
  */
 export class Info {
     protected ns: NS;
+    protected logger: Logger
     protected target: string;
     private dashboard: Dashboard;
 
     constructor(ns: NS, target: string) {
         this.ns = ns;
+        this.logger = new Logger(ns);
         this.target = target;
         this.dashboard = new Dashboard(ns, Log.target(this.target, {colorless: true}), {icon: 'ℹ️', role: 'info'});
     }
@@ -23,11 +26,11 @@ export class Info {
     run() {
         this.setupDashboard();
     
-        this.ns.print(Log.getStartLog());
+        this.logger.log(Log.getStartLog());
     
         this.printData();
 
-        this.ns.print(Log.getEndLog());
+        this.logger.log(Log.getEndLog());
 
         Log.setTailSize(this.ns);
     }
