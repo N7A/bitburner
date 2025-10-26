@@ -1,5 +1,3 @@
-/cmd/analyze/getCurrentTargets.ts
-/cmd/analyze/getDeeperServerKnown.ts
 /cmd/analyze/self.info.ts
 /cmd/job/work.scheduler.ts
 /cmd/load-balancer/domain/payload.disable.ts
