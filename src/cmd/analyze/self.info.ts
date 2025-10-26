@@ -19,88 +19,113 @@ class PlayerInfo extends Info {
 	}
 
     printData() {
-		this.showPlayerStats();
-		this.ns.print('\n')
-		this.showProductionInfo();
-		this.ns.print('\n')
-		this.showServeurs();
-		this.ns.print('\n')
-		this.showFactionsData();
-		this.ns.print('\n')
-		this.showScriptFeatures();
-		this.ns.print('\n')
-		this.showResetInfo();
-		this.ns.print('\n')
-		this.showBitnode();
+		let player = this.ns.getPlayer();
+		
+		this.getMessages(player)
+			.forEach(message => this.logger.log(message));
 	}
 
-	showPlayerStats() {
-		let player = this.ns.getPlayer();
+	getMessages(data: Player): string[] {
+		return [
+			...this.showPlayerStats(data),
+			'\n',
+			...this.showProductionInfo(),
+			'\n',
+			...this.showServeurs(),
+			'\n',
+			...this.showFactionsData(data),
+			'\n',
+			...this.showScriptFeatures(),
+			'\n',
+			...this.showResetInfo(),
+			'\n',
+			...this.showBitnode()
+		]
+	}
+
+	showPlayerStats(data: Player): string[] {
 		let hackingLevel = this.ns.getHackingLevel();
-		this.ns.print(Log.INFO("Hacking Level", hackingLevel));
-		//this.ns.print(Log.INFO("Entropy", player.entropy));
-		this.ns.print(Log.INFO("People Killed", player.numPeopleKilled));
-		this.ns.print(Log.INFO("Karma", this.ns.heart.break().toFixed(2)));
+		return [
+			Log.INFO("Hacking Level", hackingLevel),
+			//Log.INFO("Entropy", player.entropy)
+			Log.INFO("People Killed", data.numPeopleKilled),
+			Log.INFO("Karma", this.ns.heart.break().toFixed(2))
+		]
 	}
 
-	showFactionsData() {
-		let player = this.ns.getPlayer();
-		this.ns.print(Log.title("Faction"));
-		this.ns.print(Log.INFO(`Factions (${Log.color(player.factions.length.toString(), Log.Color.CYAN)})`, `${player.factions}`));
-		this.ns.print(Log.INFO("Share Power", this.ns.getSharePower()));
-	}
-
-	showScriptFeatures() {
-		this.ns.print(Log.title("Script features"));
-		this.ns.print(Log.INFO('Formulas API', this.gameRepository.getData().hasFormulas));
-		this.ns.print(Log.INFO("Singularity API", this.gameRepository.getData().hasSingularity));
-	}
-
-	showResetInfo() {
-		this.ns.print(Log.title("Reset info"));
-		this.ns.print(`${Log.date(this.ns, new Date(this.ns.getResetInfo().lastAugReset))} since last augmentation reset`);
-		this.ns.print(Log.INFO('Augmentations', this.ns.getResetInfo().ownedAugs.size));
-	}
-
-	showProductionInfo() {
-		this.ns.print(Log.title("Production"));
-		this.ns.print(Log.INFO("Current script production", Log.money(this.ns, this.ns.getTotalScriptIncome()[0]), '/s'));
+	showProductionInfo(): string[] {
 		// get current node number
 		const numNodes = this.ns.hacknet.numNodes();
 		let hacknetProduction: number = 0;
 		for (let i = 0; i < numNodes; i++) {
 			hacknetProduction += this.ns.hacknet.getNodeStats(i).production;
 		}
-		this.ns.print(Log.INFO("Current Hacknet production", Log.money(this.ns, hacknetProduction), '/s'));
-		this.ns.print(Log.INFO("Script production augmentation since augmentation", Log.money(this.ns, this.ns.getTotalScriptIncome()[1]), '/s'));
+
+		return [
+			Log.title("Production"),
+			Log.INFO("Current script production", Log.money(this.ns, this.ns.getTotalScriptIncome()[0]), '/s'),
+			Log.INFO("Current Hacknet production", Log.money(this.ns, hacknetProduction), '/s'),
+			Log.INFO("Script production augmentation since augmentation", Log.money(this.ns, this.ns.getTotalScriptIncome()[1]), '/s')
+		]
 	}
 
-	showServeurs() {
-		this.ns.print(Log.title("Server"));
-		this.ns.print(Log.color("Home", Log.Color.MAGENTA));
-		this.ns.print(Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer().ramUsed) + '/' + this.ns.formatNumber(this.ns.getServer().maxRam)));
-		this.ns.print('\n')
-		this.ns.print(Log.color("Servers owned", Log.Color.CYAN), ` (${Log.color(this.ns.getPurchasedServers().length.toString(), Log.Color.CYAN)})`);
+	showServeurs(): string[] {
+		let message: string[] = [
+			Log.title("Server"),
+			Log.color("Home", Log.Color.MAGENTA),
+			Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer().ramUsed) + '/' + this.ns.formatNumber(this.ns.getServer().maxRam)),
+			'\n',
+			Log.color("Servers owned", Log.Color.CYAN), ` (${Log.color(this.ns.getPurchasedServers().length.toString(), Log.Color.CYAN)})`
+		]
 		for (const owned of this.ns.getPurchasedServers()) {
-			this.ns.print(Log.color(owned, Log.Color.YELLOW));
-			this.ns.print(Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer(owned).ramUsed) + 
+			message.push(Log.color(owned, Log.Color.YELLOW));
+			message.push(Log.INFO("Used RAM", this.ns.formatNumber(this.ns.getServer(owned).ramUsed) + 
 			'/' + this.ns.formatNumber(this.ns.getServer(owned).maxRam)));
 		}
+		return message;
 	}
 	
+	showFactionsData(data: Player): string[] {
+		return [
+			Log.title("Faction"),
+			Log.INFO(`Factions (${Log.color(data.factions.length.toString(), Log.Color.CYAN)})`, `${data.factions}`),
+			Log.INFO("Share Power", this.ns.getSharePower())
+		]
+	}
+
+	showScriptFeatures(): string[] {
+		return [
+			Log.title("Script features"),
+			Log.INFO('Formulas API', this.gameRepository.getData().hasFormulas),
+			Log.INFO("Singularity API", this.gameRepository.getData().hasSingularity)
+		]
+	}
+
+	showResetInfo(): string[] {
+		return [
+			Log.title("Reset info"),
+			`${Log.date(this.ns, new Date(this.ns.getResetInfo().lastAugReset))} since last augmentation reset`,
+			Log.INFO('Augmentations', this.ns.getResetInfo().ownedAugs.size)
+		]
+	}
+
 	showBitnode() {
 		const currentNode: number = this.ns.getResetInfo().currentNode;
 
-		this.ns.print(Log.title("Bitnode"));
-		this.ns.print(Log.INFO('Current node', currentNode));
-		this.ns.print(`${Log.date(this.ns, new Date(this.ns.getResetInfo().lastNodeReset))} since last BitNode reset`);
+		let message: string[] = [
+			Log.title("Bitnode"),
+			Log.INFO('Current node', currentNode),
+			`${Log.date(this.ns, new Date(this.ns.getResetInfo().lastNodeReset))} since last BitNode reset`
+		];
 		
 		if (this.ns.getResetInfo().ownedSF.has(5)) {
 			const bitNodeLvl = this.ns.getResetInfo().bitNodeOptions.sourceFileOverrides.get(currentNode) 
 				?? this.ns.getResetInfo().ownedSF.get(currentNode) 
 				?? 0;
-			this.ns.print(this.ns.getBitNodeMultipliers(currentNode, bitNodeLvl));
+			message.push(JSON.stringify(this.ns.getBitNodeMultipliers(currentNode, bitNodeLvl), null, 4));
 		}
+
+		return message;
 	}
 
 }

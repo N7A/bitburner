@@ -25,6 +25,7 @@ declare global {
     type CityName = bitburner.CityName
     type CodingContractObject = bitburner.CodingContractObject
     type CodingContractName = bitburner.CodingContractName
+    type Player = bitburner.Player
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];
 
