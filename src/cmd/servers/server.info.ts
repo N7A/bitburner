@@ -78,7 +78,7 @@ class ServerInfo extends Info {
     
     getMessages(data: Server): string[] {
         return [
-            Log.INFO('Organisation', this.data.organizationName),
+            Log.INFO('Organisation', data.organizationName),
             '\n',
             ...this.getInfectionData(data),
             '\n',
