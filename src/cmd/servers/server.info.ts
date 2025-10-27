@@ -91,14 +91,14 @@ class ServerInfo extends Info {
     getInfectionData(data: Server): string[] {
         let messages: string[] = [
             Log.title('Nuke data'),
-            Log.INFO('Unlocked : ', this.data.hasAdminRights)
+            Log.INFO('Unlocked : ', data.hasAdminRights)
         ];
         if (!this.data.hasAdminRights) {
             messages.push(Log.INFO('Unlock possible', this.nukeAchievable(data)));
             messages.push(Log.INFO('Hacking level requis', data.requiredHackingSkill));
             messages.push(Log.INFO('Ports requis', data.numOpenPortsRequired - data.openPortCount));
             messages.push(Log.INFO('Backdoor installé', data.backdoorInstalled));
-        } else if (!this.data.backdoorInstalled) {
+        } else if (!data.backdoorInstalled) {
             messages.push(Log.INFO('Deep connect command', this.service.getConnectCommand(data.hostname) + ' backdoor;'));
         } else {
             messages.push(Log.INFO('Deep connect command', `connect ${data.hostname};`));
