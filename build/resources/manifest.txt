@@ -1,5 +1,4 @@
 /cmd/analyze/self.info.ts
-/cmd/job/work.scheduler.ts
 /cmd/load-balancer/domain/payload.disable.ts
 /cmd/load-balancer/domain/payload.enable.ts
 /cmd/load-balancer/domain/setup.disable.ts
@@ -41,6 +40,7 @@
 /cmd/resource-generator/infiltration/infiltration.headhunter.ts
 /cmd/resource-generator/infiltration/infiltration.info.ts
 /cmd/resource-generator/infiltration/infiltration.launcher.ts
+/cmd/resource-generator/job/work.scheduler.ts
 /cmd/resource-generator/stock-market/buy-stock.scheduler.ts
 /cmd/resource-generator/stock-market/buy-stock-train.scheduler.ts
 /cmd/resource-generator/stock-market/sell-stock.worker.ts
@@ -160,6 +160,7 @@
 /workspace/resource-generator/infiltration/model/InfiltrationDifficulty.ts
 /workspace/resource-generator/job/job.selector.ts
 /workspace/resource-generator/job/model/JobOrder.ts
+/workspace/resource-generator/job/model/WorkExperienceType.ts
 /workspace/resource-generator/stock-market/buy-stock.selector.ts
 /workspace/resource-generator/stock-market/model/WseUpgrade.ts
 /workspace/resource-generator/stock-market/purchase-4s-market-data.worker.ts
