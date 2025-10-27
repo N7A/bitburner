@@ -49,7 +49,7 @@ export class Headhunter<T> {
             }
 
             const message = targets?.length < 10 ? JSON.stringify(targets) : `(${targets.length})`
-            this.logger.info(Log.INFO('Selected targets', message));
+            this.logger.trace(Log.INFO('Selected targets', message));
 
             await this.work(targets);
 
