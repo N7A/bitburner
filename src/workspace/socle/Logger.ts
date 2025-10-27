@@ -131,6 +131,7 @@ export class Logger {
     }
     
     private printTerminal(message: string) {
-        this.ns.tprintf(`${message}`);
+        // %% caractère d'échappement pour %
+        this.ns.tprintf(`${message.replace('%', '%%')}`);
     }
 }

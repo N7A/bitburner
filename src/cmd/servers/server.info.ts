@@ -116,7 +116,7 @@ class ServerInfo extends Info {
     }
 
     getPayloadData(data: Server): string[] {
-        const percentMoney = (data.moneyMax as number) > 0 ? (data.moneyAvailable as number) / (data.moneyMax as number) : 0;
+        const percentMoney: number = (data.moneyMax as number) > 0 ? (data.moneyAvailable as number) / (data.moneyMax as number) : 0;
 
         return [
             Log.title('Hack data'),
