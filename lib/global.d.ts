@@ -17,6 +17,7 @@ declare global {
     type CrimeType = bitburner.CrimeType
     type MoneyRequirement = bitburner.MoneyRequirement
     type CompanyName = bitburner.CompanyName
+    type FactionName = bitburner.FactionName
     type CompanyPositionInfo = bitburner.CompanyPositionInfo
     type CompanyWorkTask = bitburner.CompanyWorkTask
     type LocationName = bitburner.LocationName
@@ -27,16 +28,10 @@ declare global {
     type CodingContractName = bitburner.CodingContractName
     type Player = bitburner.Player
     interface WorkStats extends bitburner.WorkStats {}
-
-    enum UniversityClassType {
-        computerScience = "Computer Science",
-        dataStructures = "Data Structures",
-        networks = "Networks",
-        algorithms = "Algorithms",
-        management = "Management",
-        leadership = "Leadership",
-    }
-
+    type UniversityClassType = bitburner.UniversityClassType
+    type GymType = bitburner.GymType
+    type FactionWorkType = bitburner.FactionWorkType
+    
     enum UniversityLocationName {
       AevumSummitUniversity = "Summit University",
       Sector12RothmanUniversity = "Rothman University",
@@ -49,13 +44,6 @@ declare global {
         Sector12IronGym = "Iron Gym",
         Sector12PowerhouseGym = "Powerhouse Gym",
         VolhavenMilleniumFitnessGym = "Millenium Fitness Gym",
-    }
-
-    enum GymType {
-        strength = "str",
-        defense = "def",
-        dexterity = "dex",
-        agility = "agi",
     }
 
     type AutocompleteConfig = [string, string | number | boolean | string[]][];

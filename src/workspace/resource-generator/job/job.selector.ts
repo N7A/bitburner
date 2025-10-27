@@ -5,12 +5,16 @@ function getCompanies(ns: NS): CompanyName[] {
     return Array.from(Object.values(ns.enums.CompanyName));
 }
 
-function getUniversities(ns: NS): UniversityLocationName[] {
+function getUniversities(): UniversityLocationName[] {
     return Array.from(Object.values(UniversityLocationName));
 }
 
-function getGyms(ns: NS): GymLocationName[] {
+function getGyms(): GymLocationName[] {
     return Array.from(Object.values(GymLocationName));
+}
+
+function getFactions(ns: NS): FactionName[] {
+    return Array.from(Object.values(ns.enums.FactionName));
 }
 
 /**
@@ -44,7 +48,7 @@ function getBestGym(ns: NS, type: WorkExperienceType) {
     }[] = []
     let bestExperience: number;
 
-    const gyms = getGyms(ns)
+    const gyms = getGyms()
         .flatMap(locationName => Array.from(Object.values(ns.enums.GymType)).map(gymType => {
             return {
                     location: locationName,
@@ -72,7 +76,7 @@ function getBestCourse(ns: NS, type: WorkExperienceType) {
     }[] = []
     let bestExperience: number;
 
-    const courses = getUniversities(ns)
+    const courses = getUniversities()
         .flatMap(university => Array.from(Object.values(ns.enums.UniversityClassType)).map(classType => {
             return {
                     university: university,
@@ -91,6 +95,34 @@ function getBestCourse(ns: NS, type: WorkExperienceType) {
     }
 
     return bestCourses;
+}
+
+function getBestFaction(ns: NS, type: WorkExperienceType) {
+    let bestFactions: {
+        faction: FactionName,
+        workType: FactionWorkType
+    }[] = []
+    let bestExperience: number;
+    
+    const factions = getFactions(ns)
+        .flatMap(faction => Array.from(Object.values(ns.singularity.getFactionWorkTypes(faction))).map(workType => {
+            return {
+                    faction: faction,
+                    workType: workType
+                }
+        }));
+
+    for (const faction of factions) {
+        const currentExperience = ns.formulas.work.factionGains(ns.getPlayer(), faction.workType, ns.singularity.getFactionFavor(faction.faction))[type];
+        if (bestExperience < currentExperience) {
+            bestExperience = currentExperience;
+            bestFactions = [faction]
+        } else if (bestExperience === currentExperience) {
+            bestFactions.push(faction)
+        }
+    }
+
+    return bestFactions;
 }
 
 /**
