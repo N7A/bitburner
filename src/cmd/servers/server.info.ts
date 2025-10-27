@@ -93,7 +93,7 @@ class ServerInfo extends Info {
             Log.title('Nuke data'),
             Log.INFO('Unlocked : ', data.hasAdminRights)
         ];
-        if (!this.data.hasAdminRights) {
+        if (!data.hasAdminRights) {
             messages.push(Log.INFO('Unlock possible', this.nukeAchievable(data)));
             messages.push(Log.INFO('Hacking level requis', data.requiredHackingSkill));
             messages.push(Log.INFO('Ports requis', data.numOpenPortsRequired - data.openPortCount));
