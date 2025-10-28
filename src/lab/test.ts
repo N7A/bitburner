@@ -3,11 +3,6 @@ import * as Log from 'workspace/socle/utils/logging';
 export async function main(ns: NS) {
     //ns.print(ns.getRunningScript())
     //ns.print(ns.ps())
-    /*ns.clearPort(1)
-    ns.tprint(ns.readPort(1))
-    ns.alert('test \n 1')*/
-    //ns.tprint(JSON.stringify(ns.getServer('home')));
-    //ns.tprint(JSON.stringify(ns.getServer('f1rst')));
     
     //ns.singularity.getDarkwebProgramCost()
     //ns.singularity.createProgram
@@ -17,10 +12,6 @@ export async function main(ns: NS) {
     //showCrimes(ns);
     
     //showFactions(ns);
-
-    const data: string = '668176211';
-    ns.tprint(data);
-    //ns.tprint(getSolution(ns, data));
 }
 
 function showCrimes(ns: NS) {

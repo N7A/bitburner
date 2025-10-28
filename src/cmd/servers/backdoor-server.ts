@@ -1,4 +1,5 @@
 import * as Log from 'workspace/socle/utils/logging';
+import { Logger } from 'workspace/socle/Logger';
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 import { ServersService } from 'workspace/servers/servers.service';
 import { Dashboard } from 'workspace/socle/interface/dashboard';
@@ -7,6 +8,8 @@ import { Dashboard } from 'workspace/socle/interface/dashboard';
  * @requires singularity
  * @param ns 
  * @param scanTarget 
+ * 
+ * @remarks RAM cost: 7.95 GB
  */
 export async function main(ns: NS) {
     // load input arguments
@@ -48,32 +51,47 @@ async function getInput(ns: NS): Promise<InputArg> {
 
 class BackdoorServerWorker {
     private ns: NS;
+    private logger: Logger
     private targetHostname: string;
     private serversService: ServersService;
     private dashboard: Dashboard;
 
     constructor(ns: NS, targetHostname: string) {
         this.ns = ns;
+        this.logger = new Logger(ns);
         this.targetHostname = targetHostname;
         this.serversService = new ServersService(ns);
         this.dashboard = new Dashboard(ns, `Backdoor ${Log.target(this.targetHostname, {colorless: true})}`, {icon: '🚪', role: 'Worker'});
     }
 
     async work() {
-        // check if connect target host currently possible
-        if (this.serversService.isHostConnectionPossible(this.targetHostname)) {
-            // get host path to target host
-            const hostPath: string[] = this.serversService.getHostPath(this.targetHostname);
-
-            // target host connection
-            hostPath.forEach(x => this.ns.singularity.connect(x));
-            
-            // backdoor intallation
-            await this.ns.singularity.installBackdoor();
-
-            // go back home
-            this.ns.singularity.connect('home');
+        // check if backdoor already installed
+        if (this.ns.getServer(this.targetHostname).backdoorInstalled) {
+            this.logger.warn(`Backdoor already installed on ${this.targetHostname}`);
+            return
         }
+        // check if connect target host currently possible
+        if (!this.serversService.isHostConnectionPossible(this.targetHostname)) {
+            this.logger.err(`Backdoor currently impossible to install on ${this.targetHostname}`);
+            return
+        }
+
+        // get host path to target host
+        const hostPath: string[] = this.serversService.getHostPath(this.targetHostname);
+
+        // target host connection
+        hostPath.forEach(currentHost => {
+            this.ns.singularity.connect(currentHost);
+            if (this.targetHostname !== currentHost) {
+                this.ns.singularity.installBackdoor();
+            }
+        });
+        
+        // backdoor intallation
+        await this.ns.singularity.installBackdoor();
+
+        // go back home
+        this.ns.singularity.connect('home');
     }
 
     setupDashboard() {
