@@ -1,9 +1,9 @@
 import {Contract} from 'workspace/resource-generator/coding-contract/model/Contract';
-import { ServersRepository } from 'workspace/servers/domain/servers.repository';
+import { ServersService } from "workspace/servers/servers.service";
 
 export async function main(ns: NS): Promise<Contract[]> {
-    const serversRepository = new ServersRepository(ns);
-    const knownServers = serversRepository.getAllIds();
+    const serversService = new ServersService(ns);
+    const knownServers = serversService.getAllPossibleCodingContractSpawn();
 
     return getCurrentContracts(ns, knownServers);
 }

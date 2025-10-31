@@ -106,12 +106,18 @@ export class ServersService {
     }
 
     getAllExecutable(): string[] {
-        return this.getAllUnlocked();
+        return ['home', ...this.getAllUnlocked()];
     }
 
     getOwned(): string[] {
         return this.repository.getAll()
             .filter(x => x?.type === ServerType.BOUGHT)
+            .map(x => x?.name ?? '');
+    }
+
+    getAllPossibleCodingContractSpawn(): string[] {
+        return this.repository.getAll()
+            .filter(x => x?.type === ServerType.EXTERNAL)
             .map(x => x?.name ?? '');
     }
 
