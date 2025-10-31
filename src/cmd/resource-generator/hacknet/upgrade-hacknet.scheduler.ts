@@ -37,7 +37,6 @@ export async function main(ns: NS) {
 }
 
 class UpgradeHacknetHeadHunter extends Headhunter<UpgradeExecution> {
-    private logger: Logger;
     private dashboard: Dashboard;
     private moneyPiggyBankService: MoneyPiggyBankService;
 

@@ -10,6 +10,17 @@ const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
 //#endregion Constantes
 
 /**
+ * @param {AutocompleteData} data - context about the game, useful when autocompleting
+ * @param {string[]} args - current arguments, not including "run script.js"
+ * @returns {string[]} - the array of possible autocomplete options
+ */
+export function autocomplete(data: AutocompleteData, args: string[]): string[] {
+  return FLAGS_SCHEMA
+    .map(x => '--' + x[0])
+    .filter(flag => !args.includes(flag));
+}
+
+/**
  * @requires singularity
  * @param ns Bitburner API
  */

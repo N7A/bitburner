@@ -4,6 +4,16 @@ import { Info } from 'workspace/socle/interface/info';
 import { ServersRepository } from 'workspace/servers/domain/servers.repository'
 
 /**
+ * @param {AutocompleteData} data - context about the game, useful when autocompleting
+ * @param {string[]} args - current arguments, not including "run script.js"
+ * @returns {string[]} - the array of possible autocomplete options
+ */
+export function autocomplete(data: AutocompleteData, args: string[]): string[] {
+  return data.servers
+    .filter(arg => !args.includes(arg));
+}
+
+/**
  * Affiche les données utiles pour backdoor un serveur.
  * @param ns 
  */

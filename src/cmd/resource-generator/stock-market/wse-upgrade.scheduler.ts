@@ -29,7 +29,6 @@ export async function main(ns: NS) {
 }
 
 class WseUpgradeHeadHunter extends Headhunter<WseUpgrade> {
-    private logger: Logger;
     private dashboard: Dashboard;
     private moneyPiggyBankService: MoneyPiggyBankService;
     

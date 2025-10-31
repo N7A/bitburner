@@ -31,7 +31,6 @@ export async function main(ns: NS) {
 }
 
 class Main extends Headhunter<string> {
-    private logger: Logger;
     private dashboard: Dashboard;
     private stockSymbol: string;
 

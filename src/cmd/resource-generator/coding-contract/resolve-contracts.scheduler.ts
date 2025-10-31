@@ -17,6 +17,17 @@ const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
 export const RESOLVER_SCRIPT_DIRECTORY = 'workspace/resource-generator/coding-contract';
 //#endregion Constantes
 
+/**
+ * @param {AutocompleteData} data - context about the game, useful when autocompleting
+ * @param {string[]} args - current arguments, not including "run script.js"
+ * @returns {string[]} - the array of possible autocomplete options
+ */
+export function autocomplete(data: AutocompleteData, args: string[]): string[] {
+  return FLAGS_SCHEMA
+    .map(x => '--' + x[0])
+    .filter(flag => !args.includes(flag));
+}
+
 export async function main(ns: NS) {
     // load input flags
     const scriptFlags = ns.flags(FLAGS_SCHEMA);
@@ -38,7 +49,6 @@ export class ResolveContracts extends Headhunter<Contract> {
     //#endregion Constants
 
     private rejetsRepository: RejetsRepository;
-    private logger: Logger;
 
     constructor(ns: NS) {
         // waitNewTargets = true : contracts appear over the time
