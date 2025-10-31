@@ -7,6 +7,7 @@ import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
 import { Headhunter } from 'workspace/socle/interface/headhunter';
 import { Logger } from 'workspace/socle/Logger';
+import { UpgradeType } from '/workspace/resource-generator/hacknet/model/UpgradeType';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
@@ -65,11 +66,11 @@ class UpgradeHacknetHeadHunter extends Headhunter<UpgradeExecution> {
 
             // wait purchase to be possible
             // TODO: prendre en compte que le repaytime peut reduire avec la prochaine augmentation
-            /*while(this.getAutoRepayTime() > 1000 * 60 * 60 * 5) {
-                refreshDashBoard2(this.getMoney(), this.REFRESH_INTERVAL, target);
+            while(this.getAutoRepayTime() > 1000 * 60 * 60 * 24 * 2 && target.upgradeType == UpgradeType.NODE) {
+                this.refreshDashBoard2(this.getMoney(), this.REFRESH_INTERVAL, target);
                 // sleep to prevent crash because of infinite loop
                 await this.ns.sleep(500);
-            }*/
+            }
         }
     }
 
