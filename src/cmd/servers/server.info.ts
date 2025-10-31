@@ -9,8 +9,10 @@ import { ServersRepository } from 'workspace/servers/domain/servers.repository'
  * @returns {string[]} - the array of possible autocomplete options
  */
 export function autocomplete(data: AutocompleteData, args: string[]): string[] {
-  return data.servers
-    .filter(arg => !args.includes(arg));
+    if (args.some(arg => data.servers.includes(arg))) {
+        return null;
+    }
+    return data.servers;
 }
 
 /**
