@@ -1,4 +1,20 @@
-node_module/**/*
 package-lock.json
 src/repositories/executions/**/*.json
 src/repositories/servers/**/*.json
+
+# macOS settings file 
+.DS_Store
+
+# Contains all your dependencies
+node_modules
+
+# Coverage directory used by testing tools
+coverage
+
+# Visual Studio Code configuration
+.vscode/
+
+# npm and yarn debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
