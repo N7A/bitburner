@@ -51,8 +51,8 @@
 /cmd/servers/server.info.ts
 /cmd/synchronize/pull.launcher.ts
 /cmd/synchronize/synchronize-workspace.ts
-/lab/oui.ts
 /lab/test.ts
+/lab/test-contract.ts
 /workspace/common/log.properties.ts
 /workspace/common/model/DaemonFlags.ts
 /workspace/common/model/DirectiveType.ts
