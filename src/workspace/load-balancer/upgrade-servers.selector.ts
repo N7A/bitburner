@@ -53,13 +53,18 @@ async function getProfitBuy(ns: NS, maxMoneyToSpend?: number): Promise<UpgradeEx
 
     if (maxMoneyToSpend) {
         // found max ram possible
-        ns.print('Recherche de la RAM maximum');
-        ns.print('Max RAM : ', ns.getPurchasedServerMaxRam());
+        ns.print('Recherche de la RAM maximum achetable...');
         while (ns.getPurchasedServerCost(getNewRam(ram, pow+1)) < maxMoneyToSpend && getNewRam(ram, pow+1) <= ns.getPurchasedServerMaxRam()) {
             pow++;
-            ns.print('RAM : ', getNewRam(ram, pow));
-            await ns.sleep(500);
+            await ns.sleep(300);
         }
+        
+        let message = `RAM achetable : ${ns.formatRam(getNewRam(ram, pow))}`;
+
+        if (ns.getPurchasedServerMaxRam()) {
+            message = `RAM achetable (max) : ${ns.formatRam(getNewRam(ram, pow))}`
+        }
+        ns.print(message);
     }
     ram = getNewRam(ram, pow)
 
@@ -72,4 +77,4 @@ async function getProfitBuy(ns: NS, maxMoneyToSpend?: number): Promise<UpgradeEx
     return upgradeRatio;
 }
 
-function getNewRam(ram: number, pow: number) { return ram*(2**pow) }
+function getNewRam(ram: number, pow: number): number { return ram*(2**pow) }
