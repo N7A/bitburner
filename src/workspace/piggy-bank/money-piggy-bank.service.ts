@@ -1,4 +1,5 @@
 import { PiggyBankRepository } from "workspace/piggy-bank/domain/piggy-bank.repository";
+import { MoneyNeeder } from "workspace/piggy-bank/domain/model/MoneyBank";
 
 /**
  * Exposition des services money piggy bank.
@@ -18,8 +19,15 @@ export class MoneyPiggyBankService {
      * 
      * @remarks — Ram cost : 0.1 GB
      */
-    getDisponibleMoney(currentMoney: number): number {
-        return currentMoney - this.getReserveMoney(currentMoney);
+    getDisponibleMoney(currentMoney: number, type?: MoneyNeeder): number {
+        const available: number = currentMoney - this.getReserveMoney(currentMoney);
+        const totalWeight = Object.keys(MoneyNeeder)
+            .map(x => (this.repository.get().moneyBank.repartitionByType as Map<MoneyNeeder, number>).get(MoneyNeeder[x]))
+            .reduce((a,b) => a+b);
+        const ratio = type ? 
+            (this.repository.get().moneyBank.repartitionByType as Map<MoneyNeeder, number>).get(type) / totalWeight
+            : 1
+        return available * ratio;
     }
 
     /**

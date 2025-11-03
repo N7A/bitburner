@@ -3,17 +3,13 @@ export type MoneyBank = {
     rateToKeep: number;
     /** montant à ne pas utiliser */
     toReserve: number;
+    /** Répartition de la RAM en fonction du type d'execution */
+    repartitionByType: Map<MoneyNeeder, number> | Object;
 }
 
-/** repartition du disponible */
-// TODO
-/*
 export enum MoneyNeeder {
     HACKNET,
-    SERVERS
+    SERVERS,
+    STOCK_MARKET,
+    GANG
 }
-
-static readonly weight: Map<MoneyNeeder, number> = new Map([
-    [MoneyNeeder.HACKNET, 1], 
-    [MoneyNeeder.SERVERS, 1]
-]);*/

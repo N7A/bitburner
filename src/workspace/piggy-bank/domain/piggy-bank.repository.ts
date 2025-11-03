@@ -1,7 +1,7 @@
 import * as Referentiel from 'workspace/common/referentiel'
 import { Bank } from 'workspace/piggy-bank/domain/model/Bank'
 import { RamBank } from 'workspace/piggy-bank/domain/model/RamBank';
-import { MoneyBank } from 'workspace/piggy-bank/domain/model/MoneyBank';
+import { MoneyBank, MoneyNeeder } from 'workspace/piggy-bank/domain/model/MoneyBank';
 import { getHash } from 'workspace/socle/utils/file';
 import { ProcessRequestType } from 'workspace/load-balancer/domain/model/ProcessRequestType';
 
@@ -29,7 +29,7 @@ export class PiggyBankRepository {
      */
     get(): Bank {
         if (!this.ns.fileExists(REPOSITORY)) {
-            return {moneyBank: {rateToKeep:0, toReserve: 0}, ramBank: {rateToKeep: new Map(), toReserve: new Map(), repartitionByType: new Map()}};
+            return {moneyBank: {rateToKeep:0, toReserve: 0, repartitionByType: new Map()}, ramBank: {rateToKeep: new Map(), toReserve: new Map(), repartitionByType: new Map()}};
         }
         let bank: Bank = JSON.parse(this.ns.read(REPOSITORY));
         bank.ramBank = {
@@ -37,6 +37,7 @@ export class PiggyBankRepository {
             toReserve: bank.ramBank.toReserve ? new Map(Object.entries(bank.ramBank.toReserve)) : new Map(),
             repartitionByType: bank.ramBank.repartitionByType ? new Map(Object.entries(bank.ramBank.repartitionByType)) : new Map()
         }
+        bank.moneyBank.repartitionByType = bank.moneyBank.repartitionByType ? new Map(Object.entries(bank.moneyBank.repartitionByType)) : new Map()
 
         return bank;
     }
@@ -54,6 +55,7 @@ export class PiggyBankRepository {
         bank.ramBank.rateToKeep = Object.fromEntries(bank.ramBank.rateToKeep as Map<string, number>);
         bank.ramBank.toReserve = Object.fromEntries(bank.ramBank.toReserve as Map<string, number>);
         bank.ramBank.repartitionByType = Object.fromEntries(bank.ramBank.repartitionByType as Map<ProcessRequestType, number>);
+        bank.moneyBank.repartitionByType = Object.fromEntries(bank.ramBank.repartitionByType as Map<ProcessRequestType, number>);
         // save data
         this.ns.write(REPOSITORY, JSON.stringify(bank, null, 4), "w");
     }
@@ -69,7 +71,13 @@ export class PiggyBankRepository {
         // initial money thresholds
         const moneyBank: MoneyBank = {
             rateToKeep: 30/100,
-            toReserve: 0 * 1000 * 1000
+            toReserve: 0 * 1000 * 1000,
+            repartitionByType: new Map([
+                [MoneyNeeder.HACKNET, 1], 
+                [MoneyNeeder.SERVERS, 1], 
+                [MoneyNeeder.STOCK_MARKET, 1], 
+                [MoneyNeeder.GANG, 1]
+            ])
         };
         // initial RAM thresholds
         const ramBank: RamBank = {

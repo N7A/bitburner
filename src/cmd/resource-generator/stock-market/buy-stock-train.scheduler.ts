@@ -6,6 +6,7 @@ import { Logger } from 'workspace/socle/Logger';
 import { SellStockWorker } from "cmd/resource-generator/stock-market/sell-stock.worker";
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+import { MoneyNeeder } from 'workspace/piggy-bank/domain/model/MoneyBank';
 
 //#region Constantes
 const FLAGS_SCHEMA: [string, string | number | boolean | string[]][] = [
@@ -68,7 +69,7 @@ class Main extends Headhunter<string> {
                 continue;
             }
 
-            const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money));
+            const availableMoney = moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money, MoneyNeeder.STOCK_MARKET);
             shares = getMaxShares(this.ns, this.stockSymbol, availableMoney);
         } while(shares === 0)
 
@@ -78,7 +79,7 @@ class Main extends Headhunter<string> {
     async buy(): Promise<string> {
         const moneyPiggyBankService = new MoneyPiggyBankService(this.ns);
 
-        const availableMoney = Math.min(1000*1000*1000, moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money));
+        const availableMoney = moneyPiggyBankService.getDisponibleMoney(this.ns.getPlayer().money, MoneyNeeder.STOCK_MARKET);
         const shares: number = getMaxShares(this.ns, this.stockSymbol, availableMoney);
         
         if (shares === 0) {
