@@ -34,9 +34,11 @@ export async function waitBuyTime(ns: NS, stockSymbol: string) {
 
 export function getMaxShares(ns: NS, stockSymbol: string, maxMoneyToSpend: number) {
     return Math.min(
-        ns.stock.getMaxShares(stockSymbol),
-        (maxMoneyToSpend - ns.stock.getConstants().StockMarketCommission) / ns.stock.getBidPrice(stockSymbol),
-        0
+        ...[
+            ns.stock.getMaxShares(stockSymbol),
+            (maxMoneyToSpend - ns.stock.getConstants().StockMarketCommission) / ns.stock.getBidPrice(stockSymbol),
+            0
+        ].filter(x => x >= 0)
     );
 }
 
