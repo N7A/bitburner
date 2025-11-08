@@ -33,13 +33,16 @@ export async function waitBuyTime(ns: NS, stockSymbol: string) {
 }
 
 export function getMaxShares(ns: NS, stockSymbol: string, maxMoneyToSpend: number) {
-    return Math.min(
-        ...[
+    const toCompare = [
             ns.stock.getMaxShares(stockSymbol),
-            (maxMoneyToSpend - ns.stock.getConstants().StockMarketCommission) / ns.stock.getBidPrice(stockSymbol),
-            0
-        ].filter(x => !Number.isNaN(x) && x >= 0)
-    );
+            (maxMoneyToSpend - ns.stock.getConstants().StockMarketCommission) / ns.stock.getBidPrice(stockSymbol)
+        ].filter(x => !Number.isNaN(x) && x >= 0);
+        
+    if (toCompare.length === 0) {
+        return 0;
+    }
+
+    return Math.min(...toCompare);
 }
 
 export async function waitRepayTime(ns: NS, stockSymbol: string, moneySpent: number, shares: number) {
