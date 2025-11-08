@@ -55,7 +55,7 @@ export class PiggyBankRepository {
         bank.ramBank.rateToKeep = Object.fromEntries(bank.ramBank.rateToKeep as Map<string, number>);
         bank.ramBank.toReserve = Object.fromEntries(bank.ramBank.toReserve as Map<string, number>);
         bank.ramBank.repartitionByType = Object.fromEntries(bank.ramBank.repartitionByType as Map<ProcessRequestType, number>);
-        bank.moneyBank.repartitionByType = Object.fromEntries(bank.ramBank.repartitionByType as Map<ProcessRequestType, number>);
+        bank.moneyBank.repartitionByType = Object.fromEntries(bank.moneyBank.repartitionByType as Map<MoneyNeeder, number>);
         // save data
         this.ns.write(REPOSITORY, JSON.stringify(bank, null, 4), "w");
     }
