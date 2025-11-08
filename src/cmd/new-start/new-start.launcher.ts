@@ -7,6 +7,7 @@ import { ExecutionOrdersService } from 'workspace/load-balancer/execution-orders
 import { Dashboard } from 'workspace/socle/interface/dashboard';
 import { GameService } from 'workspace/game/game.service';
 import { MemberNamesRepository } from "workspace/resource-generator/gang/domain/MemberNamesRepository";
+import { PiggyBankRepository } from "workspace/piggy-bank/domain/piggy-bank.repository";
 
 /**
  * Script à lancer après un reset du jeu (installation d'augmentation).
@@ -29,6 +30,7 @@ class NewStart {
     private serversRepository: ServersRepository;
     private executionOrdersService: ExecutionOrdersService;
     private moneyPiggyBankService: MoneyPiggyBankService;
+    private piggyBankRepository: PiggyBankRepository;
     private gangDirectiveRepository: GangDirectiveRepository;
     private memberNamesRepository: MemberNamesRepository;
     private gameService: GameService;
@@ -39,6 +41,7 @@ class NewStart {
         this.serversRepository = new ServersRepository(ns);
         this.executionOrdersService = new ExecutionOrdersService(ns);
         this.moneyPiggyBankService = new MoneyPiggyBankService(ns);
+        this.piggyBankRepository = new PiggyBankRepository(ns);
         this.gangDirectiveRepository = new GangDirectiveRepository(ns);
         this.gameService = new GameService(ns);
         this.memberNamesRepository = new MemberNamesRepository(ns)
@@ -53,20 +56,22 @@ class NewStart {
     }
 
     private resetRepositories() {
+        
+        // reset des bases de données
+        this.serversRepository.reset();
+        this.memberNamesRepository.reset();
+        this.executionOrdersService.reset();
+        this.piggyBankRepository.reset();
+        this.gangDirectiveRepository.reset();
+        this.memberNamesRepository.reset();
+        this.gameService.reset();
+
         // reset reserve money
         this.moneyPiggyBankService.setReserveMoney(0);
-        
         // TODO : objectif dépend de la vitesse de gain
         /*if (!ns.hasTorRouter()) {
             MoneyPiggyBank.setReserveMoney(ns, 200 * 1000);
         }*/
-
-        // reset des bases de données
-        this.serversRepository.reset();
-        this.executionOrdersService.reset();
-        this.gangDirectiveRepository.reset();
-        this.memberNamesRepository.reset();
-        this.gameService.reset();
     }
 
     private startScripts() {
