@@ -38,7 +38,7 @@ export function getMaxShares(ns: NS, stockSymbol: string, maxMoneyToSpend: numbe
             ns.stock.getMaxShares(stockSymbol),
             (maxMoneyToSpend - ns.stock.getConstants().StockMarketCommission) / ns.stock.getBidPrice(stockSymbol),
             0
-        ].filter(x => x >= 0)
+        ].filter(x => !Number.isNaN(x) && x >= 0)
     );
 }
 
