@@ -33,7 +33,7 @@ export async function main(ns: NS) {
     const daemon: ExecutionSchedulerDaemon = new ExecutionSchedulerDaemon(ns);
     
     ns.atExit(async () => {
-        await daemon.resetAllRunningProcess();
+        await daemon.resetAllRunningProcess(true);
     });
     
     daemon.setupDashboard();
@@ -117,9 +117,9 @@ class ExecutionSchedulerDaemon extends Daemon {
         }
     }
     
-    async resetAllRunningProcess() {
+    async resetAllRunningProcess(reallyAll: boolean = false) {
         const daemonOrder = this.orders
-            .filter(x => x.request.request?.wantedThreadNumber === null)
+            .filter(x => x.request.request?.wantedThreadNumber === null || reallyAll)
             .map(x => x.request);
         for (const request of daemonOrder) {
             await this.resetRunningProcess(request);
