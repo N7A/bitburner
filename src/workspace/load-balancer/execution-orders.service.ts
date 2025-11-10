@@ -43,10 +43,11 @@ export class ExecutionOrdersService {
         } as CommitRequest);
     }
 
-    async reset() {
+    async reset(data?: ProcessRequest[]) {
         await SgbdDaemon.pushData(this.ns, {
             repository: Repository.EXECUTIONS, 
-            type: CommitType.RESET
+            type: CommitType.RESET,
+            data: data
         } as CommitRequest);
     }
 }

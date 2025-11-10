@@ -41,7 +41,11 @@ export async function main(ns: NS) {
     if (scriptFlags[DaemonFlags.oneshot]) {
         daemon.killAfterLoop();
     }
-    
+
+    let orders = await new ExecutionOrdersService(ns).getAll();
+    orders.forEach(element => element.pid = []);
+    new ExecutionOrdersService(ns).reset(orders);
+
     await daemon.run();
     
     ns.ui.closeTail();
@@ -106,7 +110,7 @@ class ExecutionSchedulerDaemon extends Daemon {
                     })*/
                 this.logger.log(`${process.getActionLog()} ${this.ns.formatNumber(executionOrder.nbThread, 0)} threads on ${Log.source(executionOrder.sourceHostname)}`);
                 // maj pid processes
-                process.request.pid = [...(process.request.pid ?? []), pid];
+                process.request.pid = Array.from(new Set([...(process.request.pid ?? []), pid]));
             }
             
             // ignore DaemonFlags.threads
@@ -174,8 +178,6 @@ class ExecutionSchedulerDaemon extends Daemon {
             newRamBank = this.piggyBankRepository.getHash();
         } while (
             // requetes inchangées
-            /*Array.from(new Set([...requests.map(x => getId(x)), ...newRequest.map(x => getId(x))]))
-                .every(x => newRequest.map(x => getId(x)).includes(x) && requests.map(x => getId(x)).includes(x))*/
             this.getHash(requests) === this.getHash(newRequest)
             // RAM inchangée
             && newRamDisponible === ramDisponible

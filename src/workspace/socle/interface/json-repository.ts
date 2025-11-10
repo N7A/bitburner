@@ -53,9 +53,9 @@ export class JsonRepository<T> {
      * 
      * @remarks RAM cost : 0 GB
      */
-    reset(): void {
+    reset(data?: T[]): void {
         // save data
-        this.resetWith([] as T[]);
+        this.resetWith(data ?? ([] as T[]));
     }
     
     /**
