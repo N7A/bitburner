@@ -42,9 +42,13 @@ export async function main(ns: NS) {
         daemon.killAfterLoop();
     }
 
-    let orders = await new ExecutionOrdersService(ns).getAll();
-    orders.forEach(element => element.pid = []);
-    new ExecutionOrdersService(ns).reset(orders);
+    const executionOrdersService = new ExecutionOrdersService(ns);
+    let orders = await executionOrdersService.getAll();
+    orders.forEach(element => {
+        element.pid?.filter(x => x !== undefined).forEach(x => ns.kill(x));
+        element.pid = [];
+    });
+    await executionOrdersService.reset(orders);
 
     await daemon.run();
     

@@ -70,11 +70,13 @@ export class Logger {
         const count: string = `${numberDone.toString().padStart(numberTotal.toString().length)} / ${numberTotal}`;
         this.ns.print(count.padStart(Math.ceil((barSize - count.length) / 2) + pourcent.length));
         
+        const emptyBarCharacter: string = '░'; // - ;  
+        const filledBarCharacter: string = '█'; // | ; =
+        //const filledBarSuffixe = `${pourcentage === barSize ? '' : '>'}`;
         const message = pourcent
-            /*+ '['
-            + (`${Log.color(`${'='.repeat(pourcentage)}${pourcentage === barSize ? '' : '>'}`, color)}`).padEnd(barSize)
-            + ']'*/
-            + (`${Log.color(`${'█'.repeat(pourcentage)}`, color)}`).padEnd(barSize, '░');
+            //+ '['
+            + (`${Log.color(`${filledBarCharacter.repeat(pourcentage)}`, color)}`).padEnd(barSize, emptyBarCharacter);
+            //+ ']'
         
         this.ns.print(message);
     }
