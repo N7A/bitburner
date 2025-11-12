@@ -32,8 +32,10 @@ export async function main(ns: NS) {
 
     const daemon: ExecutionSchedulerDaemon = new ExecutionSchedulerDaemon(ns);
     
+    const executionOrdersService = new ExecutionOrdersService(ns);
+
     ns.atExit(async () => {
-        await daemon.resetAllRunningProcess(true);
+        await executionOrdersService.clearPid();
     });
     
     daemon.setupDashboard();
@@ -42,13 +44,7 @@ export async function main(ns: NS) {
         daemon.killAfterLoop();
     }
 
-    const executionOrdersService = new ExecutionOrdersService(ns);
-    let orders = await executionOrdersService.getAll();
-    orders.forEach(element => {
-        element.pid?.filter(x => x !== undefined).forEach(x => ns.kill(x));
-        element.pid = [];
-    });
-    await executionOrdersService.reset(orders);
+    await executionOrdersService.clearPid();
 
     await daemon.run();
     
@@ -125,9 +121,9 @@ class ExecutionSchedulerDaemon extends Daemon {
         }
     }
     
-    async resetAllRunningProcess(reallyAll: boolean = false) {
+    async resetAllRunningProcess() {
         const daemonOrder = this.orders
-            .filter(x => x.request.request?.wantedThreadNumber === null || reallyAll)
+            .filter(x => x.request.request?.wantedThreadNumber === null)
             .map(x => x.request);
         for (const request of daemonOrder) {
             await this.resetRunningProcess(request);

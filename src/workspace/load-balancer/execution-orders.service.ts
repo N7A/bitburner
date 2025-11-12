@@ -43,6 +43,13 @@ export class ExecutionOrdersService {
         } as CommitRequest);
     }
 
+    async clearPid() {
+        await SgbdDaemon.pushData(this.ns, {
+            repository: Repository.EXECUTIONS, 
+            type: CommitType.CLEAR
+        } as CommitRequest);
+    }
+
     async reset(data?: ProcessRequest[]) {
         await SgbdDaemon.pushData(this.ns, {
             repository: Repository.EXECUTIONS, 

@@ -65,6 +65,19 @@ export class ExecutionsRepository extends JsonRepository<ProcessRequest> {
         this.resetWith(executions);
     }
     
+    clearPid() {
+        // get last version of executions
+        let executions: ProcessRequest[] = this.getAll();
+
+        executions.forEach(element => {
+            element.pid?.filter(x => x !== undefined).forEach(x => this.ns.kill(x));
+            element.pid = [];
+        });
+        
+        // save data
+        this.resetWith(executions);
+    }
+
     static getHash(order: ProcessRequest) {
         return getHashFromContent(JSON.stringify({
             type: order.type,

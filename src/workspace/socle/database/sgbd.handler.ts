@@ -54,6 +54,8 @@ export class SgbdDaemon extends Daemon {
             this.executionsRepository.save(data);
         } else if (type === CommitType.REMOVE) {
             this.executionsRepository.remove(data);
+        } else if (type === CommitType.CLEAR) {
+            this.executionsRepository.clearPid();
         } else if (type === CommitType.RESET) {
             this.executionsRepository.reset(data);
         }

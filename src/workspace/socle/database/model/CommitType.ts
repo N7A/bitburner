@@ -3,5 +3,6 @@ export enum CommitType {
     ADD,
     SAVE,
     REMOVE,
-    RESET
+    RESET,
+    CLEAR
 }
