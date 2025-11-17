@@ -7,6 +7,5 @@ export enum ResourceType {
     MONEY,
     // gain de RAM
     RAM,
-    // TODO: up combat stats and charisma
-    DOWN_INFILTRATION_DIFFICULTY
+    UP_STATS
 }
