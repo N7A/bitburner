@@ -56,6 +56,7 @@
 /workspace/common/log.properties.ts
 /workspace/common/model/DaemonFlags.ts
 /workspace/common/model/DirectiveType.ts
+/workspace/common/model/Resource.ts
 /workspace/common/referentiel.ts
 /workspace/game/domain/game.repository.ts
 /workspace/game/domain/model/Game.ts
@@ -78,7 +79,10 @@
 /workspace/load-balancer/upgrade-servers.worker.ts
 /workspace/notification/alert.ts
 /workspace/orchestration/darkweb-upgrade.selector.ts
+/workspace/orchestration/domain/directive.repository.ts
+/workspace/orchestration/domain/model/Directive.ts
 /workspace/orchestration/ipvgo-orchestration.daemon.ts
+/workspace/orchestration/model/Process.ts
 /workspace/piggy-bank/domain/model/Bank.ts
 /workspace/piggy-bank/domain/model/MoneyBank.ts
 /workspace/piggy-bank/domain/model/RamBank.ts

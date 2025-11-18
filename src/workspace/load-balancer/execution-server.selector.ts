@@ -10,6 +10,7 @@ import { ProcessRequestType } from 'workspace/load-balancer/domain/model/Process
 import { ProcessRequest } from 'workspace/load-balancer/domain/model/ProcessRequest';
 import { PiggyBankRepository } from 'workspace/piggy-bank/domain/piggy-bank.repository';
 import { DaemonFlags } from 'workspace/common/model/DaemonFlags';
+import { ExecutionsRepository } from 'workspace/load-balancer/domain/executions.repository'
 
 //#region Constants
 const THREAD_FLAG_SCRIPTS = [
@@ -21,6 +22,7 @@ const THREAD_FLAG_SCRIPTS = [
 export class ExecutionSelector {
     private ns: NS;
     private orders: RamResourceExecution[];
+    private ignoredOrders: RamResourceExecution[] = [];
     private logger: Logger;
     private piggyBankRepository: PiggyBankRepository;
 
@@ -30,6 +32,8 @@ export class ExecutionSelector {
         this.logger = new Logger(ns);
         this.piggyBankRepository = new PiggyBankRepository(ns);
     }
+
+    getId = (request: RamResourceExecution) => ExecutionsRepository.getHash(request.request);
 
     async getRepartitions(): Promise<Map<RamResourceExecution, ExecutionOrder[]>> {
         const serversService = new ServersService(this.ns);
@@ -42,25 +46,43 @@ export class ExecutionSelector {
 
         const totalRamDisponible = targetServers.map(x => this.availableRam(this.ns, x)).reduce((a,b) => a+b);
         
+        do {
+            let filteredOrders = this.orders.filter(x => !this.ignoredOrders.map(y => this.getId(y)).includes(this.getId(x)))
+                // TODO: sort order par priorité
+                .sort(x => x.request.weight);
+            executions = await this.getRepartitionsBis(filteredOrders, ramByServer, totalRamDisponible);
+        } while (executions === null)
+
+        return executions;
+    }
+
+    async getRepartitionsBis(orders: RamResourceExecution[], ramByServer: Map<string, number>, totalRamDisponible: number) {
+        let executions: Map<RamResourceExecution, ExecutionOrder[]> = new Map();
+
         // define repartition to fixed ram executions
         let ramDisponiblePostFixed = totalRamDisponible;
-        // TODO: sort order par priorité
-        for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber !== undefined && x.request.request.wantedThreadNumber > 0)) {
+        for(const order of orders.filter(x => x.request.request.wantedThreadNumber !== undefined && x.request.request.wantedThreadNumber > 0)) {
             this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`));
 
             const ramAuthorized = await this.getAuthorizedRam(order, totalRamDisponible);
             this.logger.info(Log.INFO('Ram authorisée', this.ns.formatRam(ramAuthorized) + '/' + this.ns.formatRam(totalRamDisponible)));
 
-            ramDisponiblePostFixed -= ramAuthorized
             // recherche de la répartition possible sur les serveurs
             const executionOrders: ExecutionOrder[] = await this.getExecutionRepartition(this.ns, ramByServer, order.request.request, ramAuthorized);
-            // TODO: if executionOrders.length <= 0 -> new ram disponible pour les autres
-            // TODO: => recalcul des ram authorized sans cet order + notif ?
+            // execution impossible actuellement -> new ram disponible pour les autres
+            if (executionOrders.length <= 0) {
+                // notification
+                this.logger.warn(`Pas assez de RAM pour executer ${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`);
+                // recalcul des ram authorized sans cet order
+                this.ignoredOrders.push(order);
+                return null;
+            }
+            ramDisponiblePostFixed -= ramAuthorized
             executions.set(order, executionOrders);
         }
 
         // define repartition to ram resource executions
-        for(const order of this.orders.filter(x => x.request.request.wantedThreadNumber === undefined)) {
+        for(const order of orders.filter(x => x.request.request.wantedThreadNumber === undefined)) {
             this.logger.info(Log.INFO('Order', `${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`));
 
             const ramAuthorized = await this.getAuthorizedRam(order, ramDisponiblePostFixed);
@@ -68,7 +90,15 @@ export class ExecutionSelector {
 
             // recherche de la répartition possible sur les serveurs
             const executionOrders: ExecutionOrder[] = await this.getExecutionRepartition(this.ns, ramByServer, order.request.request, ramAuthorized);
-            // TODO: if executionOrders.length <= 0 -> new ram disponible pour les autres
+            // execution impossible actuellement -> new ram disponible pour les autres
+            if (executionOrders.length <= 0) {
+                // notification
+                this.logger.warn(`Pas assez de RAM pour executer ${order.getActionLog()}${order.request.id ? ' ' + order.request.id : ''}`);
+                // recalcul des ram authorized sans cet order
+                this.ignoredOrders.push(order);
+                return null;
+            }
+
             executions.set(order, executionOrders);
         }
 

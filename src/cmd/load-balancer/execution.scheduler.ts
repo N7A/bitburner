@@ -34,8 +34,8 @@ export async function main(ns: NS) {
     
     const executionOrdersService = new ExecutionOrdersService(ns);
 
-    ns.atExit(async () => {
-        await executionOrdersService.clearPid();
+    ns.atExit(() => {
+        executionOrdersService.clearPid();
     });
     
     daemon.setupDashboard();
