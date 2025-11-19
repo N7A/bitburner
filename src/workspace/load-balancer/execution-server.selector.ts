@@ -41,12 +41,11 @@ export class ExecutionSelector {
 
         let executions: Map<RamResourceExecution, ExecutionOrder[]> = new Map();
         
-        // init ram disponible by server
-        let ramByServer: Map<string, number> = new Map(targetServers.map(x => [x, this.availableRam(this.ns, x)]));
-
         const totalRamDisponible = targetServers.map(x => this.availableRam(this.ns, x)).reduce((a,b) => a+b);
         
         do {
+            // init ram disponible by server
+            let ramByServer: Map<string, number> = new Map(targetServers.map(x => [x, this.availableRam(this.ns, x)]));
             let filteredOrders = this.orders.filter(x => !this.ignoredOrders.map(y => this.getId(y)).includes(this.getId(x)))
                 // TODO: sort order par priorité
                 .sort(x => x.request.weight);
