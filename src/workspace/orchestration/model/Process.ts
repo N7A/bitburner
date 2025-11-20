@@ -7,7 +7,13 @@ export type Process = {
     scriptDown: string;
 }
 
-export const PROCESSES: Process[] = [
+export const PROCESSES: Process[] = [,
+    {
+        need: ResourceType.MONEY,
+        produce: ResourceType.MONEY,
+        scriptUp: 'cmd/resource-generator/hacknet/upgrade-hacknet.scheduler.ts',
+        scriptDown: null
+    },
     {
         need: ResourceType.RAM,
         scriptUp: 'cmd/resource-generator/hacknet/ipvgo/play-board.daemon.ts',
