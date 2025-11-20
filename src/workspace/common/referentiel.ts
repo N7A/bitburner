@@ -12,6 +12,7 @@ export const SERVERS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/servers';
 export const FAILED_CONTRACTS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/failed-contracts';
 export const GAME_DATA_REPOSITORY_FILE: string = REPOSITORIES_DIRECTORY + '/game/production.json';
 export const GAME_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/game.json';
+export const DIRECTIVE_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/directive.json';
 export const EXECUTION_ORDERS_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/executions/executions.json';
 export const GANG_MEMBER_NAMES_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/gang-member-names.json';
 export const PIGGY_BANK_REPOSITORY: string = REPOSITORIES_DIRECTORY + '/piggy-bank.json';
